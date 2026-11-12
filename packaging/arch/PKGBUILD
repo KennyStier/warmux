@@ -1,8 +1,18 @@
 # Maintainer: KennyStier <https://github.com/KennyStier>
+# Contributor: Laël Guillemenot <zeppelinlg@gmail.com>
+# Contributor: Michael DeGuzis <mdeguzis@gmail.com>
+# Contributor: carstene1ns <url/mail: arch carsten-teibes de>
+# Contributor: Eric Belanger <eric@archlinux.org>
+# Contributor: pukyxd
+# Contributor: Daenyth <Daenyth+Arch AT gmail DOT com>
+# Contributor: Laurent Carlier <lordheavym@gmail.com>
+# Contributor: Martchus <martchus@gmx.net>
+#
 # Builds the latest commit of https://github.com/KennyStier/warmux
+# (kept in sync with packaging/arch/PKGBUILD there)
 
 pkgname=warmux-git
-pkgver=12.0.0
+pkgver=12.0.0.r0.g246bd33
 pkgrel=1
 pkgdesc="Turn-based artillery game with free-software mascots (maintained fork, includes index/game servers)"
 arch=('x86_64' 'aarch64')
@@ -13,7 +23,6 @@ depends=('sdl2' 'sdl2_image' 'sdl2_gfx' 'sdl2_ttf' 'sdl2_mixer' 'sdl2_net'
 makedepends=('git' 'autoconf' 'automake')
 provides=('warmux')
 conflicts=('warmux' 'warmux-data')
-replaces=('wormux')
 source=("warmux::git+https://github.com/KennyStier/warmux.git")
 sha256sums=('SKIP')
 
