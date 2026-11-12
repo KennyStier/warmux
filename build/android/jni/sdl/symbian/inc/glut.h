@@ -1,1 +1,0 @@
-/*SDL GL / GLES IOP */

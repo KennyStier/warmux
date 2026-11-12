@@ -91,7 +91,7 @@ void Interface::LoadDataInternal(Profile *res)
     small_interface = LOAD_RES_IMAGE("interface/small_background_interface");
   }
   clock_width = 70*zoom+0.5f;
-#if defined(ANDROID) || defined (__SYMBIAN32__)
+#if defined (__SYMBIAN32__)
   // The optimization below depends on fastpath being implemented
   // for RGB565 with surface alpha *and* colorkey
   default_toolbar = default_toolbar.DisplayFormatColorKey(64);

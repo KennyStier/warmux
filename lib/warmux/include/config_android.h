@@ -3,7 +3,7 @@
 
 /* Define to 1 if translation of program messages to the user's native
    language is requested. */
-#define ENABLE_NLS 1
+/* #define ENABLE_NLS 1  translations not built for Android yet */
 
 /* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
    CoreFoundation framework. */
@@ -15,17 +15,17 @@
 
 /* Define if the GNU dcgettext() function is already present or preinstalled.
    */
-#define HAVE_DCGETTEXT 1
+/* #define HAVE_DCGETTEXT 1  translations not built for Android yet */
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 //#define HAVE_DIRENT_H 1
 
 /* Define if the GNU gettext() function is already present or preinstalled. */
-#define HAVE_GETTEXT 1
+/* #define HAVE_GETTEXT 1  translations not built for Android yet */
 
 /* Define if you have the iconv() function and it works. */
-#define HAVE_ICONV 1
+/* #define HAVE_ICONV 1  translations not built for Android yet */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -117,4 +117,4 @@
 #define VERSION "12.0.0"
 
 #define HAVE_TOUCHSCREEN
-#define HAVE_HANDHELD
+// No HAVE_HANDHELD: its memory and CPU savings were for 2011 phones

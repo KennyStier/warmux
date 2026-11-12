@@ -235,9 +235,15 @@ std::string GetTmpDir()
 #else
 
 #  if defined(ANDROID)
-std::string GetHome() { return "."; }
+// Absolute, for the same reason as GetWarmuxPath() in src/game/config.cpp
+static std::string CurrentDir()
+{
+  char buf[4096];
+  return getcwd(buf, sizeof(buf)) ? std::string(buf) : std::string(".");
+}
+std::string GetHome() { return CurrentDir(); }
 std::string GetOldPersonalDir() { return ""; }
-std::string GetTmpDir() { return "."; }
+std::string GetTmpDir() { return CurrentDir(); }
 #  elif defined(GEKKO) // Wii
 std::string GetHome() { return "sd:/apps/Warmux"; }
 std::string GetOldPersonalDir() { return ""; }

@@ -253,7 +253,7 @@ void Text::RenderMultiLines()
   // but we still want the last line to be properly displayed
   Point2i size(max_line_width,
                GetLineHeight(font)*(ret_lines.size()-1)+font->GetHeight());
-#ifdef HAVE_HANDHELD
+#if 0 // SDL 1.2 colour-key path for handhelds; the SDL2 path below is used everywhere
   Surface tmp = Surface(size, SDL_SWSURFACE, false);
   surf = tmp.DisplayFormat();
 

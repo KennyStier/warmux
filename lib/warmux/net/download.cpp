@@ -74,7 +74,7 @@ bool Downloader::Get(const char* url, FILE* file)
   error = std::string(curl_error_buf);
   return false;
 }
-#elif defined(ANDROID)
+#elif defined(ANDROID) && defined(SDL_JAVA_PACKAGE_PATH) // 2011 Java glue, not built
 # include <jni.h>
 
 #ifndef SDL_JAVA_PACKAGE_PATH

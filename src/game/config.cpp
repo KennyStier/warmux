@@ -87,7 +87,15 @@ static std::string GetWarmuxPath()
 }
 #else
 #  if defined(ANDROID)
-static std::string GetWarmuxPath() { return "."; }
+#  include <unistd.h>
+// The data was copied to the current directory (src/android_data.cpp). It
+// must be an absolute path: SDL resolves relative ones against the APK and
+// the app's storage folder, not the current directory.
+static std::string GetWarmuxPath()
+{
+  char buf[4096];
+  return getcwd(buf, sizeof(buf)) ? std::string(buf) : std::string(".");
+}
 #  elif defined(GEKKO)
 static std::string GetWarmuxPath() { return "sd:/apps/Warmux"; }
 #  endif

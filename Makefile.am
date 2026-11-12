@@ -6,7 +6,7 @@ if NLS
 SUBDIRS += po
 endif
 
-EXTRA_DISTDIRS = build/android/jni build/android/src build/android/res build/symbian
+EXTRA_DISTDIRS = build/symbian
 EXTRA_DIST = build/visual/gettext.rules            \
              build/visual/warmux.sln               \
              build/visual/warmux.vcproj            \
@@ -40,9 +40,6 @@ EXTRA_DIST = build/visual/gettext.rules            \
              build/mac/README-mac.txt              \
              build/mac/README-mac.txt              \
              build/mac/cmake_build.sh              \
-             build/android/AndroidManifest.xml     \
-             build/android/build.xml               \
-             build/android/default.properties      \
              $(foreach D, $(EXTRA_DISTDIRS), $(shell find $(D) -name .svn -a -type d -prune -o -type f -print))
 
 # Windows installer and portable zip: packaging/windows/build-windows.sh

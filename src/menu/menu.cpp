@@ -99,6 +99,9 @@ Menu::Menu(void)
 
 Menu::~Menu()
 {
+#ifdef ANDROID
+  SDL_StopTextInput();  // hide the on-screen keyboard
+#endif
   AppWarmux::GetInstance()->SetCurrentMenu(NULL);
   if (background) {
     delete background;
@@ -474,7 +477,11 @@ void Menu::Run(bool skip_menu)
   Point2i mousePosition(x, y);
   Display(mousePosition);
 
+#ifndef ANDROID
+  // On Android text input is only turned on by tapping a text box, or the
+  // on-screen keyboard would cover the menus
   SDL_StartTextInput();
+#endif
 
   do {
     // this is the current menu (here in case we had run a submenu)

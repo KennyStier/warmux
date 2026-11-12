@@ -60,6 +60,7 @@
 #endif
 #ifdef ANDROID
 # include <android/log.h>
+# include "android_data.h"
 # define PAUSE_LOG(fmt, ...) __android_log_print(ANDROID_LOG_INFO, "warmux", fmt, ##__VA_ARGS__ )
 #else
 # define PAUSE_LOG(fmt, ...) MSG_DEBUG("pause", fmt, ##__VA_ARGS__ )
@@ -551,6 +552,14 @@ extern "C" int main(int argc, char *argv[])
 #endif
 
   std::ios_base::sync_with_stdio(true);
+
+#ifdef ANDROID
+  if (!AndroidPrepareData()) {
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Warmux",
+                             "Could not prepare the game data.", NULL);
+    return EXIT_FAILURE;
+  }
+#endif
 
   /* FIXME calling Config::GetInstance here means that there is no need of
    * singleton for Config but simply a global variable. This may look stange

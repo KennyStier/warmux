@@ -24,9 +24,6 @@
 #endif
 
 #include <SDL_keyboard.h>
-#ifdef ANDROID
-#  include <SDL_screenkeyboard.h>
-#endif
 
 #include "graphic/text.h"
 #include "gui/text_box.h"
@@ -141,14 +138,10 @@ Widget * TextBox::ClickUp(const Point2i & mousePosition, uint button)
   NeedRedrawing();
 
 #ifdef ANDROID
-  static char buffer[256];
-  const std::string& txt = GetText();
-  int len = (255<txt.size()) ? 255 : txt.size();
-  memcpy(buffer, txt.c_str(), len); buffer[len] = 0;
-  if (SDL_ANDROID_GetScreenKeyboardTextInput(buffer, 256)) {
-    SetText(buffer);
-  }
-#else
+  // Text input (and with it the on-screen keyboard) is only on while
+  // typing; desktop builds keep it on in menus
+  SDL_StartTextInput();
+#endif
   if (button == SDL_BUTTON_MIDDLE) {
     std::string new_txt = GetText();
     bool        used    = RetrieveBuffer(new_txt, cursor_pos);
@@ -175,7 +168,6 @@ Widget * TextBox::ClickUp(const Point2i & mousePosition, uint button)
 
     return this;
   }
-#endif
 
   // Om nom nom
   return this;

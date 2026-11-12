@@ -134,7 +134,9 @@ OptionMenu::OptionMenu() :
 
   // No resolution picker: the game renders at the size of its window
   // (or of the screen when fullscreen), adjusted by the display scale
+#ifndef HAVE_TOUCHSCREEN
   cbox_video_mode = NULL;
+#endif
   {
     std::vector<std::pair<std::string, std::string> > scales;
     scales.push_back(std::pair<std::string, std::string>("0", _("Auto")));
@@ -456,14 +458,14 @@ void OptionMenu::SaveOptions()
   app->video->SetMaxFps(opt_max_fps->GetValue());
   Surface &window = app->video->window;
 
+  uint scale = (uint)atoi(opt_display_scale->GetValue().c_str());
+  config->SetVideoScale(scale);
+  app->video->SetScale(scale); // applied when leaving the menu
 #ifdef HAVE_TOUCHSCREEN
   app->video->SetConfig(window.GetWidth(), window.GetHeight(), true);
 #else
   // Only fullscreen and the display scale can change; the window size
   // determines the resolution
-  uint scale = (uint)atoi(opt_display_scale->GetValue().c_str());
-  config->SetVideoScale(scale);
-  app->video->SetScale(scale); // applied when leaving the menu
   Point2i win = app->video->GetWindowSize();
   app->video->SetConfig(win.x, win.y, full_screen->GetValue());
 

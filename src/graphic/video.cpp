@@ -176,6 +176,12 @@ bool Video::CreateWindowAndRenderer(int w, int h, bool fs)
   if (fs)
     flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
+#ifdef ANDROID
+  // Without this SDL picks the orientation from the window size, overriding
+  // the manifest
+  SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
+#endif
+
   sdl_window = SDL_CreateWindow("WarMUX", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                 w, h, flags);
   if (!sdl_window)
@@ -258,6 +264,20 @@ bool Video::__SetConfig(const int width, const int height, const bool _fullscree
 
 Point2i Video::TargetGameSize() const
 {
+#ifdef ANDROID
+  if (scale_percent == 0 && renderer) {
+    // Phones have no desktop scale factor, and drawing 1:1 on a dense
+    // screen makes everything tiny: aim for a game 540 pixels high (200% on a
+    // 1080p phone)
+    static const int AUTO_HEIGHT = 540;
+    int pw = window_size.x, ph = window_size.y;
+    SDL_GetRendererOutputSize(renderer, &pw, &ph);
+    int percent = ph * 100 / AUTO_HEIGHT;
+    if (percent < 100)
+      percent = 100;
+    return Point2i(pw * 100 / percent, ph * 100 / percent);
+  }
+#endif
   if (scale_percent == 0 || !renderer)
     return window_size; // logical size: the desktop's scale factor applies
 

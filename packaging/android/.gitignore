@@ -1,0 +1,13 @@
+# Created by prepare.sh
+/app/jni/deps/
+/app/src/main/java/org/libsdl/
+/app/src/main/assets/
+/.downloads/
+# Gradle
+/.gradle/
+/build/
+/app/build/
+/app/.cxx/
+/local.properties
+# Build logs
+/*.log

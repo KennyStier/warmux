@@ -70,7 +70,7 @@ void TriggerWarning(const char *filename, unsigned int line,
   std::string err = FormatError(filename, line, txt);
   std::cerr << "! " << err << std::endl;
 #ifdef ANDROID
-  __android_log_print(ANDROID_LOG_WARN, "Warmux", err.c_str());
+  __android_log_print(ANDROID_LOG_WARN, "Warmux", "%s", err.c_str());
 #endif
 }
 
@@ -80,7 +80,7 @@ void TriggerError(const char *filename, unsigned int line,
   std::string err = FormatError(filename, line, txt);
   std::cerr << "! " << err << std::endl;
 #ifdef ANDROID
-  __android_log_print(ANDROID_LOG_FATAL, "Warmux", err.c_str());
+  __android_log_print(ANDROID_LOG_FATAL, "Warmux", "%s", err.c_str());
 #endif
 
   ASSERT(false);

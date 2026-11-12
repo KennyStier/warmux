@@ -753,7 +753,9 @@ bool Game::Run()
 #endif
     MessageEndOfGame();
 
+#ifndef ANDROID
   SDL_StartTextInput(); // back to the menus
+#endif
 
   return game_finished;
 }
