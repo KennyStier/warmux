@@ -845,8 +845,9 @@ Surface Surface::DisplayFormatAlpha()
   if (surface->format->BitsPerPixel == 24)
     return DisplayFormat();
 
-  if (surface->format->format == SDL_PIXELFORMAT_ARGB8888)
-    return *this;
+  // Always a new surface, even if the format already matches: SDL 1.2's
+  // SDL_DisplayFormatAlpha always copied (the screen had no alpha channel),
+  // and callers such as Sprite::Init reuse their source surface afterwards.
   SDL_Surface *surf = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_ARGB8888, 0);
 
   if (!surf)
