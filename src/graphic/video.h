@@ -55,10 +55,15 @@ class Video
   SDL_Renderer *renderer;
   SDL_Texture  *texture;
 
+  // Size the window currently has (in points), applied to the game surface
+  // by ApplyPendingResize() at a point where it is safe to do so
+  Point2i window_size;
+
   std::list<Point2i> available_configs;
   void ComputeAvailableConfigs();
 
   bool __SetConfig(const int w, const int h, const bool _fullscreen);
+  bool ResizeGameSurface(int w, int h);
   bool CreateWindowAndRenderer(int w, int h, bool fullscreen);
 
   void InitSDL(void);
@@ -84,6 +89,11 @@ public:
   // return true only if the change is successful
   bool SetConfig(int width, int height, bool fullscreen);
   void ToggleFullscreen();
+
+  // The game renders at the window's size. Window size changes are
+  // recorded as they happen and applied here, between frames.
+  bool HasPendingResize() const;
+  bool ApplyPendingResize();
 
   // Upload the game surface and show it
   void Flip(void);

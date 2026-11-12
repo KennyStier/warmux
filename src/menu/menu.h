@@ -113,6 +113,10 @@ protected:
   virtual bool signal_cancel() { return true; }
 
   virtual void signal_begin_run() {};
+  // Menus whose owner rebuilds them can close when the window is resized,
+  // to be laid out again at the new size. Others keep their size (scaled)
+  // until they are closed.
+  virtual bool RebuildOnResize() const { return false; }
 
   virtual void DrawBackground();
   virtual void Draw(const Point2i& /*mousePosition*/) { };

@@ -132,28 +132,9 @@ OptionMenu::OptionMenu() :
                              qualities, qualities[config->GetQuality()].first);
   graphic_options->AddWidget(opt_quality);
 
-#ifndef HAVE_TOUCHSCREEN
-  // Get available video resolution
-  const std::list<Point2i>& video_res = app->video->GetAvailableConfigs();
-  std::list<Point2i>::const_iterator mode;
-  std::vector<std::pair<std::string, std::string> > video_resolutions;
-  std::string current_resolution;
-
-  for (mode = video_res.begin(); mode != video_res.end(); ++mode) {
-    std::ostringstream ss;
-    std::string text;
-    ss << mode->GetX() << "x" << mode->GetY() ;
-    text = ss.str();
-    if (window_w == mode->GetX() && window_h == mode->GetY())
-      current_resolution = text;
-
-    video_resolutions.push_back (std::pair<std::string, std::string>(text, text));
-  }
-  cbox_video_mode =
-    new ComboBox(_("Resolution"), "menu/resolution", option_size,
-                 video_resolutions, current_resolution);
-  graphic_options->AddWidget(cbox_video_mode);
-#endif
+  // No resolution picker: the game renders at the size of its window
+  // (or of the screen when fullscreen)
+  cbox_video_mode = NULL;
 
   tabs->AddNewTab("unused", _("Graphics"), graphic_options);
 
@@ -462,13 +443,8 @@ void OptionMenu::SaveOptions()
 #ifdef HAVE_TOUCHSCREEN
   app->video->SetConfig(window.GetWidth(), window.GetHeight(), true);
 #else
-  // Video mode
-  std::string s_mode = cbox_video_mode->GetValue();
-
-  int w, h;
-  sscanf(s_mode.c_str(),"%dx%d", &w, &h);
-
-  app->video->SetConfig(w, h, full_screen->GetValue());
+  // Only fullscreen can change; the window size is the resolution
+  app->video->SetConfig(window.GetWidth(), window.GetHeight(), full_screen->GetValue());
 
   uint x = (window.GetWidth() - actions_buttons->GetSizeX())/2;
   uint y = window.GetHeight() - actions_buttons->GetSizeY();

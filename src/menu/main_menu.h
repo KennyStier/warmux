@@ -56,6 +56,8 @@ public:
 
   void Init(void);
   menu_item Run();
+  // NONE is returned when closed for a resize; main() then rebuilds it
+  bool RebuildOnResize() const { return true; }
 
 protected:
    bool signal_ok();

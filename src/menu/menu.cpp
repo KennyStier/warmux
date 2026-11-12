@@ -465,6 +465,9 @@ void Menu::Run(bool skip_menu)
     // Poll and treat events
     HandleEvents();
 
+    if (RebuildOnResize() && AppWarmux::GetInstance()->video->HasPendingResize())
+      close_menu = true;
+
     // Avoid to calculate redraw menu when comming back for closing.
     if (!close_menu) {
       GetGameMouseState(&x, &y);

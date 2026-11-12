@@ -198,17 +198,13 @@ bool Video::CreateWindowAndRenderer(int w, int h, bool fs)
   return true;
 }
 
-bool Video::__SetConfig(const int width, const int height, const bool _fullscreen)
+// Minimum size the game's layout supports
+static const int MIN_GAME_W = 480, MIN_GAME_H = 320;
+
+bool Video::ResizeGameSurface(int width, int height)
 {
-  if (!sdl_window) {
-    if (!CreateWindowAndRenderer(width, height, _fullscreen))
-      return false;
-  } else {
-    if (SDL_SetWindowFullscreen(sdl_window, _fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) < 0)
-      return false;
-    if (!_fullscreen)
-      SDL_SetWindowSize(sdl_window, width, height);
-  }
+  if (width < MIN_GAME_W)  width = MIN_GAME_W;
+  if (height < MIN_GAME_H) height = MIN_GAME_H;
 
   // (Re)create the game surface and its texture if the resolution changed
   if (window.IsNull() || window.GetWidth() != width || window.GetHeight() != height) {
@@ -229,8 +225,51 @@ bool Video::__SetConfig(const int width, const int height, const bool _fullscree
   }
 
   SDL_RenderSetLogicalSize(renderer, width, height);
+  return true;
+}
+
+bool Video::__SetConfig(const int width, const int height, const bool _fullscreen)
+{
+  if (!sdl_window) {
+    if (!CreateWindowAndRenderer(width, height, _fullscreen))
+      return false;
+  } else {
+    if (SDL_SetWindowFullscreen(sdl_window, _fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) < 0)
+      return false;
+    if (!_fullscreen)
+      SDL_SetWindowSize(sdl_window, width, height);
+  }
   fullscreen = _fullscreen;
 
+  // Render at the size the window really has (fullscreen, or as tiled by
+  // the window manager), not just the size that was asked for
+  int ww = width, wh = height;
+  SDL_GetWindowSize(sdl_window, &ww, &wh);
+  if (ww <= 0 || wh <= 0) {
+    ww = width;
+    wh = height;
+  }
+  window_size = Point2i(ww, wh);
+  return ResizeGameSurface(ww, wh);
+}
+
+bool Video::HasPendingResize() const
+{
+  if (window.IsNull())
+    return false;
+  int w = window_size.x < MIN_GAME_W ? MIN_GAME_W : window_size.x;
+  int h = window_size.y < MIN_GAME_H ? MIN_GAME_H : window_size.y;
+  return w != window.GetWidth() || h != window.GetHeight();
+}
+
+bool Video::ApplyPendingResize()
+{
+  if (!HasPendingResize())
+    return false;
+  if (!ResizeGameSurface(window_size.x, window_size.y))
+    return false;
+  Camera::GetInstance()->SetSize(window.GetWidth(), window.GetHeight());
+  AppWarmux::GetInstance()->RefreshDisplay();
   return true;
 }
 
@@ -285,6 +324,7 @@ bool Video::SetConfig(const int width, const int height, const bool _fullscreen)
 
 void Video::ToggleFullscreen()
 {
+  // The resulting size change arrives as a window event
   if (SDL_SetWindowFullscreen(sdl_window, fullscreen ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP) == 0)
     fullscreen = !fullscreen;
   Present();
@@ -376,8 +416,12 @@ int Video::WindowEventWatch(void *data, SDL_Event *event)
   // window is uncovered or resized instead of leaving it black.
   if (event->type == SDL_WINDOWEVENT) {
     switch (event->window.event) {
-    case SDL_WINDOWEVENT_EXPOSED:
     case SDL_WINDOWEVENT_SIZE_CHANGED:
+      // Remember it; the game surface follows at the next safe point
+      static_cast<Video*>(data)->window_size = Point2i(event->window.data1, event->window.data2);
+      static_cast<Video*>(data)->Present();
+      break;
+    case SDL_WINDOWEVENT_EXPOSED:
       static_cast<Video*>(data)->Present();
       break;
     default:

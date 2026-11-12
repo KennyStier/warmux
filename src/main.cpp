@@ -122,6 +122,9 @@ int AppWarmux::Main(void)
   }
 
   do {
+    // Menus are laid out for the current size: follow the window first
+    video->ApplyPendingResize();
+
     if (choice == MainMenu::NONE) {
       MainMenu main_menu;
       SetCurrentMenu(&main_menu);

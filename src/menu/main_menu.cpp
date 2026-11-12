@@ -190,8 +190,7 @@ MainMenu::menu_item MainMenu::Run ()
 
   Menu::Run();
 
-  ASSERT( choice != NONE );
-  return choice;
+  return choice; // NONE if closed to be rebuilt at a new window size
 }
 
 bool MainMenu::signal_cancel()

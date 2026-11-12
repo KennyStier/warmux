@@ -799,6 +799,11 @@ void Game::MainLoop()
   static bool draw = true;
   GameTime *time = GameTime::GetInstance();
 
+  // Follow the window size between frames (not while a menu is shown on
+  // top of the game, as menus are laid out for a fixed size)
+  if (!GetCurrentMenu())
+    AppWarmux::GetInstance()->video->ApplyPendingResize();
+
   // One time honouring of the pause request - check GameTime::IsPaused to get the state
   if (request_pause == START_PAUSE) {
     time->SetPause(true);
