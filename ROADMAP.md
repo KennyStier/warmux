@@ -174,3 +174,78 @@ statically linking libraries, which is not worth it.
 4. Keep the per-release RPMs on GitHub releases as a fallback; update
    their version matrix when Fedora releases are added or reach end of
    life.
+
+## Android port
+
+**Status:** playable (November 2026). Tested on a Pixel 11 Pro XL
+(Android 17): menus, local games against the AI, touch controls, sharp
+text. CI builds a debug APK on every push (`build.yml`, artifact
+"android").
+
+### What exists
+
+- `packaging/android/`: Gradle project from SDL2's Android template.
+  `prepare.sh` downloads SDL2 2.32 and its add-on libraries, libpng and
+  libxml2 (pinned checksums), copies SDL's Java glue and stages the game
+  data as APK assets; CMake builds the game as `libmain.so`, reading its
+  source lists from the `Makefile.am` files.
+- `io.github.kennystier.warmux`, minSdk 24, arm64-v8a and x86_64,
+  landscape only; version taken from `configure.ac`.
+- `src/android_data.cpp` copies the data out of the APK into the app's
+  storage on first start and after updates.
+- Touch controls (`src/interface/touch_controls.cpp`): walk on the left;
+  fire, jump and aim on the right; weapons menu, timer and camera centre
+  at the top; drag to move the camera, tap to click; Back for the pause
+  menu.
+- "Auto" display scale aims for a 540-pixel-high game at a whole-number
+  stretch (2x on 1080p, 3x on 1440p).
+
+### What needs work
+
+- **Translations:** gettext is not built for Android (`ENABLE_NLS` is off
+  in `lib/warmux/include/config_android.h`); everything is in English.
+  Needs a libintl build (or gettext-tiny) in `prepare.sh`/CMake, and the
+  `.mo` files staged with the data.
+- **Online lobby and update check:** curl is not built, so the downloader
+  is a no-op (`lib/warmux/net/download.cpp`). Direct-IP network games
+  should still work but are untested. Options: build curl with mbedTLS,
+  or fetch over Java (`HttpURLConnection`) through JNI.
+- **Release builds:** a signing key (kept out of the repository, as a CI
+  secret), a release APK or AAB in `release.yml`, then distribution:
+  F-Droid (free, suits GPL; builds from source) and/or Google Play
+  (one-time fee, recent target SDK required).
+- **Storage:** the data is stored twice (in the APK and the copy, about
+  110 MB each). Reading it straight from the APK through SDL would avoid
+  the copy, but the game opens files by path (libxml2, fopen).
+- **Touch controls:** no back jump or slow walking/aiming yet; character
+  names are drawn above characters rather than behind them (they are on
+  the text overlay, see "Frame rate" below).
+- **Pause on background:** check that the game pauses, and keeps its
+  state, when the app is switched away from or the screen turns off.
+
+## Frame rate: 50 FPS ceiling
+
+**Status:** known limit; the Android port reaches it (frames take about
+13 ms on a Pixel 11 Pro XL).
+
+- The physics runs in fixed 20 ms steps (`PHYS_DELTA_T_MS` in
+  `src/object/physics.cpp`, `delta_t` in `src/game/time.cpp`), and
+  `Game::MainLoop()` draws at most one frame per step: never more than
+  50 FPS, whatever "Maximum FPS" says. On 60/120 Hz screens frames are
+  shown for uneven times, a slight judder.
+- **Interpolation (preferred):** draw frames between physics steps by
+  blending each object's previous and current position, and the camera's.
+  Gameplay stays exactly as it is (it is deterministic, which network
+  games and replays rely on), but every drawn object needs a previous
+  position.
+- **Shorter physics steps:** less work, but walking, jumping and timers
+  are tuned to 20 ms; risks changing how the game plays and breaking
+  replays.
+
+### Rendering notes (for reference)
+
+On screens that are a whole multiple of the game size, game frames are
+drawn at game resolution and stretched by the GPU, with text on a
+transparent full-resolution overlay and the touch buttons as GPU sprites
+(`src/graphic/video.h`). Stretching every bitmap in software instead ran
+at about 25 FPS on the Pixel.
