@@ -12,15 +12,20 @@ the original project.
 
 ## What's different from upstream 11.04
 
+- **Ported to SDL2**: runs natively on Wayland and X11 without the
+  `sdl12-compat` layer, and feels noticeably snappier.
+- **Renders at your window's size**: no resolution picker and no blurry
+  upscaling. Fullscreen uses the desktop resolution (no mode switch), and
+  resizing or re-tiling the window during a match just works. HiDPI screens
+  keep a normal interface size.
 - **Builds on modern toolchains**: GCC 16, autoconf 2.7x, automake 1.17+,
   out-of-tree builds, Arch's hardened build flags and LTO.
-- **Held keys work under Wayland**: charge-up weapons (bazooka, grenades) and
-  rope swinging no longer cut out after a quarter second, which happened when
-  key auto-repeat arrived as release/press pairs.
+- **Held keys work properly**: charge-up weapons (bazooka, grenades) and
+  rope swinging no longer cut out after a quarter second.
+- **Better text input**: typing uses SDL2 text input (works with input
+  methods and any Unicode), and paste uses the system clipboard everywhere.
 - **Network play no longer depends on the defunct upstream server**. Point it
   at your own index server instead (see [Running your own servers](#running-your-own-servers)).
-- **Sensible first run**: opens at the largest standard resolution that fits
-  your desktop instead of the smallest one.
 - **Desktop integration**: freedesktop icons at every size, a cleaned-up
   `.desktop` entry, and a working "Warmux folder" shortcut.
 - The index and game servers build cleanly again (`--enable-servers`; the
@@ -43,14 +48,14 @@ makepkg -si
 
 ### Building from source
 
-Dependencies: SDL 1.2 (or `sdl12-compat`), SDL_image, SDL_mixer, SDL_ttf,
-SDL_net, SDL_gfx, libcurl, libxml2, libpng and gettext, plus a C++ compiler
-and autotools.
+Dependencies: SDL2 (2.0.18 or newer, or `sdl2-compat`), SDL2_image,
+SDL2_mixer, SDL2_ttf, SDL2_net, SDL2_gfx, libcurl, libxml2, libpng and
+gettext, plus a C++ compiler and autotools.
 
 | Distro | Packages |
 |---|---|
-| Arch | `sdl12-compat sdl_image sdl_mixer sdl_ttf sdl_net sdl_gfx curl libxml2 libpng base-devel` |
-| Debian / Ubuntu | `libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl-net1.2-dev libsdl-gfx1.2-dev libcurl4-openssl-dev libxml2-dev libpng-dev gettext autoconf automake build-essential` |
+| Arch | `sdl2-compat sdl2_image sdl2_mixer sdl2_ttf sdl2_net sdl2_gfx curl libxml2 libpng base-devel` |
+| Debian / Ubuntu | `libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libsdl2-net-dev libsdl2-gfx-dev libcurl4-openssl-dev libxml2-dev libpng-dev gettext autoconf automake build-essential` |
 
 Then:
 
@@ -88,6 +93,10 @@ Useful `configure` options:
 | P | Pause |
 | F10 | Toggle fullscreen |
 | Esc | Leave the game |
+
+Key bindings refer to physical key positions (a US layout's positions), so
+on AZERTY and similar layouts letter bindings stay where a QWERTY user would
+expect them.
 
 Your settings live in `~/.config/wormux/`; replays, chat logs and custom
 teams/maps go in `~/.local/share/wormux/`. (The `wormux` name predates the
