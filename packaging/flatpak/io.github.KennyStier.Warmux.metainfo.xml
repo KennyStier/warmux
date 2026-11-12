@@ -36,11 +36,19 @@
   <supports>
     <control>keyboard</control>
     <control>pointing</control>
+    <control>gamepad</control>
   </supports>
   <releases>
-    <release version="11.04.1" date="2026-11-11">
+    <release version="12.0.0" date="2026-11-12">
       <description>
-        <p>SDL2 port, window-size rendering, modern toolchain support.</p>
+        <p>First release of the maintained fork:</p>
+        <ul>
+          <li>Ported to SDL2: native Wayland, noticeably snappier</li>
+          <li>Renders at the window's size, with a display scale setting</li>
+          <li>Game controller support, including menu navigation</li>
+          <li>Held keys work for charge-up weapons and the rope</li>
+          <li>Many bug fixes and modern toolchain support</li>
+        </ul>
       </description>
     </release>
   </releases>

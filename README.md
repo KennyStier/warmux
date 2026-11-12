@@ -38,7 +38,19 @@ the original project.
 
 ## Installing
 
-### Arch Linux
+### Download a release
+
+Ready-made packages for each version are on the
+[Releases page](https://github.com/KennyStier/warmux/releases):
+
+| File | For | Install with |
+|---|---|---|
+| `warmux-*.flatpak` | Any Linux distribution | `flatpak install --user warmux-*.flatpak` |
+| `warmux-git-*.pkg.tar.zst` | Arch Linux | `sudo pacman -U warmux-git-*.pkg.tar.zst` |
+| `warmux_*.deb` | Ubuntu 24.04+ / Debian | `sudo apt install ./warmux_*.deb` |
+| `warmux-*.rpm` | Fedora | `sudo dnf install ./warmux-*.rpm` |
+
+### Arch Linux (latest commit)
 
 A PKGBUILD that builds the latest commit from this repository is in
 [`packaging/arch`](packaging/arch/PKGBUILD):

@@ -1,0 +1,134 @@
+name: Release
+
+# Push a version tag to publish a release with packages for every platform:
+#   git tag v11.04.2 && git push origin v11.04.2
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  flatpak:
+    name: Flatpak
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-26.08
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: warmux-${{ github.ref_name }}.flatpak
+          manifest-path: packaging/flatpak/io.github.KennyStier.Warmux.yml
+          cache-key: flatpak-builder-${{ github.sha }}
+          upload-artifact: false
+      - uses: actions/upload-artifact@v4
+        with:
+          name: flatpak
+          path: warmux-${{ github.ref_name }}.flatpak
+
+  arch:
+    name: Arch Linux package
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm --needed base-devel git autoconf automake \
+            sdl2-compat sdl2_image sdl2_mixer sdl2_ttf sdl2_net sdl2_gfx \
+            curl libxml2 libpng hicolor-icon-theme
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # tags, for the package version
+      - name: Build package
+        run: |
+          git config --global --add safe.directory '*'
+          useradd -m builder
+          chown -R builder: "$GITHUB_WORKSPACE"
+          cd packaging/arch
+          # Build exactly the tagged commit from this checkout
+          sed -i "s|^source=.*|source=(\"warmux::git+file://$GITHUB_WORKSPACE#commit=$GITHUB_SHA\")|" PKGBUILD
+          su builder -c "makepkg --noconfirm"
+          rm -f warmux-git-debug-*.pkg.tar.zst
+      - uses: actions/upload-artifact@v4
+        with:
+          name: arch
+          path: packaging/arch/warmux-git-*.pkg.tar.zst
+
+  deb:
+    name: Debian/Ubuntu package
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential autoconf automake gettext autopoint pkg-config dpkg-dev \
+            libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
+            libsdl2-net-dev libsdl2-gfx-dev libcurl4-openssl-dev libxml2-dev libpng-dev
+      - uses: actions/checkout@v4
+      - name: Build package
+        run: packaging/debian/build-deb.sh "${GITHUB_REF_NAME#v}" dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb
+          path: dist/*.deb
+
+  rpm:
+    name: Fedora package
+    runs-on: ubuntu-latest
+    container: registry.fedoraproject.org/fedora:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          dnf -y install git rpm-build gcc-c++ make autoconf automake gettext-devel \
+            pkgconf-pkg-config SDL2-devel SDL2_image-devel SDL2_mixer-devel \
+            SDL2_ttf-devel SDL2_net-devel SDL2_gfx-devel \
+            libcurl-devel libxml2-devel libpng-devel
+      - uses: actions/checkout@v4
+      - name: Build package
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p rpm/SOURCES
+          git config --global --add safe.directory '*'
+          git archive --format=tar.gz --prefix="warmux-$VERSION/" \
+            -o "rpm/SOURCES/warmux-$VERSION.tar.gz" HEAD
+          sed "s/@VERSION@/$VERSION/" packaging/rpm/warmux.spec > rpm/warmux.spec
+          rpmbuild -bb --define "_topdir $PWD/rpm" rpm/warmux.spec
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rpm
+          path: rpm/RPMS/x86_64/warmux-[0-9]*.rpm
+
+  release:
+    name: Publish release
+    needs: [flatpak, arch, deb, rpm]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ls -la dist
+          cat > notes.md <<'EOF'
+          ## Downloads
+
+          | File | For |
+          |---|---|
+          | `warmux-*.flatpak` | Any Linux distribution: `flatpak install --user warmux-*.flatpak` |
+          | `warmux-git-*.pkg.tar.zst` | Arch Linux: `sudo pacman -U warmux-git-*.pkg.tar.zst` |
+          | `warmux_*.deb` | Ubuntu 24.04+ / Debian: `sudo apt install ./warmux_*.deb` |
+          | `warmux-*.rpm` | Fedora: `sudo dnf install ./warmux-*.rpm` |
+
+          ## Changes
+          EOF
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Warmux ${GITHUB_REF_NAME#v}" \
+            --notes-file notes.md --generate-notes

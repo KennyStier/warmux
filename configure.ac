@@ -12,7 +12,7 @@ dnl ========================================================================
 dnl = Require at least automake 2.52
 AC_PREREQ(2.52)
 
-AC_INIT([Warmux], [11.04], [https://github.com/KennyStier/warmux/issues], [warmux], [https://github.com/KennyStier/warmux])
+AC_INIT([Warmux], [12.0.0], [https://github.com/KennyStier/warmux/issues], [warmux], [https://github.com/KennyStier/warmux])
 AC_CONFIG_SRCDIR([src/main.cpp])
 
 dnl Detect the canonical host and target build environment
