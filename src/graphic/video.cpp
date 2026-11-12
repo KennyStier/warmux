@@ -70,8 +70,24 @@ Video::Video()
   int w = config->GetVideoWidth();
   int h = config->GetVideoHeight();
   if (!w || !h) {
+    // No size configured yet (first run): use the largest available mode
+    // that fits comfortably inside the desktop, leaving room for panels and
+    // decorations, instead of the smallest one.
     w = available_configs.begin()->GetX();
     h = available_configs.begin()->GetY();
+    const SDL_VideoInfo *info = SDL_GetVideoInfo();
+    if (info && info->current_w > 0 && info->current_h > 0) {
+      int max_w = info->current_w * 9 / 10;
+      int max_h = info->current_h * 9 / 10;
+      for (std::list<Point2i>::const_iterator res = available_configs.begin();
+           res != available_configs.end(); ++res) {
+        if (res->GetX() <= max_w && res->GetY() <= max_h
+            && res->GetX() * res->GetY() > w * h) {
+          w = res->GetX();
+          h = res->GetY();
+        }
+      }
+    }
   }
 
   SetConfig(w, h, config->IsVideoFullScreen());
