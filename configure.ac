@@ -12,7 +12,7 @@ dnl ========================================================================
 dnl = Require at least automake 2.52
 AC_PREREQ(2.52)
 
-AC_INIT([Warmux], [11.04], [warmux-dev@gna.org], [warmux])
+AC_INIT([Warmux], [11.04], [https://github.com/KennyStier/warmux/issues], [warmux], [https://github.com/KennyStier/warmux])
 AC_CONFIG_SRCDIR([src/main.cpp])
 
 dnl Detect the canonical host and target build environment
@@ -164,7 +164,7 @@ dnl ========================================================================
 SDL_VERSION=1.2.6
 
 dnl === Internet game discovery ============================================
-dnl The original warmux.org host is gone, so both default to empty (disabled).
+dnl The original upstream host is gone, so both default to empty (disabled).
 dnl Either can also be overridden at runtime via the environment variable of
 dnl the same name.
 

@@ -287,9 +287,9 @@ void AppWarmux::End() const
 #ifdef ENABLE_STATS
   SaveStatToXML("stats.xml");
 #endif
-  std::cout << "o " << _("If you found a bug or have a feature request "
-                         "send us an email (in english, please):")
-    << " " << Constants::EMAIL << std::endl;
+  std::cout << "o " << _("If you found a bug or have a feature request, "
+                         "please report it at:")
+    << " " << Constants::BUG_TRACKER << std::endl;
 }
 
 bool AppWarmux::CheckInactive(SDL_Event& evnt)

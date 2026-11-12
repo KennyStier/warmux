@@ -11,10 +11,10 @@
 #{"Warmux"},(0xECF75E71),11,04,0
 
 ;Localised Vendor name
-%{"www.warmux.org-EN"}
+%{"github.com/KennyStier/warmux-EN"}
 
 ;Unique Vendor name
-:"www.warmux.org"
+:"github.com/KennyStier/warmux"
 
 ;Supports S60 5th Edition
 [0x1028315F], 0, 0, 0, {"Series60ProductID"}

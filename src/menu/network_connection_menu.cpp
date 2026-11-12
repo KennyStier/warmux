@@ -444,7 +444,7 @@ void NetworkConnectionMenu::DisplayNetError(connection_state_t conn)
     error_msg = Format(_("Sorry, your version is not supported anymore. "
                          "Supported versions are %s. "
                          "You can download an updated version "
-                         "from http://www.warmux.org/wiki/download.php"),
+                         "from https://github.com/KennyStier/warmux"),
                        IndexServer::GetInstance()->GetSupportedVersions().c_str());
   } else {
     error_msg = NetworkErrorToString(conn);

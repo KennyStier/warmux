@@ -374,7 +374,7 @@ bool GameServer::ConnectToIndexServer()
       fprintf(stderr,"%s\n", Format(_("Sorry, your version is not supported anymore. "
                                "Supported versions are %s. "
                                "You can download an updated version "
-                               "from http://www.warmux.org/wiki/download.php"),
+                               "from https://github.com/KennyStier/warmux"),
                              IndexServer::GetInstance()->GetSupportedVersions().c_str()).c_str());
     } else {
       fprintf(stderr, "ERROR: Fail to connect to the index server\n");

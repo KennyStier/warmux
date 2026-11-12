@@ -171,7 +171,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(top_srcdir)/build/win32_setup/create_setup.sh.in \
 	$(top_srcdir)/lib/warmux/include/WARMUX_net_defaults.h.in \
 	$(top_srcdir)/lib/warmux/include/config_autotools.h.in \
-	ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL README TODO \
+	ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL README.md TODO \
 	compile config.guess config.rpath config.sub depcomp \
 	install-sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)

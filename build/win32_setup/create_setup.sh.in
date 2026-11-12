@@ -99,7 +99,7 @@ RequestExecutionLevel highest
   !define MUI_FINISHPAGE_RUN                "\$INSTDIR\warmux.exe"
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_LINK               \$(Warmux_VISIT)
-  !define MUI_FINISHPAGE_LINK_LOCATION      "http://www.warmux.org"
+  !define MUI_FINISHPAGE_LINK_LOCATION      "https://github.com/KennyStier/warmux"
 
   ;--------------------------------
   ;Pages

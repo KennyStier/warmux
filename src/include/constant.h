@@ -43,7 +43,7 @@ public:
 
   // Web site address and email
   static const std::string WEB_SITE;
-  static const std::string EMAIL;
+  static const std::string BUG_TRACKER;
 
   // Dimension min/max of playground (in pixel)
   static const Point2i MAP_MIN_SIZE;

@@ -1,0 +1,36 @@
+# Maintainer: KennyStier <https://github.com/KennyStier>
+# Builds the latest commit of https://github.com/KennyStier/warmux
+
+pkgname=warmux-git
+pkgver=11.04.1.r0.g0000000
+pkgrel=1
+pkgdesc="Turn-based artillery game with free-software mascots (maintained fork, includes index/game servers)"
+arch=('x86_64' 'aarch64')
+url="https://github.com/KennyStier/warmux"
+license=('GPL-2.0-or-later')
+depends=('sdl12-compat' 'sdl_image' 'sdl_gfx' 'sdl_ttf' 'sdl_mixer' 'sdl_net'
+         'curl' 'libxml2' 'libpng' 'zlib' 'gcc-libs' 'glibc' 'hicolor-icon-theme')
+makedepends=('git')
+provides=('warmux')
+conflicts=('warmux' 'warmux-data')
+replaces=('wormux')
+source=("warmux::git+https://github.com/KennyStier/warmux.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd warmux
+  printf "11.04.1.r%s.g%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short=7 HEAD)"
+}
+
+build() {
+  cd warmux
+  # To make clients find your own lobby by default, add:
+  #   --with-index-server=your.host[:9997]
+  ./configure --prefix=/usr --enable-servers
+  make
+}
+
+package() {
+  cd warmux
+  make DESTDIR="$pkgdir" install
+}

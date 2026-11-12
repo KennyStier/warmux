@@ -94,7 +94,7 @@
 #define PACKAGE "warmux"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "warmux-dev@gna.org"
+#define PACKAGE_BUGREPORT "https://github.com/KennyStier/warmux/issues"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "Warmux"

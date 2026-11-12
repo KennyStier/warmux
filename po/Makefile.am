@@ -208,7 +208,7 @@ DOMAIN = $(PACKAGE)
 
 COPYRIGHT_HOLDER = Warmux Development Team
 
-MSGID_BUGS_ADDRESS = warmux-dev@gna.org
+MSGID_BUGS_ADDRESS = https://github.com/KennyStier/warmux/issues
 
 localedir=@LOCALEDIR@
 

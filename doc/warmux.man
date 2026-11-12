@@ -74,18 +74,18 @@ team attempts to produce maximum damage to their opponents.
 .br
 .SH SEE ALSO
 .br
-Have a look at the official website http://warmux.org
-On the website, you will find some useful help:
+Source code, bug reports and build instructions:
 .br
-* List of weapons: http://warmux.org/wiki/en/weapons.php
+https://github.com/KennyStier/warmux
 .br
-* List of maps: http://warmux.org/wiki/en/maps.php
+.PP
+Environment variables:
 .br
-  * How to write your own map: http://warmux.org/wiki/Create_your_own_map.php
+* WARMUX_INDEX_SERVER=host[:port]: index server used to find internet games
 .br
-* List of skins: http://warmux.org/wiki/en/skins.php
+* WARMUX_META_URL=url: web host publishing the list of index servers
 .br
-* Forum: http://www.warmux.org/forum/
+* WARMUX_DEBUG_INPUT=1: print raw keyboard events to stderr
 .br
 .SH AUTHOR
 Warmux was written by:

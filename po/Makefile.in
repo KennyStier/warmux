@@ -500,7 +500,7 @@ POTFILES = \
 
 DOMAIN = $(PACKAGE)
 COPYRIGHT_HOLDER = Warmux Development Team
-MSGID_BUGS_ADDRESS = warmux-dev@gna.org
+MSGID_BUGS_ADDRESS = https://github.com/KennyStier/warmux/issues
 # add as automated comments all strings preceeding the gettexized line
 # since it seems that in most cases the comments are useful
 XGETTEXT_OPTIONS = -c --keyword=_ --keyword=N_

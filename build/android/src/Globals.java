@@ -28,7 +28,7 @@ class Globals {
 	public static boolean InhibitSuspend = true;
 
 	// Readme text to be shown on download page
-	public static String ReadmeText = "^nYou may press \"Home\" now - the data will be downloaded in backgroundnPlease also visit http://www.warmux.org for more info".replace("^","\n");
+	public static String ReadmeText = "^nYou may press \"Home\" now - the data will be downloaded in backgroundnPlease also visit https://github.com/KennyStier/warmux for more info".replace("^","\n");
 
 	public static String CommandLine = "warmux";
 
