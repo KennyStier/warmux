@@ -29,6 +29,7 @@
 #include <WARMUX_error.h>
 #include <WARMUX_i18n.h>
 #include <WARMUX_file_tools.h>
+#include <WARMUX_index_svr_msg.h>
 
 #ifdef HAVE_LIBCURL
 # include <curl/curl.h>
@@ -167,7 +168,7 @@ static ssize_t getline(std::string& line, FILE* file)
   line.clear();
   char buffer[1024];
 
-  int r = fscanf(file, "%1024s\n", buffer);
+  int r = fscanf(file, "%1023s\n", buffer);
   if (r == 1)
     line = buffer;
 
@@ -176,7 +177,13 @@ static ssize_t getline(std::string& line, FILE* file)
 
 bool Downloader::GetLatestVersion(std::string& line)
 {
-  static const char url[] = "http://www.warmux.org/last";
+  const std::string base_url = GetMetaServerUrl();
+  if (base_url.empty()) {
+    error = _("No update server configured");
+    return false;
+  }
+  const std::string url_str = base_url + "last";
+  const char *url = url_str.c_str();
   int fd;
   const std::string last_file = CreateTmpFile("warmux_version", &fd);
 
@@ -198,6 +205,8 @@ bool Downloader::GetLatestVersion(std::string& line)
     if (error.empty())
       error = Format(_("Couldn't fetch last version from %s"), url);
     fprintf(stderr, "%s\n", error.c_str());
+    fclose(file);
+    remove(last_file.c_str());
     return false;
   }
 
@@ -217,7 +226,13 @@ bool Downloader::GetServerList(std::map<std::string, int>& server_lst, const std
   MSG_DEBUG("downloader", "Retrieving server list: %s", list_name.c_str());
 
   // Download the list of server
-  const std::string list_url = "http://www.warmux.org/" + list_name;
+  const std::string base_url = GetMetaServerUrl();
+  if (base_url.empty()) {
+    error = _("No index server configured. Set WARMUX_INDEX_SERVER=host[:port] "
+              "(or WARMUX_META_URL) to find games on the internet.");
+    return false;
+  }
+  const std::string list_url = base_url + list_name;
   int fd;
   const std::string server_file = CreateTmpFile("warmux_servers", &fd);
 
@@ -228,8 +243,16 @@ bool Downloader::GetServerList(std::map<std::string, int>& server_lst, const std
   }
 
   FILE* file = fdopen(fd, "r+");
-  if (!Get(list_url.c_str(), file))
+  if (!file) {
+    error = Format(_("Fail to open temporary file: %s"), strerror(errno));
+    remove(server_file.c_str());
     return false;
+  }
+  if (!Get(list_url.c_str(), file)) {
+    fclose(file);
+    remove(server_file.c_str());
+    return false;
+  }
 
   // Parse the file
   std::string line;

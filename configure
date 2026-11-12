@@ -659,6 +659,8 @@ PKG_CONFIG
 SDL_LIBS
 SDL_CFLAGS
 SDL_CONFIG
+WARMUX_META_URL
+WARMUX_INDEX_SERVER
 GCC_FALSE
 GCC_TRUE
 STATIC_FALSE
@@ -821,6 +823,8 @@ enable_profile
 with_datadir_name
 with_localedir_name
 with_font_path
+with_index_server
+with_meta_url
 with_sdl_prefix
 with_sdl_exec_prefix
 enable_sdltest
@@ -1517,6 +1521,11 @@ Optional Packages:
                           ${prefix}/share/locale)
   --with-font-path=FILE   specify the font file (default:
                           ${datadir}/font/Ubuntu-R.ttf)
+  --with-index-server=HOST:PORT
+                          index server to contact directly for internet games
+                          (default: none)
+  --with-meta-url=URL     base URL publishing server_list and last version
+                          (default: none)
   --with-sdl-prefix=PFX   Prefix where SDL is installed (optional)
   --with-sdl-exec-prefix=PFX Exec prefix where SDL is installed (optional)
   --with-sdl-gfx-prefix=DIR       specify where SDL_gfx library is installed
@@ -10323,6 +10332,33 @@ fi
 SDL_VERSION=1.2.6
 
 
+
+# Check whether --with-index-server was given.
+if test ${with_index_server+y}
+then :
+  withval=$with_index_server; WARMUX_INDEX_SERVER="$withval"
+else case e in #(
+  e) WARMUX_INDEX_SERVER="" ;;
+esac
+fi
+
+test "x$WARMUX_INDEX_SERVER" = "xno" && WARMUX_INDEX_SERVER=""
+
+
+
+# Check whether --with-meta-url was given.
+if test ${with_meta_url+y}
+then :
+  withval=$with_meta_url; WARMUX_META_URL="$withval"
+else case e in #(
+  e) WARMUX_META_URL="" ;;
+esac
+fi
+
+test "x$WARMUX_META_URL" = "xno" && WARMUX_META_URL=""
+
+
+
 if test "x$GCC" = "xyes"; then
     { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking gcc version" >&5
 printf %s "checking gcc version... " >&6; }
@@ -12523,7 +12559,7 @@ DATA_FILES=`echo $DATA_FILES`
 
 
 
-ac_config_files="$ac_config_files Makefile data/Makefile src/Makefile lib/Makefile lib/fixedpoint/Makefile lib/warmux/Makefile po/Makefile"
+ac_config_files="$ac_config_files Makefile data/Makefile src/Makefile lib/Makefile lib/fixedpoint/Makefile lib/warmux/Makefile lib/warmux/include/WARMUX_net_defaults.h po/Makefile"
 
 if test "${WIN32}" = "yes"; then
 ac_config_files="$ac_config_files build/win32_setup/create_setup.sh"
@@ -13268,6 +13304,7 @@ do
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
     "lib/fixedpoint/Makefile") CONFIG_FILES="$CONFIG_FILES lib/fixedpoint/Makefile" ;;
     "lib/warmux/Makefile") CONFIG_FILES="$CONFIG_FILES lib/warmux/Makefile" ;;
+    "lib/warmux/include/WARMUX_net_defaults.h") CONFIG_FILES="$CONFIG_FILES lib/warmux/include/WARMUX_net_defaults.h" ;;
     "po/Makefile") CONFIG_FILES="$CONFIG_FILES po/Makefile" ;;
     "build/win32_setup/create_setup.sh") CONFIG_FILES="$CONFIG_FILES build/win32_setup/create_setup.sh" ;;
     "lib/warmux-server/Makefile") CONFIG_FILES="$CONFIG_FILES lib/warmux-server/Makefile" ;;
@@ -15177,6 +15214,224 @@ EOF
   mv "$ac_file.tmp" "$ac_file"
  ;;
     "lib/warmux/Makefile":F)
+  # When this code is run, in config.status, two variables have already been
+  # set:
+  # - OBSOLETE_ALL_LINGUAS is the value of LINGUAS set in configure.in,
+  # - LINGUAS is the value of the environment variable LINGUAS at configure
+  #   time.
+
+  # Adjust a relative srcdir.
+  ac_dir=`echo "$ac_file"|sed 's%/[^/][^/]*$%%'`
+  ac_dir_suffix=/`echo "$ac_dir"|sed 's%^\./%%'`
+  ac_dots=`echo "$ac_dir_suffix"|sed 's%/[^/]*%../%g'`
+  # In autoconf-2.13 it is called $ac_given_srcdir.
+  # In autoconf-2.50 it is called $srcdir.
+  test -n "$ac_given_srcdir" || ac_given_srcdir="$srcdir"
+  case "$ac_given_srcdir" in
+    .)  top_srcdir=`echo $ac_dots|sed 's%/$%%'` ;;
+    /*) top_srcdir="$ac_given_srcdir" ;;
+    *)  top_srcdir="$ac_dots$ac_given_srcdir" ;;
+  esac
+
+  # Find a way to echo strings without interpreting backslash.
+  if test "X`(echo '\t') 2>/dev/null`" = 'X\t'; then
+    gt_echo='echo'
+  else
+    if test "X`(printf '%s\n' '\t') 2>/dev/null`" = 'X\t'; then
+      gt_echo='printf %s\n'
+    else
+      echo_func () {
+        cat <<EOT
+
+EOT
+      }
+      gt_echo='echo_func'
+    fi
+  fi
+
+  # A sed script that extracts the value of VARIABLE from a Makefile.
+  tab=`printf '\t'`
+  sed_x_variable='
+# Test if the hold space is empty.
+x
+s/P/P/
+x
+ta
+# Yes it was empty. Look if we have the expected variable definition.
+/^['"${tab}"' ]*VARIABLE['"${tab}"' ]*=/{
+  # Seen the first line of the variable definition.
+  s/^['"${tab}"' ]*VARIABLE['"${tab}"' ]*=//
+  ba
+}
+bd
+:a
+# Here we are processing a line from the variable definition.
+# Remove comment, more precisely replace it with a space.
+s/#.*$/ /
+# See if the line ends in a backslash.
+tb
+:b
+s/\\$//
+# Print the line, without the trailing backslash.
+p
+tc
+# There was no trailing backslash. The end of the variable definition is
+# reached. Clear the hold space.
+s/^.*$//
+x
+bd
+:c
+# A trailing backslash means that the variable definition continues in the
+# next line. Put a nonempty string into the hold space to indicate this.
+s/^.*$/P/
+x
+:d
+'
+
+  # Set POTFILES to the value of the Makefile variable POTFILES.
+  sed_x_POTFILES=`$gt_echo "$sed_x_variable" | sed -e '/^ *#/d' -e 's/VARIABLE/POTFILES/g'`
+  POTFILES=`sed -n -e "$sed_x_POTFILES" < "$ac_file"`
+  # Compute POTFILES_DEPS as
+  #   $(foreach file, $(POTFILES), $(top_srcdir)/$(file))
+  POTFILES_DEPS=
+  for file in $POTFILES; do
+    POTFILES_DEPS="$POTFILES_DEPS "'$(top_srcdir)/'"$file"
+  done
+  POMAKEFILEDEPS=""
+
+  if test -n "$OBSOLETE_ALL_LINGUAS"; then
+    test -n "$as_me" && echo "$as_me: setting ALL_LINGUAS in configure.in is obsolete" || echo "setting ALL_LINGUAS in configure.in is obsolete"
+  fi
+  if test -f "$ac_given_srcdir/$ac_dir/LINGUAS"; then
+    # The LINGUAS file contains the set of available languages.
+    ALL_LINGUAS=`sed -e "/^#/d" -e "s/#.*//" "$ac_given_srcdir/$ac_dir/LINGUAS"`
+    POMAKEFILEDEPS="$POMAKEFILEDEPS LINGUAS"
+  else
+    # Set ALL_LINGUAS to the value of the Makefile variable LINGUAS.
+    sed_x_LINGUAS=`$gt_echo "$sed_x_variable" | sed -e '/^ *#/d' -e 's/VARIABLE/LINGUAS/g'`
+    ALL_LINGUAS=`sed -n -e "$sed_x_LINGUAS" < "$ac_file"`
+  fi
+  # Compute POFILES
+  # as      $(foreach lang, $(ALL_LINGUAS), $(srcdir)/$(lang).po)
+  # Compute UPDATEPOFILES
+  # as      $(foreach lang, $(ALL_LINGUAS), $(lang).po-update)
+  # Compute DUMMYPOFILES
+  # as      $(foreach lang, $(ALL_LINGUAS), $(lang).nop)
+  # Compute GMOFILES
+  # as      $(foreach lang, $(ALL_LINGUAS), $(srcdir)/$(lang).gmo)
+  # Compute PROPERTIESFILES
+  # as      $(foreach lang, $(ALL_LINGUAS), $(srcdir)/$(DOMAIN)_$(lang).properties)
+  # Compute CLASSFILES
+  # as      $(foreach lang, $(ALL_LINGUAS), $(srcdir)/$(DOMAIN)_$(lang).class)
+  # Compute QMFILES
+  # as      $(foreach lang, $(ALL_LINGUAS), $(srcdir)/$(lang).qm)
+  # Compute MSGFILES
+  # as      $(foreach lang, $(ALL_LINGUAS), $(srcdir)/$(frob $(lang)).msg)
+  # Compute RESOURCESDLLFILES
+  # as      $(foreach lang, $(ALL_LINGUAS), $(srcdir)/$(frob $(lang))/$(DOMAIN).resources.dll)
+  case "$ac_given_srcdir" in
+    .) srcdirpre= ;;
+    *) srcdirpre='$(srcdir)/' ;;
+  esac
+  POFILES=
+  UPDATEPOFILES=
+  DUMMYPOFILES=
+  GMOFILES=
+  PROPERTIESFILES=
+  CLASSFILES=
+  QMFILES=
+  MSGFILES=
+  RESOURCESDLLFILES=
+  for lang in $ALL_LINGUAS; do
+    POFILES="$POFILES $srcdirpre$lang.po"
+    UPDATEPOFILES="$UPDATEPOFILES $lang.po-update"
+    DUMMYPOFILES="$DUMMYPOFILES $lang.nop"
+    GMOFILES="$GMOFILES $srcdirpre$lang.gmo"
+    PROPERTIESFILES="$PROPERTIESFILES \$(srcdir)/\$(DOMAIN)_$lang.properties"
+    CLASSFILES="$CLASSFILES \$(srcdir)/\$(DOMAIN)_$lang.class"
+    QMFILES="$QMFILES $srcdirpre$lang.qm"
+    frobbedlang=`echo $lang | sed -e 's/\..*$//' -e 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'`
+    MSGFILES="$MSGFILES $srcdirpre$frobbedlang.msg"
+    frobbedlang=`echo $lang | sed -e 's/_/-/g' -e 's/^sr-CS/sr-SP/' -e 's/@latin$/-Latn/' -e 's/@cyrillic$/-Cyrl/' -e 's/^sr-SP$/sr-SP-Latn/' -e 's/^uz-UZ$/uz-UZ-Latn/'`
+    RESOURCESDLLFILES="$RESOURCESDLLFILES $srcdirpre$frobbedlang/\$(DOMAIN).resources.dll"
+  done
+  # CATALOGS depends on both $ac_dir and the user's LINGUAS
+  # environment variable.
+  INST_LINGUAS=
+  if test -n "$ALL_LINGUAS"; then
+    for presentlang in $ALL_LINGUAS; do
+      useit=no
+      if test "%UNSET%" != "$LINGUAS"; then
+        desiredlanguages="$LINGUAS"
+      else
+        desiredlanguages="$ALL_LINGUAS"
+      fi
+      for desiredlang in $desiredlanguages; do
+        # Use the presentlang catalog if desiredlang is
+        #   a. equal to presentlang, or
+        #   b. a variant of presentlang (because in this case,
+        #      presentlang can be used as a fallback for messages
+        #      which are not translated in the desiredlang catalog).
+        case "$desiredlang" in
+          "$presentlang" | "$presentlang"_* | "$presentlang".* | "$presentlang"@*)
+            useit=yes
+            ;;
+        esac
+      done
+      if test $useit = yes; then
+        INST_LINGUAS="$INST_LINGUAS $presentlang"
+      fi
+    done
+  fi
+  CATALOGS=
+  JAVACATALOGS=
+  QTCATALOGS=
+  TCLCATALOGS=
+  CSHARPCATALOGS=
+  if test -n "$INST_LINGUAS"; then
+    for lang in $INST_LINGUAS; do
+      CATALOGS="$CATALOGS $lang.gmo"
+      JAVACATALOGS="$JAVACATALOGS \$(DOMAIN)_$lang.properties"
+      QTCATALOGS="$QTCATALOGS $lang.qm"
+      frobbedlang=`echo $lang | sed -e 's/\..*$//' -e 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'`
+      TCLCATALOGS="$TCLCATALOGS $frobbedlang.msg"
+      frobbedlang=`echo $lang | sed -e 's/_/-/g' -e 's/^sr-CS/sr-SP/' -e 's/@latin$/-Latn/' -e 's/@cyrillic$/-Cyrl/' -e 's/^sr-SP$/sr-SP-Latn/' -e 's/^uz-UZ$/uz-UZ-Latn/'`
+      CSHARPCATALOGS="$CSHARPCATALOGS $frobbedlang/\$(DOMAIN).resources.dll"
+    done
+  fi
+
+  sed -e "s|@POTFILES_DEPS@|$POTFILES_DEPS|g" -e "s|@POFILES@|$POFILES|g" -e "s|@UPDATEPOFILES@|$UPDATEPOFILES|g" -e "s|@DUMMYPOFILES@|$DUMMYPOFILES|g" -e "s|@GMOFILES@|$GMOFILES|g" -e "s|@PROPERTIESFILES@|$PROPERTIESFILES|g" -e "s|@CLASSFILES@|$CLASSFILES|g" -e "s|@QMFILES@|$QMFILES|g" -e "s|@MSGFILES@|$MSGFILES|g" -e "s|@RESOURCESDLLFILES@|$RESOURCESDLLFILES|g" -e "s|@CATALOGS@|$CATALOGS|g" -e "s|@JAVACATALOGS@|$JAVACATALOGS|g" -e "s|@QTCATALOGS@|$QTCATALOGS|g" -e "s|@TCLCATALOGS@|$TCLCATALOGS|g" -e "s|@CSHARPCATALOGS@|$CSHARPCATALOGS|g" -e 's,^#distdir:,distdir:,' < "$ac_file" > "$ac_file.tmp"
+  tab=`printf '\t'`
+  if grep -l '@TCLCATALOGS@' "$ac_file" > /dev/null; then
+    # Add dependencies that cannot be formulated as a simple suffix rule.
+    for lang in $ALL_LINGUAS; do
+      frobbedlang=`echo $lang | sed -e 's/\..*$//' -e 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'`
+      cat >> "$ac_file.tmp" <<EOF
+$frobbedlang.msg: $lang.po
+${tab}@echo "\$(MSGFMT) -c --tcl -d \$(srcdir) -l $lang $srcdirpre$lang.po"; \
+${tab}\$(MSGFMT) -c --tcl -d "\$(srcdir)" -l $lang $srcdirpre$lang.po || { rm -f "\$(srcdir)/$frobbedlang.msg"; exit 1; }
+EOF
+    done
+  fi
+  if grep -l '@CSHARPCATALOGS@' "$ac_file" > /dev/null; then
+    # Add dependencies that cannot be formulated as a simple suffix rule.
+    for lang in $ALL_LINGUAS; do
+      frobbedlang=`echo $lang | sed -e 's/_/-/g' -e 's/^sr-CS/sr-SP/' -e 's/@latin$/-Latn/' -e 's/@cyrillic$/-Cyrl/' -e 's/^sr-SP$/sr-SP-Latn/' -e 's/^uz-UZ$/uz-UZ-Latn/'`
+      cat >> "$ac_file.tmp" <<EOF
+$frobbedlang/\$(DOMAIN).resources.dll: $lang.po
+${tab}@echo "\$(MSGFMT) -c --csharp -d \$(srcdir) -l $lang $srcdirpre$lang.po -r \$(DOMAIN)"; \
+${tab}\$(MSGFMT) -c --csharp -d "\$(srcdir)" -l $lang $srcdirpre$lang.po -r "\$(DOMAIN)" || { rm -f "\$(srcdir)/$frobbedlang.msg"; exit 1; }
+EOF
+    done
+  fi
+  if test -n "$POMAKEFILEDEPS"; then
+    cat >> "$ac_file.tmp" <<EOF
+Makefile: $POMAKEFILEDEPS
+EOF
+  fi
+  mv "$ac_file.tmp" "$ac_file"
+ ;;
+    "lib/warmux/include/WARMUX_net_defaults.h":F)
   # When this code is run, in config.status, two variables have already been
   # set:
   # - OBSOLETE_ALL_LINGUAS is the value of LINGUAS set in configure.in,

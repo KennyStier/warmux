@@ -22,6 +22,7 @@
 #include <string>
 #include <iostream>
 #include <WARMUX_download.h>
+#include <WARMUX_index_svr_msg.h>
 #include "menu/options_menu.h"
 #include "include/app.h"
 #include "include/constant.h"
@@ -524,7 +525,8 @@ void OptionMenu::CheckUpdates()
 {
 #if USE_MISC_TAB
   if (!Config::GetInstance()->GetCheckUpdates()
-      || Constants::WARMUX_VERSION.find("svn") != std::string::npos)
+      || Constants::WARMUX_VERSION.find("svn") != std::string::npos
+      || GetMetaServerUrl().empty())  // no update host configured
     return;
 
   Downloader *dl = Downloader::GetInstance();

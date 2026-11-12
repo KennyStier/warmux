@@ -163,6 +163,25 @@ dnl ========================================================================
 
 SDL_VERSION=1.2.6
 
+dnl === Internet game discovery ============================================
+dnl The original warmux.org host is gone, so both default to empty (disabled).
+dnl Either can also be overridden at runtime via the environment variable of
+dnl the same name.
+
+AC_ARG_WITH([index-server],
+            [AS_HELP_STRING([--with-index-server=HOST[:PORT]],
+                            [index server to contact directly for internet games (default: none)])],
+            [WARMUX_INDEX_SERVER="$withval"], [WARMUX_INDEX_SERVER=""])
+test "x$WARMUX_INDEX_SERVER" = "xno" && WARMUX_INDEX_SERVER=""
+AC_SUBST([WARMUX_INDEX_SERVER])
+
+AC_ARG_WITH([meta-url],
+            [AS_HELP_STRING([--with-meta-url=URL],
+                            [base URL publishing server_list and last version (default: none)])],
+            [WARMUX_META_URL="$withval"], [WARMUX_META_URL=""])
+test "x$WARMUX_META_URL" = "xno" && WARMUX_META_URL=""
+AC_SUBST([WARMUX_META_URL])
+
 dnl === Set compiler flags =================================================
 
 if test "x$GCC" = "xyes"; then
@@ -399,6 +418,7 @@ AC_CONFIG_FILES([Makefile
                  lib/Makefile
                  lib/fixedpoint/Makefile
                  lib/warmux/Makefile
+                 lib/warmux/include/WARMUX_net_defaults.h
                  po/Makefile
                  ], [AM_POSTPROCESS_PO_MAKEFILE])
 if test "${WIN32}" = "yes"; then

@@ -111,7 +111,8 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/lib/warmux/include/config_autotools.h
-CONFIG_CLEAN_FILES = build/win32_setup/create_setup.sh
+CONFIG_CLEAN_FILES = lib/warmux/include/WARMUX_net_defaults.h \
+	build/win32_setup/create_setup.sh
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -168,6 +169,7 @@ am__define_uniq_tagged_files = \
 DIST_SUBDIRS = data lib src po tools doc
 am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(top_srcdir)/build/win32_setup/create_setup.sh.in \
+	$(top_srcdir)/lib/warmux/include/WARMUX_net_defaults.h.in \
 	$(top_srcdir)/lib/warmux/include/config_autotools.h.in \
 	ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL README TODO \
 	compile config.guess config.rpath config.sub depcomp \
@@ -317,6 +319,8 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+WARMUX_INDEX_SERVER = @WARMUX_INDEX_SERVER@
+WARMUX_META_URL = @WARMUX_META_URL@
 WINDRES = @WINDRES@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
@@ -484,6 +488,8 @@ $(top_srcdir)/lib/warmux/include/config_autotools.h.in:  $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f lib/warmux/include/config_autotools.h lib/warmux/include/stamp-h1
+lib/warmux/include/WARMUX_net_defaults.h: $(top_builddir)/config.status $(top_srcdir)/lib/warmux/include/WARMUX_net_defaults.h.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 build/win32_setup/create_setup.sh: $(top_builddir)/config.status $(top_srcdir)/build/win32_setup/create_setup.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 

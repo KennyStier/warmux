@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 #include <assert.h>
+#include <cstdlib>
 #include <time.h>
 #include <SDL_net.h>
 #include <WARMUX_debug.h>
@@ -85,6 +86,23 @@ connection_state_t IndexServer::Connect(const std::string& warmux_version)
   if (hidden_server) {
     r = CONNECTED;
     goto out;
+  }
+
+  // A directly configured index server takes precedence over the list
+  if (server_lst.size() == 0) {
+    std::string override_srv = GetIndexServerOverride();
+    if (!override_srv.empty()) {
+      int override_port = WARMUX_DEFAULT_INDEX_PORT;
+      std::string::size_type colon = override_srv.rfind(':');
+      if (colon != std::string::npos) {
+        override_port = atoi(override_srv.c_str() + colon + 1);
+        override_srv.erase(colon);
+      }
+      if (!override_srv.empty() && override_port > 0 && override_port < 65536)
+        server_lst[override_srv] = override_port;
+      else
+        fprintf(stderr, "Net Error: invalid WARMUX_INDEX_SERVER value\n");
+    }
   }
 
   // Download the server if it's empty

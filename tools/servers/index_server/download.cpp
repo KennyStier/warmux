@@ -67,9 +67,14 @@ bool Downloader::Get(const char* url, const char* save_as)
 
 void DownloadServerList()
 {
-  // Download the server list from warmux.org
+  // Download the list of index servers from the configured meta URL
   // and contact every server
-  const std::string server_fn = "./server_list";
+  const std::string list_url = GetMetaServerUrl();
+  if (list_url.empty()) {
+    DPRINT(INFO, "No server list URL configured (WARMUX_META_URL); not syncing with other index servers");
+    return;
+  }
+  const std::string server_list_url = list_url + "server_list";
   int gid, uid;
   bool chroot;
   bool do_fork = true;

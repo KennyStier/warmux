@@ -23,7 +23,38 @@
 #ifndef TOP_SERVER_MSG_H
 #define TOP_SERVER_MSG_H
 
+#include <cstdlib>
 #include <string>
+#include "WARMUX_net_defaults.h"
+
+#ifndef WARMUX_INDEX_SERVER
+#  define WARMUX_INDEX_SERVER ""
+#endif
+#ifndef WARMUX_META_URL
+#  define WARMUX_META_URL ""
+#endif
+
+#define WARMUX_DEFAULT_INDEX_PORT 9997
+
+// Index server to contact directly ("host" or "host:port"), bypassing the
+// downloaded server list. Empty if none is configured.
+inline std::string GetIndexServerOverride()
+{
+  const char *env = getenv("WARMUX_INDEX_SERVER");
+  return (env && *env) ? env : WARMUX_INDEX_SERVER;
+}
+
+// Base URL (with trailing '/') of the web host publishing "server_list"
+// (one "host:port" per line) and "last" (latest version string).
+// Empty if none is configured, which disables both lookups.
+inline std::string GetMetaServerUrl()
+{
+  const char *env = getenv("WARMUX_META_URL");
+  std::string url = (env && *env) ? env : WARMUX_META_URL;
+  if (!url.empty() && url[url.size()-1] != '/')
+    url += '/';
+  return url;
+}
 
 enum IndexServerMsg
 {
@@ -43,7 +74,6 @@ enum IndexServerMsg
   TS_LAST_MSG // Don't send this
 };
 
-const std::string server_list_url = "http://www.warmux.org/server_list";
 
 #endif
 
