@@ -1,0 +1,63 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  arch:
+    name: Arch Linux
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm --needed base-devel git autoconf automake \
+            sdl2-compat sdl2_image sdl2_mixer sdl2_ttf sdl2_net sdl2_gfx \
+            curl libxml2 libpng
+      - uses: actions/checkout@v4
+      - run: sh .github/ci-build.sh
+
+  ubuntu:
+    name: Ubuntu 24.04
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential autoconf automake gettext autopoint pkg-config \
+            libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
+            libsdl2-net-dev libsdl2-gfx-dev libcurl4-openssl-dev libxml2-dev libpng-dev
+      - uses: actions/checkout@v4
+      - run: sh .github/ci-build.sh
+
+  fedora:
+    name: Fedora
+    runs-on: ubuntu-latest
+    container: registry.fedoraproject.org/fedora:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          dnf -y install git gcc-c++ make autoconf automake gettext-devel \
+            pkgconf-pkg-config SDL2-devel SDL2_image-devel SDL2_mixer-devel \
+            SDL2_ttf-devel SDL2_net-devel SDL2_gfx-devel \
+            libcurl-devel libxml2-devel libpng-devel
+      - uses: actions/checkout@v4
+      - run: sh .github/ci-build.sh
+
+  flatpak:
+    name: Flatpak
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-26.08
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: warmux.flatpak
+          manifest-path: packaging/flatpak/io.github.KennyStier.Warmux.yml
+          cache-key: flatpak-builder-${{ github.sha }}
