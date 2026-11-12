@@ -36,6 +36,7 @@ AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_RANLIB
+AM_PROG_AR
 AC_CHECK_TOOL(STRIP, strip)
 AC_CHECK_TOOL(WINDRES, windres)
 
@@ -53,7 +54,7 @@ WIN32="no"
 GEKKO="no"
 OSX="no"
 case "${host}" in
-  i[[3456789]]86-*-mingw32*) WIN32="yes" ;;
+  *-mingw32*) WIN32="yes" ;;
   *freebsd*)
     LIBS="$LIBS -lintl" # a temporary hackish workaround
     ;;
@@ -295,7 +296,7 @@ dnl === Check for SDL image, mixer, etc. ===================================
 
 if test "${WIN32}" = "yes"; then
   LIBS="$LIBS -lwsock32 -lws2_32 -luser32"
-  CXXFLAGS="$CXXFLAGS -D_WIN32_WINNT=0x501"
+  CXXFLAGS="$CXXFLAGS -D_WIN32_WINNT=0x0A00"
 fi
 
 dnl === OSX uses a specific detection method for file locations ============

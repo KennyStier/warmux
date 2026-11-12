@@ -171,7 +171,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(top_srcdir)/lib/warmux/include/WARMUX_net_defaults.h.in \
 	$(top_srcdir)/lib/warmux/include/config_autotools.h.in \
 	ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL README.md TODO \
-	compile config.guess config.rpath config.sub depcomp \
+	ar-lib compile config.guess config.rpath config.sub depcomp \
 	install-sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
@@ -230,6 +230,7 @@ distcleancheck_listfiles = \
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -327,6 +328,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 am__include = @am__include@
@@ -849,7 +851,7 @@ check: check-recursive
 all-am: Makefile
 installdirs: installdirs-recursive
 installdirs-am:
-@WIN32_FALSE@install: install-recursive
+install: install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
 uninstall: uninstall-recursive
@@ -971,7 +973,9 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
-@WIN32_TRUE@install: all
+# NSIS installer (from 2011, unmaintained); packaging/windows/build-windows.sh
+# makes the portable zip
+@WIN32_TRUE@setup: all
 @WIN32_TRUE@	@echo "Building Win32 .exe installer in build/win32_setup"
 @WIN32_TRUE@	@(cd build/win32_setup && ./create_setup.sh 2> installer.log 1>&2 && \
 @WIN32_TRUE@          rm installer.log && echo "Success!") || \

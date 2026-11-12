@@ -17,8 +17,8 @@
 #endif
 
 1 VERSIONINFO
-FILEVERSION 0,11,4,0
-PRODUCTVERSION 0,11,4,0
+FILEVERSION 12,0,0,0
+PRODUCTVERSION 12,0,0,0
 FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
 FILEFLAGS VS_FF_DEBUG | VS_FF_SPECIALBUILD
@@ -37,12 +37,12 @@ FILETYPE VFT_APP
             VALUE "FileDescription", "Warmux is a convivial mass murder game."
             VALUE "FileVersion", PACKAGE_VERSION
             VALUE "InternalName", "warmux"
-            VALUE "LegalCopyright", "Copyright (C) 2001-2010 The Warmux Project"
+            VALUE "LegalCopyright", "Copyright (C) 2001-2011 The Warmux Project, 2026 KennyStier"
             //VALUE "LegalTrademarks", "test"
             VALUE "OriginalFilename", "warmux.exe"
-            VALUE "ProductName", "warmux"
+            VALUE "ProductName", "Warmux"
             VALUE "ProductVersion", PACKAGE_VERSION
-            VALUE "SpecialBuild", "$Revision: 9893 $, build on " __DATE__ ", " __TIME__ " with compiler version " __VERSION__
+            VALUE "SpecialBuild", "Built with compiler version " __VERSION__
         }
     }
     BLOCK "VarFileInfo"
@@ -51,4 +51,4 @@ FILETYPE VFT_APP
     }
 }
 
-IDI_ICON1 ICON DISCARDABLE "..\\data\\icon\\warmux.ico"
+IDI_ICON1 ICON DISCARDABLE "../data/icon/warmux.ico"

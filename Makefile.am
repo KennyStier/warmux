@@ -52,7 +52,9 @@ EXTRA_DIST = build/visual/gettext.rules            \
              $(foreach D, $(EXTRA_DISTDIRS), $(shell find $(D) -name .svn -a -type d -prune -o -type f -print))
 
 if WIN32
-install: all
+# NSIS installer (from 2011, unmaintained); packaging/windows/build-windows.sh
+# makes the portable zip
+setup: all
 	@echo "Building Win32 .exe installer in build/win32_setup"
 	@(cd build/win32_setup && ./create_setup.sh 2> installer.log 1>&2 && \
           rm installer.log && echo "Success!") || \

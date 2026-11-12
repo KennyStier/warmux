@@ -134,15 +134,16 @@ std::string FileExtension(const std::string &name)
 static std::string GetWindowsPath(int csidl){
   static TCHAR szPath[MAX_PATH];
 
-  // "Documents and Settings\user" is CSIDL_PROFILE
-  if (SHGetSpecialFolderPath(NULL, szPath, csidl, FALSE) == TRUE)
+  // Create the folder if it doesn't exist yet
+  if (SHGetSpecialFolderPath(NULL, szPath, csidl, TRUE) == TRUE)
     return szPath;
 
   return "";
 }
 
 std::string GetOldPersonalDir() { return GetWindowsPath(CSIDL_APPDATA) + "\\Wormux\\"; }
-std::string GetHome() { return GetWindowsPath(CSIDL_PERSONAL); }
+// Settings and teams live in %APPDATA%\Warmux (next to the old Wormux folder)
+std::string GetHome() { return GetWindowsPath(CSIDL_APPDATA); }
 bool Rename(const std::string& old_name, const std::string& new_name)
 {
   DWORD flags = MOVEFILE_COPY_ALLOWED|MOVEFILE_REPLACE_EXISTING|MOVEFILE_WRITE_THROUGH;

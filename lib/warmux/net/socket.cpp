@@ -27,6 +27,8 @@
 #include <iostream>
 #include <sys/types.h>
 #include <errno.h>
+#include <cstdio>
+#include <cstring>
 #include "extSDL_net.h"
 //-----------------------------------------------------------------------------
 

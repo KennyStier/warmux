@@ -578,6 +578,7 @@ am__relativize = \
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -675,6 +676,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 am__include = @am__include@
@@ -4680,8 +4682,9 @@ uninstall-am: uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 
-@WIN32_TRUE@.rc.o: $(top_srcdir)/lib/warmux/include/config_autotools.h
-@WIN32_TRUE@	$(WINDRES) -I$(top_srcdir)/lib/warmux/include -D HAVE_CONFIG_H -o $@ -i $<
+@WIN32_TRUE@.rc.o: $(top_builddir)/lib/warmux/include/config_autotools.h
+@WIN32_TRUE@	$(WINDRES) -I$(top_builddir)/lib/warmux/include -I$(top_srcdir)/lib/warmux/include \
+@WIN32_TRUE@	  -I$(srcdir) -D HAVE_CONFIG_H -o $@ -i $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
