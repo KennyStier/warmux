@@ -125,11 +125,10 @@ Config::Config()
 
 #ifdef HAVE_TOUCHSCREEN
   , video_fullscreen(true) // No other mode supported
-  , max_fps(25)
 #else
   , video_fullscreen(false)
-  , max_fps(50)
 #endif
+  , max_fps(60)
 
   , bling_bling_interface(false)
   , scroll_on_border(false)
@@ -502,6 +501,9 @@ void Config::LoadXml(const xmlNode *xml)
   if ((elem = XmlReader::GetMarker(xml, "video"))) {
     XmlReader::ReadBool(elem, "bling_bling_interface", bling_bling_interface);
     XmlReader::ReadUint(elem, "max_fps", max_fps);
+    // 50 and 25 were the old desktop and handheld defaults
+    if (max_fps == 50 || max_fps == 25)
+      max_fps = 60;
     XmlReader::ReadUint(elem, "wind_particles_percentage", wind_particles_percentage);
     if (wind_particles_percentage > 100)
       wind_particles_percentage = 100;

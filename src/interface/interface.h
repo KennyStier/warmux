@@ -138,9 +138,6 @@ private:
   void DrawSmallInterface() const;
 
   void LoadDataInternal(Profile *res);
-  int GetWidth() const { return default_toolbar.GetWidth(); }
-  int GetHeight() const;
-  Point2i GetSize() const { return Point2i(GetWidth(), GetHeight()); }
 
   // Handle clicks for various states of the interface
   bool ReplayClick(const Point2i &mouse_pos, ClickType type, Point2i old_mouse_pos = Point2i());
@@ -185,6 +182,10 @@ public:
   bool ActionClickDown(const Point2i &mouse_pos);
 
   int GetMenuHeight() const;
+  // Size of the bottom bar
+  int GetWidth() const { return default_toolbar.GetWidth(); }
+  int GetHeight() const;
+  Point2i GetSize() const { return Point2i(GetWidth(), GetHeight()); }
 };
 
 void AbsoluteDraw(const Surface& s, const Point2i& pos);

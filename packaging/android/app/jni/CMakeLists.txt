@@ -88,6 +88,8 @@ add_subdirectory(${DEPS}/libxml2 libxml2 EXCLUDE_FROM_ALL)
 # --- Warmux -------------------------------------------------------------------
 # Source lists come from the automake files, so they stay in sync
 function(automake_sources out makefile_am dir)
+  # Re-run CMake when a source list changes
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${makefile_am})
   file(READ ${makefile_am} text)
   string(REGEX MATCHALL "[A-Za-z0-9_./-]+\\.cpp" files "${text}")
   set(result "")

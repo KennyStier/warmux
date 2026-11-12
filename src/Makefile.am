@@ -156,6 +156,8 @@ warmux_SOURCES = \
         interface/man_machine_interface.cpp \
         interface/man_machine_interface.h \
         interface/mouse.cpp \
+        interface/touch_controls.cpp \
+        interface/touch_controls.h \
         interface/mouse.h \
         interface/mouse_cursor.cpp \
         interface/mouse_cursor.h \

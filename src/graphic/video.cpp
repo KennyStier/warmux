@@ -41,7 +41,7 @@ Video::Video()
   , texture(NULL)
   , scale_percent(0)
 {
-  SetMaxFps(50);
+  SetMaxFps(60);
 
   Config * config = Config::GetInstance();
   SetMaxFps(config->GetMaxFps());
@@ -233,6 +233,14 @@ bool Video::ResizeGameSurface(int width, int height)
   }
 
   SDL_RenderSetLogicalSize(renderer, width, height);
+
+  // Whole-number stretch (2x on a 1080p phone, HiDPI desktops at 200%):
+  // nearest-neighbour keeps edges and text sharp. Other ratios need
+  // smoothing to avoid uneven pixels.
+  int pw = width, ph = height;
+  SDL_GetRendererOutputSize(renderer, &pw, &ph);
+  bool whole = pw % width == 0 && ph % height == 0 && pw / width == ph / height;
+  SDL_SetTextureScaleMode(texture, whole ? SDL_ScaleModeNearest : SDL_ScaleModeLinear);
   return true;
 }
 
@@ -267,15 +275,16 @@ Point2i Video::TargetGameSize() const
 #ifdef ANDROID
   if (scale_percent == 0 && renderer) {
     // Phones have no desktop scale factor, and drawing 1:1 on a dense
-    // screen makes everything tiny: aim for a game 540 pixels high (200% on a
-    // 1080p phone)
+    // screen makes everything tiny: aim for a game about 540 pixels high,
+    // with a whole-number stretch so it stays sharp (2x on 1080p, 3x on
+    // 1440p; see ResizeGameSurface())
     static const int AUTO_HEIGHT = 540;
     int pw = window_size.x, ph = window_size.y;
     SDL_GetRendererOutputSize(renderer, &pw, &ph);
-    int percent = ph * 100 / AUTO_HEIGHT;
-    if (percent < 100)
-      percent = 100;
-    return Point2i(pw * 100 / percent, ph * 100 / percent);
+    int factor = (ph + AUTO_HEIGHT / 2) / AUTO_HEIGHT;
+    if (factor < 1)
+      factor = 1;
+    return Point2i(pw / factor, ph / factor);
   }
 #endif
   if (scale_percent == 0 || !renderer)

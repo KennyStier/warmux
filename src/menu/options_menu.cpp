@@ -119,7 +119,7 @@ OptionMenu::OptionMenu() :
 #ifdef DEBUG
                               option_size, 30, 5, 20,1000);
 #else
-                              option_size, 30, 5, 20,  60);
+                              option_size, 60, 5, 20, 240);
 #endif
   graphic_options->AddWidget(opt_max_fps);
   std::vector< std::pair<std::string, std::string> > qualities;

@@ -398,6 +398,7 @@ void Menu::HandleEvent(const SDL_Event& evnt)
     if (!used_by_widget) {
       switch (evnt.key.keysym.sym) {
       case SDLK_ESCAPE:
+      case SDLK_AC_BACK:  // Android's Back button
         key_cancel();
         break;
       case SDLK_RETURN:
@@ -466,6 +467,13 @@ void Menu::Run(bool skip_menu)
   }
 
   Mouse::pointer_t old_pointer = Mouse::GetInstance()->SetPointer(Mouse::POINTER_STANDARD);
+#ifdef HAVE_TOUCHSCREEN
+  // Menus are driven by taps as mouse clicks, even when opened during a game,
+  // where the touch controls turn that off
+  const char *hint = SDL_GetHint(SDL_HINT_TOUCH_MOUSE_EVENTS);
+  std::string old_touch_mouse = hint ? hint : "1";
+  SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "1");
+#endif
   int x = 0;
   int y = 0;
   close_menu = false;
@@ -504,6 +512,9 @@ void Menu::Run(bool skip_menu)
   } while (!close_menu);
 
   Mouse::GetInstance()->SetPointer(old_pointer);
+#ifdef HAVE_TOUCHSCREEN
+  SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, old_touch_mouse.c_str());
+#endif
 }
 
 void Menu::Display(const Point2i& mousePosition)

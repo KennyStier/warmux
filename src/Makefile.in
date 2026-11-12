@@ -174,6 +174,7 @@ am__warmux_SOURCES_DIST = ai/ai_command.cpp ai/ai_command.h \
 	interface/loading_screen.cpp interface/loading_screen.h \
 	interface/man_machine_interface.cpp \
 	interface/man_machine_interface.h interface/mouse.cpp \
+	interface/touch_controls.cpp interface/touch_controls.h \
 	interface/mouse.h interface/mouse_cursor.cpp \
 	interface/mouse_cursor.h interface/movable_by_user.h \
 	interface/move_intention.cpp interface/move_intention.h \
@@ -307,12 +308,13 @@ am_warmux_OBJECTS = ai_command.$(OBJEXT) ai_idea.$(OBJEXT) \
 	game_msg.$(OBJEXT) interface.$(OBJEXT) joystick.$(OBJEXT) \
 	keyboard.$(OBJEXT) loading_screen.$(OBJEXT) \
 	man_machine_interface.$(OBJEXT) mouse.$(OBJEXT) \
-	mouse_cursor.$(OBJEXT) move_intention.$(OBJEXT) \
-	weapon_help.$(OBJEXT) weapon_menu.$(OBJEXT) main.$(OBJEXT) \
-	camera.$(OBJEXT) ground.$(OBJEXT) map.$(OBJEXT) \
-	maps_list.$(OBJEXT) random_map.$(OBJEXT) sky.$(OBJEXT) \
-	tile.$(OBJEXT) tileitem.$(OBJEXT) water.$(OBJEXT) \
-	wind.$(OBJEXT) benchmark_menu.$(OBJEXT) credits_menu.$(OBJEXT) \
+	touch_controls.$(OBJEXT) mouse_cursor.$(OBJEXT) \
+	move_intention.$(OBJEXT) weapon_help.$(OBJEXT) \
+	weapon_menu.$(OBJEXT) main.$(OBJEXT) camera.$(OBJEXT) \
+	ground.$(OBJEXT) map.$(OBJEXT) maps_list.$(OBJEXT) \
+	random_map.$(OBJEXT) sky.$(OBJEXT) tile.$(OBJEXT) \
+	tileitem.$(OBJEXT) water.$(OBJEXT) wind.$(OBJEXT) \
+	benchmark_menu.$(OBJEXT) credits_menu.$(OBJEXT) \
 	game_menu.$(OBJEXT) game_mode_editor.$(OBJEXT) \
 	help_menu.$(OBJEXT) main_menu.$(OBJEXT) \
 	map_selection_box.$(OBJEXT) menu.$(OBJEXT) \
@@ -469,14 +471,14 @@ am__depfiles_remade = ./$(DEPDIR)/abstract_spin_button.Po \
 	./$(DEPDIR)/text_handling.Po ./$(DEPDIR)/text_list.Po \
 	./$(DEPDIR)/tile.Po ./$(DEPDIR)/tileitem.Po \
 	./$(DEPDIR)/time.Po ./$(DEPDIR)/torus_cache.Po \
-	./$(DEPDIR)/vertical_box.Po ./$(DEPDIR)/video.Po \
-	./$(DEPDIR)/water.Po ./$(DEPDIR)/water_drop.Po \
-	./$(DEPDIR)/weapon.Po ./$(DEPDIR)/weapon_cfg.Po \
-	./$(DEPDIR)/weapon_help.Po ./$(DEPDIR)/weapon_launcher.Po \
-	./$(DEPDIR)/weapon_menu.Po ./$(DEPDIR)/weapon_strength_bar.Po \
-	./$(DEPDIR)/weapons_list.Po ./$(DEPDIR)/widget.Po \
-	./$(DEPDIR)/widget_list.Po ./$(DEPDIR)/wind.Po \
-	./$(DEPDIR)/xml_document.Po
+	./$(DEPDIR)/touch_controls.Po ./$(DEPDIR)/vertical_box.Po \
+	./$(DEPDIR)/video.Po ./$(DEPDIR)/water.Po \
+	./$(DEPDIR)/water_drop.Po ./$(DEPDIR)/weapon.Po \
+	./$(DEPDIR)/weapon_cfg.Po ./$(DEPDIR)/weapon_help.Po \
+	./$(DEPDIR)/weapon_launcher.Po ./$(DEPDIR)/weapon_menu.Po \
+	./$(DEPDIR)/weapon_strength_bar.Po ./$(DEPDIR)/weapons_list.Po \
+	./$(DEPDIR)/widget.Po ./$(DEPDIR)/widget_list.Po \
+	./$(DEPDIR)/wind.Po ./$(DEPDIR)/xml_document.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -797,6 +799,7 @@ warmux_SOURCES = ai/ai_command.cpp ai/ai_command.h ai/ai_idea.cpp \
 	interface/loading_screen.cpp interface/loading_screen.h \
 	interface/man_machine_interface.cpp \
 	interface/man_machine_interface.h interface/mouse.cpp \
+	interface/touch_controls.cpp interface/touch_controls.h \
 	interface/mouse.h interface/mouse_cursor.cpp \
 	interface/mouse_cursor.h interface/movable_by_user.h \
 	interface/move_intention.cpp interface/move_intention.h \
@@ -1178,6 +1181,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tileitem.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/time.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/torus_cache.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/touch_controls.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vertical_box.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/video.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/water.Po@am__quote@ # am--include-marker
@@ -2235,6 +2239,20 @@ mouse.obj: interface/mouse.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interface/mouse.cpp' object='mouse.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mouse.obj `if test -f 'interface/mouse.cpp'; then $(CYGPATH_W) 'interface/mouse.cpp'; else $(CYGPATH_W) '$(srcdir)/interface/mouse.cpp'; fi`
+
+touch_controls.o: interface/touch_controls.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT touch_controls.o -MD -MP -MF $(DEPDIR)/touch_controls.Tpo -c -o touch_controls.o `test -f 'interface/touch_controls.cpp' || echo '$(srcdir)/'`interface/touch_controls.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/touch_controls.Tpo $(DEPDIR)/touch_controls.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interface/touch_controls.cpp' object='touch_controls.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o touch_controls.o `test -f 'interface/touch_controls.cpp' || echo '$(srcdir)/'`interface/touch_controls.cpp
+
+touch_controls.obj: interface/touch_controls.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT touch_controls.obj -MD -MP -MF $(DEPDIR)/touch_controls.Tpo -c -o touch_controls.obj `if test -f 'interface/touch_controls.cpp'; then $(CYGPATH_W) 'interface/touch_controls.cpp'; else $(CYGPATH_W) '$(srcdir)/interface/touch_controls.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/touch_controls.Tpo $(DEPDIR)/touch_controls.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interface/touch_controls.cpp' object='touch_controls.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o touch_controls.obj `if test -f 'interface/touch_controls.cpp'; then $(CYGPATH_W) 'interface/touch_controls.cpp'; else $(CYGPATH_W) '$(srcdir)/interface/touch_controls.cpp'; fi`
 
 mouse_cursor.o: interface/mouse_cursor.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mouse_cursor.o -MD -MP -MF $(DEPDIR)/mouse_cursor.Tpo -c -o mouse_cursor.o `test -f 'interface/mouse_cursor.cpp' || echo '$(srcdir)/'`interface/mouse_cursor.cpp
@@ -4386,6 +4404,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/tileitem.Po
 	-rm -f ./$(DEPDIR)/time.Po
 	-rm -f ./$(DEPDIR)/torus_cache.Po
+	-rm -f ./$(DEPDIR)/touch_controls.Po
 	-rm -f ./$(DEPDIR)/vertical_box.Po
 	-rm -f ./$(DEPDIR)/video.Po
 	-rm -f ./$(DEPDIR)/water.Po
@@ -4631,6 +4650,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/tileitem.Po
 	-rm -f ./$(DEPDIR)/time.Po
 	-rm -f ./$(DEPDIR)/torus_cache.Po
+	-rm -f ./$(DEPDIR)/touch_controls.Po
 	-rm -f ./$(DEPDIR)/vertical_box.Po
 	-rm -f ./$(DEPDIR)/video.Po
 	-rm -f ./$(DEPDIR)/water.Po

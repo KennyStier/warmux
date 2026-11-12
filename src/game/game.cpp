@@ -37,6 +37,7 @@
 #include "interface/interface.h"
 #include "interface/keyboard.h"
 #include "interface/joystick.h"
+#include "interface/touch_controls.h"
 #include "interface/mouse.h"
 #include "interface/game_msg.h"
 #include "interface/loading_screen.h"
@@ -525,6 +526,11 @@ void Game::RefreshInput()
         ask_for_end = true;
       }
     } else {
+#ifdef HAVE_TOUCHSCREEN
+      // Touch controls first: they turn taps into mouse clicks
+      if (TouchControls::GetInstance()->HandleKeyEvent(evnt))
+        continue;
+#endif
       // Mouse event
       if (Mouse::GetInstance()->HandleEvent(evnt))
         continue;
@@ -638,6 +644,10 @@ void Game::Draw()
   Interface::GetInstance()->Draw();
   StatStop("GameDraw:interface");
 
+#ifdef HAVE_TOUCHSCREEN
+  TouchControls::GetInstance()->Draw();
+#endif
+
   // Draw game messages
   StatStart("GameDraw::game_messages");
   GameMessages::GetInstance()->Draw();
@@ -700,6 +710,9 @@ bool Game::Run()
   // No text input during play: input methods (IMEs) could grab game keys.
   // The in-game chat turns it back on while it is open.
   SDL_StopTextInput();
+#ifdef HAVE_TOUCHSCREEN
+  TouchControls::GetInstance()->Enable();
+#endif
 
   // Time to display the next frame
   time_of_next_frame = 0;
@@ -729,7 +742,16 @@ bool Game::Run()
     if (ask_for_help_menu) {
       MenuHelpPause();
     }
+#ifdef HAVE_TOUCHSCREEN
+    // Fingers lifted while a menu was open never reached the controls
+    if (ask_for_menu || ask_for_help_menu)
+      TouchControls::GetInstance()->Reset();
+#endif
   } while(!IsGameFinished());
+
+#ifdef HAVE_TOUCHSCREEN
+  TouchControls::GetInstance()->Disable();
+#endif
 
   // the game is finished but we won't go at the results screen too fast!
   if (IsGameFinished()) {
