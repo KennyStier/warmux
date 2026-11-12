@@ -158,3 +158,31 @@ because it changes gameplay.
 - Consequence: matches with many explosives become more chaotic; parking a
   timed grenade next to another one plays differently. Worth a playtest
   before deciding.
+
+## Fedora COPR repository
+
+**Status:** parked. Release RPMs are built per Fedora release (44 and 45)
+in `.github/workflows/release.yml` and must be downloaded by hand; they
+get no updates.
+
+### Why per release
+
+An RPM is tied to the library sonames of the release it was built on, and
+these change between releases (Fedora 45 moved to `libxml2.so.16`, Fedora
+44 has `libxml2.so.2`). One RPM for all releases would mean bundling or
+statically linking libraries, which is not worth it.
+
+### Plan
+
+1. Create a COPR project (`kennystier/warmux`) at
+   https://copr.fedorainfracloud.org, with every supported Fedora release
+   enabled as a chroot.
+2. Build from the spec: either SCM builds from this repository (a
+   `.copr/Makefile` that fills in `@VERSION@` and makes the source
+   tarball), or upload an SRPM from the release workflow with
+   `copr-cli` and an API token stored as a repository secret.
+3. Document install in README.md:
+   `sudo dnf copr enable kennystier/warmux && sudo dnf install warmux`.
+4. Keep the per-release RPMs on GitHub releases as a fallback; update
+   their version matrix when Fedora releases are added or reach end of
+   life.
