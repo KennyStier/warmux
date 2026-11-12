@@ -9,7 +9,7 @@ arch=('x86_64' 'aarch64')
 url="https://github.com/KennyStier/warmux"
 license=('GPL-2.0-or-later')
 depends=('sdl12-compat' 'sdl_image' 'sdl_gfx' 'sdl_ttf' 'sdl_mixer' 'sdl_net'
-         'curl' 'libxml2' 'libpng' 'zlib' 'gcc-libs' 'glibc' 'hicolor-icon-theme')
+         'curl' 'libxml2' 'libpng' 'libx11' 'libstdc++' 'glibc' 'hicolor-icon-theme')
 makedepends=('git')
 provides=('warmux')
 conflicts=('warmux' 'warmux-data')
