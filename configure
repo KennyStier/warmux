@@ -12143,10 +12143,7 @@ DATA_FILES=`echo $DATA_FILES`
 
 ac_config_files="$ac_config_files Makefile data/Makefile src/Makefile lib/Makefile lib/fixedpoint/Makefile lib/warmux/Makefile lib/warmux/include/WARMUX_net_defaults.h po/Makefile"
 
-if test "${WIN32}" = "yes"; then
-ac_config_files="$ac_config_files build/win32_setup/create_setup.sh"
-
-else
+if test "${WIN32}" != "yes"; then
 ac_config_files="$ac_config_files lib/warmux-server/Makefile doc/Makefile tools/Makefile tools/list_games/Makefile tools/servers/Makefile tools/servers/game_server/Makefile tools/servers/index_server/Makefile"
 
 fi
@@ -12889,7 +12886,6 @@ do
     "lib/warmux/Makefile") CONFIG_FILES="$CONFIG_FILES lib/warmux/Makefile" ;;
     "lib/warmux/include/WARMUX_net_defaults.h") CONFIG_FILES="$CONFIG_FILES lib/warmux/include/WARMUX_net_defaults.h" ;;
     "po/Makefile") CONFIG_FILES="$CONFIG_FILES po/Makefile" ;;
-    "build/win32_setup/create_setup.sh") CONFIG_FILES="$CONFIG_FILES build/win32_setup/create_setup.sh" ;;
     "lib/warmux-server/Makefile") CONFIG_FILES="$CONFIG_FILES lib/warmux-server/Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "tools/Makefile") CONFIG_FILES="$CONFIG_FILES tools/Makefile" ;;
@@ -15450,7 +15446,6 @@ EOF
   fi
   mv "$ac_file.tmp" "$ac_file"
  ;;
-    "build/win32_setup/create_setup.sh":F) chmod +x build/win32_setup/create_setup.sh ;;
 
   esac
 done # for ac_tag
@@ -15516,7 +15511,4 @@ echo "***********************************************************"
 echo ""
 echo "Execute make to compile then execute make install to install..."
 
-if test "${WIN32}" = "yes"; then
-   echo "Alternatively, type make setup to build an installer"
-fi
 

@@ -40,28 +40,13 @@ EXTRA_DIST = build/visual/gettext.rules            \
              build/mac/README-mac.txt              \
              build/mac/README-mac.txt              \
              build/mac/cmake_build.sh              \
-             build/win32_setup/create_setup.sh.in  \
-             build/win32_setup/English.nsh         \
-             build/win32_setup/French.nsh          \
-             build/win32_setup/Greek.nsh           \
-             build/win32_setup/Polish.nsh          \
-             build/win32_setup/langmacros.nsh      \
              build/android/AndroidManifest.xml     \
              build/android/build.xml               \
              build/android/default.properties      \
              $(foreach D, $(EXTRA_DISTDIRS), $(shell find $(D) -name .svn -a -type d -prune -o -type f -print))
 
-if WIN32
-# NSIS installer (from 2011, unmaintained); packaging/windows/build-windows.sh
-# makes the portable zip
-setup: all
-	@echo "Building Win32 .exe installer in build/win32_setup"
-	@(cd build/win32_setup && ./create_setup.sh 2> installer.log 1>&2 && \
-          rm installer.log && echo "Success!") || \
-         (echo "Installer compilation failed!"; \
-          echo "Check build/win32_setup/installer.log for details"; \
-          exit 1)
-else
+# Windows installer and portable zip: packaging/windows/build-windows.sh
+if !WIN32
 SUBDIRS+=tools doc
 endif
 

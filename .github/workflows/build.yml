@@ -58,7 +58,7 @@ jobs:
           dnf -y install mingw64-gcc-c++ mingw64-sdl2-compat mingw64-SDL2_image \
             mingw64-SDL2_mixer mingw64-SDL2_ttf mingw64-curl mingw64-libxml2 \
             mingw64-libpng mingw64-gettext mingw64-zlib autoconf automake \
-            gettext-devel make git zip curl findutils
+            gettext-devel make git zip curl findutils mingw32-nsis
       - uses: actions/checkout@v4
       - name: Build
         run: |
@@ -67,7 +67,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: dist/*.zip
+          path: |
+            dist/*.zip
+            dist/*-setup.exe
 
   flatpak:
     name: Flatpak

@@ -427,7 +427,7 @@ AM_CXXFLAGS = -I $(top_srcdir)/src -DINSTALL_DATADIR=\"@DATADIR@\"  \
 
 if WIN32
 warmux_SOURCES += warmux.rc
-.rc.o: $(top_builddir)/lib/warmux/include/config_autotools.h
+.rc.o:
 	$(WINDRES) -I$(top_builddir)/lib/warmux/include -I$(top_srcdir)/lib/warmux/include \
 	  -I$(srcdir) -D HAVE_CONFIG_H -o $@ -i $<
 endif

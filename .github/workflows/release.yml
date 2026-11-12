@@ -117,7 +117,7 @@ jobs:
           dnf -y install mingw64-gcc-c++ mingw64-sdl2-compat mingw64-SDL2_image \
             mingw64-SDL2_mixer mingw64-SDL2_ttf mingw64-curl mingw64-libxml2 \
             mingw64-libpng mingw64-gettext mingw64-zlib autoconf automake \
-            gettext-devel make git zip curl findutils
+            gettext-devel make git zip curl findutils mingw32-nsis
       - uses: actions/checkout@v4
       - name: Build
         run: |
@@ -126,7 +126,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: dist/*.zip
+          path: |
+            dist/*.zip
+            dist/*-setup.exe
 
   release:
     name: Publish release
@@ -150,7 +152,8 @@ jobs:
           | `warmux-*.flatpak` | Any Linux distribution: `flatpak install --user warmux-*.flatpak` |
           | `warmux-git-*.pkg.tar.zst` | Arch Linux: `sudo pacman -U warmux-git-*.pkg.tar.zst` |
           | `warmux_*.deb` | Ubuntu 24.04+ / Debian: `sudo apt install ./warmux_*.deb` |
-          | `warmux-*-windows-x64.zip` | Windows 10/11 (64-bit): unzip anywhere, run `warmux.exe` |
+          | `warmux-*-windows-x64-setup.exe` | Windows 10/11 (64-bit): installer |
+          | `warmux-*-windows-x64.zip` | Windows 10/11 (64-bit), portable: unzip anywhere, run `warmux.exe` |
           | `warmux-*.fc44.x86_64.rpm` | Fedora 44: `sudo dnf install ./warmux-*.fc44.x86_64.rpm` |
           | `warmux-*.fc45.x86_64.rpm` | Fedora 45: `sudo dnf install ./warmux-*.fc45.x86_64.rpm` |
 

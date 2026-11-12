@@ -4682,7 +4682,7 @@ uninstall-am: uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 
-@WIN32_TRUE@.rc.o: $(top_builddir)/lib/warmux/include/config_autotools.h
+@WIN32_TRUE@.rc.o:
 @WIN32_TRUE@	$(WINDRES) -I$(top_builddir)/lib/warmux/include -I$(top_srcdir)/lib/warmux/include \
 @WIN32_TRUE@	  -I$(srcdir) -D HAVE_CONFIG_H -o $@ -i $<
 

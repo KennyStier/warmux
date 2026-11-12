@@ -6,11 +6,13 @@
 #   dnf install mingw64-gcc-c++ mingw64-sdl2-compat mingw64-SDL2_image \
 #     mingw64-SDL2_mixer mingw64-SDL2_ttf mingw64-curl mingw64-libxml2 \
 #     mingw64-libpng mingw64-gettext mingw64-zlib autoconf automake \
-#     gettext-devel make git zip curl
+#     gettext-devel make git zip curl findutils mingw32-nsis
 # SDL2_net and SDL2_gfx are not packaged by Fedora and are built here.
 #
-# Produces warmux-<version>-windows-x64.zip: warmux.exe, its DLLs, data/
-# and locale/, runnable from any folder.
+# Produces:
+#   warmux-<version>-windows-x64-setup.exe  installer (packaging/windows/warmux.nsi)
+#   warmux-<version>-windows-x64.zip        portable: warmux.exe, DLLs, data/
+#                                           and locale/, runnable from any folder
 set -eu
 
 VERSION=${1:?usage: build-windows.sh <version> [output-dir]}
@@ -96,3 +98,19 @@ EOF
 mkdir -p "$OUT"
 (cd "$WORK" && zip -qr9 "$OUT/warmux-$VERSION-windows-x64.zip" "$(basename "$STAGE")")
 echo "Built $OUT/warmux-$VERSION-windows-x64.zip"
+
+# --- Installer -------------------------------------------------------------
+# Uninstall list: every staged file, then folders deepest first (RMDir only
+# removes them once empty)
+UNLIST="$WORK/uninstall.nsh"
+(cd "$STAGE"
+ find . -type f | sed 's|^\./||; s|/|\\|g; s|.*|  Delete "$INSTDIR\\&"|'
+ find . -mindepth 1 -type d | awk '{ print length, $0 }' | sort -rn | cut -d' ' -f2- \
+   | sed 's|^\./||; s|/|\\|g; s|.*|  RMDir "$INSTDIR\\&"|') > "$UNLIST"
+# NSIS needs a numeric x.y.z version
+NSIS_VERSION=$(echo "$VERSION" | sed -n 's/^\([0-9]*\.[0-9]*\.[0-9]*\).*/\1/p')
+makensis -V2 -DVERSION="${NSIS_VERSION:-0.0.0}" -DSTAGE="$STAGE" \
+  -DUNINSTALL_LIST="$UNLIST" \
+  -DOUTFILE="$OUT/warmux-$VERSION-windows-x64-setup.exe" \
+  "$SRC/packaging/windows/warmux.nsi"
+echo "Built $OUT/warmux-$VERSION-windows-x64-setup.exe"

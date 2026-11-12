@@ -369,10 +369,7 @@ AC_CONFIG_FILES([Makefile
                  lib/warmux/include/WARMUX_net_defaults.h
                  po/Makefile
                  ], [AM_POSTPROCESS_PO_MAKEFILE])
-if test "${WIN32}" = "yes"; then
-AC_CONFIG_FILES([build/win32_setup/create_setup.sh],
-                [chmod +x build/win32_setup/create_setup.sh])
-else
+if test "${WIN32}" != "yes"; then
 AC_CONFIG_FILES([lib/warmux-server/Makefile
                  doc/Makefile
                  tools/Makefile
@@ -406,6 +403,3 @@ echo "***********************************************************"
 echo ""
 echo "Execute make to compile then execute make install to install..."
 
-if test "${WIN32}" = "yes"; then
-   echo "Alternatively, type make setup to build an installer"
-fi

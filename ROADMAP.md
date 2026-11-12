@@ -5,33 +5,41 @@ it doesn't have to be rediscovered.
 
 ## Windows port
 
-**Status:** builds; needs testing on real Windows 10/11 (November 2026).
+**Status:** working; the exe has been tested on Windows 11. The installer
+has been tested under Wine only (November 2026).
 
 ### What exists
 
 - `packaging/windows/build-windows.sh` cross-compiles on Fedora with its
-  MinGW packages (SDL2_net and SDL2_gfx are built from source) and makes
-  `warmux-<version>-windows-x64.zip`: `warmux.exe`, DLLs, `data\`,
-  `locale\`. Runs from any folder; settings go to `%APPDATA%\Warmux`.
-- CI builds the zip on every push (`build.yml`, artifact "windows"), and
-  `release.yml` attaches it to releases.
-- Under Wine it starts and reaches the main menu. Not yet played.
+  MinGW packages (SDL2_net and SDL2_gfx are built from source) and makes:
+  - `warmux-<version>-windows-x64-setup.exe`: NSIS installer
+    (`packaging/windows/warmux.nsi`). Installs to Program Files, adds a
+    Start menu shortcut (desktop shortcut optional), registers in
+    Settings > Apps, removes the previous version when upgrading. The
+    uninstaller deletes exactly the installed files and keeps settings.
+    The installer's own screens follow the Windows display language.
+  - `warmux-<version>-windows-x64.zip`: portable, runs from any folder.
+- Settings go to `%APPDATA%\Warmux`.
+- CI builds both on every push (`build.yml`, artifact "windows");
+  `release.yml` attaches them to releases.
 - Servers are not built for Windows (`--disable-servers`): they use
   POSIX-only features (`fork`, `chroot`, `setuid`). Windows players
   connect to servers hosted on Linux.
+- SDL2 comes from Fedora's `sdl2-compat`, which loads `SDL3.dll` at run
+  time (included).
 
 ### What needs work
 
-- **Test on real Windows 11:** a full local game, sound and music,
-  gamepad, window resizing and fullscreen, typing names (text input),
-  non-ASCII user names in the profile path, and a network game against a
-  Linux player.
-- SDL2 comes from Fedora's `sdl2-compat`, which loads `SDL3.dll` at run
-  time (it's included in the zip).
-- The NSIS installer in `build/win32_setup/` (now `make setup`) is from
-  2011 and unmaintained. An installer (NSIS or MSIX) and code signing
-  would avoid SmartScreen's "unknown publisher" warning; the zip is
-  enough until then.
+- **Test the installer on real Windows 11:** install, upgrade over an
+  existing install, uninstall from Settings > Apps.
+- **Code signing:** unsigned, so SmartScreen warns "unknown publisher"
+  until the download builds reputation. Options: a code-signing
+  certificate, or Azure Trusted Signing (inexpensive, needs identity
+  verification).
+- **Not yet checked on Windows:** network game against a Linux player,
+  non-ASCII user names in the profile path.
+- Testing under Wine in a Fedora container needs the full `wine` package
+  (the installer is 32-bit) and `WINEDLLOVERRIDES="mscoree,mshtml="`.
 
 ## Own index server (online lobby)
 

@@ -91,6 +91,8 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 @NLS_TRUE@am__append_1 = po
+
+# Windows installer and portable zip: packaging/windows/build-windows.sh
 @WIN32_FALSE@am__append_2 = tools doc
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -110,8 +112,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/lib/warmux/include/config_autotools.h
-CONFIG_CLEAN_FILES = lib/warmux/include/WARMUX_net_defaults.h \
-	build/win32_setup/create_setup.sh
+CONFIG_CLEAN_FILES = lib/warmux/include/WARMUX_net_defaults.h
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -167,7 +168,6 @@ am__define_uniq_tagged_files = \
   done | $(am__uniquify_input)`
 DIST_SUBDIRS = data lib src po tools doc
 am__DIST_COMMON = $(srcdir)/Makefile.in \
-	$(top_srcdir)/build/win32_setup/create_setup.sh.in \
 	$(top_srcdir)/lib/warmux/include/WARMUX_net_defaults.h.in \
 	$(top_srcdir)/lib/warmux/include/config_autotools.h.in \
 	ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL README.md TODO \
@@ -425,12 +425,6 @@ EXTRA_DIST = build/visual/gettext.rules            \
              build/mac/README-mac.txt              \
              build/mac/README-mac.txt              \
              build/mac/cmake_build.sh              \
-             build/win32_setup/create_setup.sh.in  \
-             build/win32_setup/English.nsh         \
-             build/win32_setup/French.nsh          \
-             build/win32_setup/Greek.nsh           \
-             build/win32_setup/Polish.nsh          \
-             build/win32_setup/langmacros.nsh      \
              build/android/AndroidManifest.xml     \
              build/android/build.xml               \
              build/android/default.properties      \
@@ -488,8 +482,6 @@ $(top_srcdir)/lib/warmux/include/config_autotools.h.in:  $(am__configure_deps)
 distclean-hdr:
 	-rm -f lib/warmux/include/config_autotools.h lib/warmux/include/stamp-h1
 lib/warmux/include/WARMUX_net_defaults.h: $(top_builddir)/config.status $(top_srcdir)/lib/warmux/include/WARMUX_net_defaults.h.in
-	cd $(top_builddir) && $(SHELL) ./config.status $@
-build/win32_setup/create_setup.sh: $(top_builddir)/config.status $(top_srcdir)/build/win32_setup/create_setup.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 # This directory's subdirectories are mostly independent; you can cd
@@ -972,16 +964,6 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
-
-# NSIS installer (from 2011, unmaintained); packaging/windows/build-windows.sh
-# makes the portable zip
-@WIN32_TRUE@setup: all
-@WIN32_TRUE@	@echo "Building Win32 .exe installer in build/win32_setup"
-@WIN32_TRUE@	@(cd build/win32_setup && ./create_setup.sh 2> installer.log 1>&2 && \
-@WIN32_TRUE@          rm installer.log && echo "Success!") || \
-@WIN32_TRUE@         (echo "Installer compilation failed!"; \
-@WIN32_TRUE@          echo "Check build/win32_setup/installer.log for details"; \
-@WIN32_TRUE@          exit 1)
 
 # make run: run the game without installing it. Saves you the hassle
 #           to run make install or set the correct environment
