@@ -59,10 +59,13 @@ public:
   virtual bool IsImmobile() const;
   // FIXME: meant to override PhysicalObj::SetEnergyDelta(int, Character*),
   // but the base signature gained a 'dealer' parameter upstream and this
-  // one was never updated. Explosions damaging a projectile therefore run
-  // PhysicalObj's version (subtract energy, ghost the object), and this one
-  // (plus the overrides in anvil.cpp and cluster_bomb.cpp) is never called.
-  // Making it override would change gameplay, so it is left as is for now.
+  // one was never updated, so it (and the overrides in anvil.cpp and
+  // cluster_bomb.cpp) is never called. Explosions call PhysicalObj's
+  // version instead, which does nothing for projectiles (their m_energy
+  // stays -1), so projectiles caught in a blast are pushed but never
+  // detonate. Restoring the override would bring back chain reactions
+  // (setting m_energy to 0 makes Refresh() explode them). That changes
+  // gameplay, so it is left as is for now; see ROADMAP.md.
   virtual void SetEnergyDelta(int delta, bool do_report = true);
 
   void IncrementTimeOut();
