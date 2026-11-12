@@ -225,7 +225,7 @@ void AppWarmux::DisplayLoadingPicture()
   text2.DrawCenter(windowCenter
                    + Point2i(0, Font::GetInstance(Font::FONT_HUGE, Font::FONT_BOLD)->GetHeight() + 20));
 
-  video->window.Flip();
+  video->Flip();
 }
 
 void AppWarmux::RefreshDisplay()
@@ -298,14 +298,12 @@ bool AppWarmux::CheckInactive(SDL_Event& evnt)
   Osso::Process();
 #endif
 
-#ifdef HAVE_HANDHELD
-#  define CHECK_STATE(e) e.type==SDL_ACTIVEEVENT
-#else
-#  define CHECK_STATE(e) e.type==SDL_ACTIVEEVENT && e.active.state&SDL_APPACTIVE
-#endif
+  // Pause while the window is minimized (SDL 1.2's "app inactive")
+#define IS_MINIMIZED(e) ((e).type == SDL_WINDOWEVENT && (e).window.event == SDL_WINDOWEVENT_MINIMIZED)
+#define IS_RESTORED(e)  ((e).type == SDL_WINDOWEVENT && (e).window.event == SDL_WINDOWEVENT_RESTORED)
 
-  if (CHECK_STATE(evnt) && evnt.active.gain == 0) {
-    PAUSE_LOG("Pause: entering, state=%X\n", evnt.active.state);
+  if (IS_MINIMIZED(evnt)) {
+    PAUSE_LOG("Pause: entering\n");
     JukeBox::GetInstance()->CloseDevice();
     GameTime::GetInstance()->SetWaitingForUser(true);
 
@@ -317,8 +315,8 @@ bool AppWarmux::CheckInactive(SDL_Event& evnt)
       Osso::Process();
 #endif
       if (evnt.type == SDL_QUIT) AppWarmux::EmergencyExit();
-      if (evnt.type == SDL_ACTIVEEVENT && evnt.active.gain == 1) {
-        PAUSE_LOG("Active: state=%X\n", evnt.active.state);
+      if (IS_RESTORED(evnt)) {
+        PAUSE_LOG("Active\n");
         if ((!menu || choice != MainMenu::NONE) && GameIsRunning()) {
           PAUSE_LOG("Pause: menu=%p\n", menu);
           choice = MainMenu::NONE;

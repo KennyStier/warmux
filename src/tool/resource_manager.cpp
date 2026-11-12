@@ -146,7 +146,7 @@ Surface ResourceManager::LoadImage(const std::string& filename,
   Surface surface(filename.c_str());
 
   if (set_colorkey)
-    surface.SetColorKey(SDL_SRCCOLORKEY, colorkey);
+    surface.SetColorKey(WX_SRCCOLORKEY, colorkey);
 
   return (alpha) ? surface.DisplayFormatAlpha() : surface.DisplayFormat();
 }

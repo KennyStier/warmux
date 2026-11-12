@@ -32,7 +32,7 @@
 
 #include "sample_cache.h"
 
-typedef struct _Mix_Music Mix_Music;
+typedef struct Mix_Music Mix_Music;
 
 //-----------------------------------------------------------------------------
 

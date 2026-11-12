@@ -25,6 +25,10 @@
 #include <string>
 #include <SDL_keyboard.h>
 
-bool TextHandle(std::string& text, std::string::size_type& pos, const SDL_keysym& key);
+// Handle an editing key (cursor movement, deletion, paste). Returns true if
+// the key belongs to the text field.
+bool TextHandle(std::string& text, std::string::size_type& pos, const SDL_Keysym& key);
+// Insert UTF-8 text from an SDL_TEXTINPUT event at the cursor
+bool TextInsert(std::string& text, std::string::size_type& pos, const std::string& utf8);
 
 #endif //TEXT_HANDLING_H

@@ -22,6 +22,7 @@
 #include <algorithm>
 
 #include "menu/map_selection_box.h"
+#include "graphic/video.h"
 #include "game/config.h"
 #include "gui/button.h"
 #include "gui/label.h"
@@ -243,10 +244,10 @@ Widget* MapSelectionBox::ClickUp(const Point2i &mousePosition, uint button)
   } else if (is_click && map_preview_before2->Contains(mousePosition)) {
     ChangeMapDelta(-2);
   } else if ((is_click && map_preview_before->Contains(mousePosition))
-             || button==SDL_BUTTON_WHEELUP) {
+             || button==WX_BUTTON_WHEELUP) {
     ChangeMapDelta(-1);
   } else if ((is_click && map_preview_after->Contains(mousePosition))
-             || button==SDL_BUTTON_WHEELDOWN) {
+             || button==WX_BUTTON_WHEELDOWN) {
     ChangeMapDelta(+1);
   } else if (is_click && map_preview_after2->Contains(mousePosition)) {
     ChangeMapDelta(+2);

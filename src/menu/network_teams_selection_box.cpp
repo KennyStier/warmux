@@ -20,6 +20,7 @@
  *****************************************************************************/
 
 #include "menu/teams_selection_box.h"
+#include "graphic/video.h"
 #include "menu/network_teams_selection_box.h"
 #include "menu/team_box.h"
 #include "game/config.h"
@@ -75,9 +76,9 @@ Widget* NetworkTeamsSelectionBox::ClickUp(const Point2i &mousePosition, uint but
         Rectanglei r(at->GetPosition(), Point2i(38,38));
 
         if (r.Contains(mousePosition)) {
-          if (button == Mouse::BUTTON_LEFT() || button == SDL_BUTTON_WHEELDOWN) {
+          if (button == Mouse::BUTTON_LEFT() || button == WX_BUTTON_WHEELDOWN) {
             NextTeam(i);
-          } else if (button == Mouse::BUTTON_RIGHT() || button == SDL_BUTTON_WHEELUP) {
+          } else if (button == Mouse::BUTTON_RIGHT() || button == WX_BUTTON_WHEELUP) {
             PrevTeam(i);
           }
           return at;

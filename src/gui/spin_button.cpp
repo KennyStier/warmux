@@ -20,6 +20,7 @@
 #include <sstream>
 
 #include "gui/spin_button.h"
+#include "graphic/video.h"
 #include "gui/button.h"
 #include "graphic/text.h"
 #include "tool/math_tools.h"
@@ -189,11 +190,11 @@ Widget * SpinButton::ClickUp(const Point2i & mousePosition,
   NeedRedrawing();
 
   bool is_click = Mouse::IS_CLICK_BUTTON(button);
-  if ((button == SDL_BUTTON_WHEELDOWN && Contains(mousePosition)) ||
+  if ((button == WX_BUTTON_WHEELDOWN && Contains(mousePosition)) ||
       (is_click && m_minus->Contains(mousePosition))){
     DecValue();
     return this;
-  } else if ((button == SDL_BUTTON_WHEELUP && Contains(mousePosition)) ||
+  } else if ((button == WX_BUTTON_WHEELUP && Contains(mousePosition)) ||
              (is_click && m_plus->Contains(mousePosition))){
     IncValue();
     return this;

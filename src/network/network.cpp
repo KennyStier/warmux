@@ -96,7 +96,7 @@ int NetworkThread::ThreadRun(void* /*no_param*/)
 
 void NetworkThread::Start()
 {
-  thread = SDL_CreateThread(NetworkThread::ThreadRun, NULL);
+  thread = SDL_CreateThread(NetworkThread::ThreadRun, "network", NULL);
   stop_thread = false;
 }
 

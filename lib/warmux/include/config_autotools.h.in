@@ -32,21 +32,6 @@
 /* Define to 1 if you have a functional curl library. */
 #undef HAVE_LIBCURL
 
-/* Define to 1 if you have the 'SDL_gfx' library (-lSDL_gfx). */
-#undef HAVE_LIBSDL_GFX
-
-/* Define to 1 if you have the 'SDL_image' library (-lSDL_image). */
-#undef HAVE_LIBSDL_IMAGE
-
-/* Define to 1 if you have the 'SDL_mixer' library (-lSDL_mixer). */
-#undef HAVE_LIBSDL_MIXER
-
-/* Define to 1 if you have the 'SDL_net' library (-lSDL_net). */
-#undef HAVE_LIBSDL_NET
-
-/* Define to 1 if you have the 'SDL_ttf' library (-lSDL_ttf). */
-#undef HAVE_LIBSDL_TTF
-
 /* Define to 1 if you have the <ndir.h> header file, and it defines 'DIR'. */
 #undef HAVE_NDIR_H
 
@@ -161,9 +146,6 @@
 
 /* Define to use FriBidi */
 #undef USE_FRIBIDI
-
-/* Define to use X11 copy'n'paste */
-#undef USE_X11
 
 /* Version number of package */
 #undef VERSION

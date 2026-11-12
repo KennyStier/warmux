@@ -56,6 +56,7 @@ public:
   void NewMessage(const std::string& msg, const Color& color);
   void HandleKeyPressed(const SDL_Event& evnt);
   void HandleKeyReleased(const SDL_Event& evnt);
+  void HandleTextInput(const SDL_Event& evnt);
 
   static void SendMessage(const std::string& msg, bool in_game = true);
 };

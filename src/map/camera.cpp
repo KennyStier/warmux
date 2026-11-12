@@ -343,7 +343,7 @@ void Camera::HandleMouseMovement()
 
   int x,y;
   //Move camera with mouse holding Ctrl key down or with middle button of mouse
-  if (SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_MIDDLE)
+  if (GetGameMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_MIDDLE)
       || SDL_GetModState() & KMOD_CTRL) {
 
     // Begin to move the camera...

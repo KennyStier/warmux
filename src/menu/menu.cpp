@@ -337,7 +337,7 @@ bool Menu::HandleGlobalEvent(const SDL_Event & evnt)
 #if 1
   int mod_state = SDL_GetModState();
   const Keyboard *kbd = Keyboard::GetConstInstance();
-  ManMachineInterface::Key_t key = kbd->GetRegisteredAction(evnt.key.keysym.sym,
+  ManMachineInterface::Key_t key = kbd->GetRegisteredAction(evnt.key.keysym.scancode,
                                                             mod_state&KMOD_CTRL,
                                                             mod_state&KMOD_ALT,
                                                             mod_state&KMOD_SHIFT);
@@ -362,10 +362,12 @@ void Menu::HandleEvent(const SDL_Event& evnt)
 #else
     key_cancel();
 #endif
+  } else if (evnt.type == SDL_TEXTINPUT) {
+    widgets.SendText(evnt.text.text);
   } else if (evnt.type == SDL_KEYDOWN) {
 
     // Drop key events that are purely modifiers
-    if (Keyboard::IsModifier(evnt.key.keysym.sym))
+    if (Keyboard::IsModifier(evnt.key.keysym.scancode))
       return;
 
     // Allow widgets to interpret any key they want,
@@ -450,11 +452,11 @@ void Menu::Run(bool skip_menu)
   // Display the background
   DrawBackground();
 
-  SDL_GetMouseState(&x, &y);
+  GetGameMouseState(&x, &y);
   Point2i mousePosition(x, y);
   Display(mousePosition);
 
-  SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+  SDL_StartTextInput();
 
   do {
     // this is the current menu (here in case we had run a submenu)
@@ -465,7 +467,7 @@ void Menu::Run(bool skip_menu)
 
     // Avoid to calculate redraw menu when comming back for closing.
     if (!close_menu) {
-      SDL_GetMouseState( &x, &y );
+      GetGameMouseState(&x, &y);
       Point2i mousePosition(x, y);
 
       Display(mousePosition);

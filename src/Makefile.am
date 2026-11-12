@@ -49,7 +49,6 @@ warmux_SOURCES = \
         graphic/colors.h \
         graphic/composite_shape.cpp \
         graphic/composite_shape.h \
-        graphic/fading_effect.h \
         graphic/font.cpp \
         graphic/font.h \
         graphic/fps.cpp \
@@ -70,7 +69,6 @@ warmux_SOURCES = \
         graphic/text.h \
         graphic/text_list.cpp \
         graphic/text_list.h \
-        graphic/textured_polygon.h \
         graphic/video.cpp \
         graphic/video.h \
         gui/abstract_spin_button.cpp \

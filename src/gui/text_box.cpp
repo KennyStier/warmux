@@ -95,7 +95,7 @@ void TextBox::SetText(std::string const & new_txt)
   cursor_pos = GetText().size();
 }
 
-bool TextBox::SendKey(const SDL_keysym & key)
+bool TextBox::SendKey(const SDL_Keysym & key)
 {
   bool used = true;
 
@@ -109,6 +109,16 @@ bool TextBox::SendKey(const SDL_keysym & key)
     BasicSetText(new_txt);
   }
 
+  return used;
+}
+
+bool TextBox::SendText(const std::string & text)
+{
+  NeedRedrawing();
+  std::string new_txt = GetText();
+  bool used = TextInsert(new_txt, cursor_pos, text);
+  if (new_txt != GetText())
+    BasicSetText(new_txt);
   return used;
 }
 
@@ -206,7 +216,17 @@ void PasswordBox::BasicSetText(std::string const & new_txt)
   }
 }
 
-bool PasswordBox::SendKey(const SDL_keysym & key)
+bool PasswordBox::SendText(const std::string & text)
+{
+  NeedRedrawing();
+  std::string new_txt = clear_text;
+  bool used = TextInsert(new_txt, cursor_pos, text);
+  if (new_txt != GetText())
+    BasicSetText(new_txt);
+  return used;
+}
+
+bool PasswordBox::SendKey(const SDL_Keysym & key)
 {
   bool used = true;
 

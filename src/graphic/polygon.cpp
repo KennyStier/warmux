@@ -698,7 +698,7 @@ void GenerateStyledBorder(Surface & source, DecoratedBox::Style style)
     }
   }
 
-  source.SetAlpha(SDL_SRCALPHA, 0);
+  source.SetAlpha(WX_SRCALPHA, 0);
   source.Blit(save_surf);
 }
 

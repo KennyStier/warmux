@@ -101,15 +101,12 @@ void Mouse::EndLongClickTimer()
 
 bool Mouse::HasFocus() const
 {
-  uint8_t state = SDL_GetAppState();
-
-  if ((state & SDL_APPMOUSEFOCUS) &&
-      (state & SDL_APPINPUTFOCUS) &&
-      (state & SDL_APPACTIVE)) {
-    return true;
-  }
-
-  return false;
+  SDL_Window *win = AppWarmux::GetInstance()->video->GetSDLWindow();
+  if (!win)
+    return false;
+  Uint32 flags = SDL_GetWindowFlags(win);
+  return (flags & SDL_WINDOW_MOUSE_FOCUS) && (flags & SDL_WINDOW_INPUT_FOCUS)
+      && !(flags & SDL_WINDOW_MINIMIZED);
 }
 
 void Mouse::ActionLeftClick(bool /*shift*/) const
@@ -254,9 +251,9 @@ bool Mouse::HandleEvent(const SDL_Event& evnt)
       ActionRightClick(shift);
     else if (evnt.button.button == Mouse::BUTTON_LEFT())
       ActionLeftClick(shift);
-    else if (evnt.button.button == SDL_BUTTON_WHEELDOWN)
+    else if (evnt.button.button == WX_BUTTON_WHEELDOWN)
       ActionWheelDown(shift);
-    else if (evnt.button.button == SDL_BUTTON_WHEELUP)
+    else if (evnt.button.button == WX_BUTTON_WHEELUP)
       ActionWheelUp(shift);
   }
 
@@ -313,7 +310,7 @@ Point2i Mouse::GetPosition() const
 {
   int x, y;
 
-  SDL_GetMouseState(&x, &y);
+  GetGameMouseState(&x, &y);
   return Point2i(x, y);
 }
 
@@ -417,7 +414,9 @@ void Mouse::SetPosition(Point2i pos)
 
   MSG_DEBUG("mouse", "1) %d, %d\n", GetPosition().GetX(), GetPosition().GetY());
 
-  SDL_WarpMouse(pos.x, pos.y);
+  Video *video = AppWarmux::GetInstance()->video;
+  Point2i wpos = video->GameToWindow(pos.x, pos.y);
+  SDL_WarpMouseInWindow(video->GetSDLWindow(), wpos.x, wpos.y);
   SDL_PumpEvents(); // force new position else GetPosition does not return new position
 
   lastpos = GetPosition();

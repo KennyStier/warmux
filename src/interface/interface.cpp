@@ -96,8 +96,8 @@ void Interface::LoadDataInternal(Profile *res)
   // for RGB565 with surface alpha *and* colorkey
   default_toolbar = default_toolbar.DisplayFormatColorKey(64);
   small_interface = small_interface.DisplayFormatColorKey(64);
-  default_toolbar.SetAlpha(SDL_SRCALPHA, 128);
-  small_interface.SetAlpha(SDL_SRCALPHA, 128);
+  default_toolbar.SetAlpha(WX_SRCALPHA, 128);
+  small_interface.SetAlpha(WX_SRCALPHA, 128);
 #endif
 
   // energy bar
@@ -483,7 +483,7 @@ void Interface::DrawMapPreview()
                           color);
       }
 
-      //scratch->SetAlpha(SDL_SRCALPHA, 0);
+      //scratch->SetAlpha(WX_SRCALPHA, 0);
       if (!mask) {
         m_last_preview_size = ground.GetPreviewSize();
         mask = new Surface(m_last_preview_size, SDL_SWSURFACE, true);

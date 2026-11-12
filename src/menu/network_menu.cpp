@@ -473,6 +473,8 @@ void NetworkMenu::HandleEvent(const SDL_Event& evnt)
 
   if (evnt.type == SDL_QUIT) {
     Menu::mouse_cancel();
+  } else if (evnt.type == SDL_TEXTINPUT) {
+    widgets.SendText(evnt.text.text);
   } else if (evnt.type == SDL_KEYDOWN) {
     switch (evnt.key.keysym.sym) {
     case SDLK_ESCAPE:
@@ -492,7 +494,7 @@ void NetworkMenu::HandleEvent(const SDL_Event& evnt)
   } else if (evnt.type == SDL_MOUSEBUTTONUP) {
 
     int x=0, y=0;
-    SDL_GetMouseState( &x, &y );
+    GetGameMouseState(&x, &y);
     Point2i mousePosition(x, y);
 
     if (b_cancel->Contains(mousePosition))
@@ -519,7 +521,7 @@ void NetworkMenu::WaitingForGameMaster()
     HandleEvents();
 
     int x=0, y=0;
-    SDL_GetMouseState( &x, &y );
+    GetGameMouseState(&x, &y);
     Point2i mousePosition(x, y);
 
     Display(mousePosition);

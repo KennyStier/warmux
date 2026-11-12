@@ -136,11 +136,11 @@ public:
     return NULL;
   }
 
-  virtual bool SendKey(const SDL_keysym & key)
+  virtual bool SendKey(const SDL_Keysym & key)
   {
-    SDLKey key_code = key.sym;
+    int key_code = key.scancode;
 
-    if (read_only || key_code == SDLK_UNKNOWN)
+    if (read_only || key_code == SDL_SCANCODE_UNKNOWN)
       return false;
 
     // Ignore modifiers-only key presses
@@ -149,7 +149,7 @@ public:
 
     Keyboard *kbd = Keyboard::GetInstance();
 
-    SDLMod mod_bits = SDL_GetModState();
+    SDL_Keymod mod_bits = SDL_GetModState();
     bool has_shift = mod_bits & KMOD_SHIFT;
     bool has_alt = mod_bits & KMOD_ALT;
     bool has_ctrl = mod_bits & KMOD_CTRL;
@@ -169,9 +169,9 @@ public:
 #endif
 
     // Reset some configs if pure backspace is pressed
-    if ((SDLK_BACKSPACE == key_code || SDLK_DELETE == key_code) &&
+    if ((SDL_SCANCODE_BACKSPACE == key_code || SDL_SCANCODE_DELETE == key_code) &&
         !has_ctrl && !has_alt && !has_shift) {
-      key_value = SDLK_UNKNOWN;
+      key_value = SDL_SCANCODE_UNKNOWN;
       label_key->SetText(_("None"));
 #ifdef ANDROID
       ctrl_box->SetValue(false);
@@ -259,7 +259,7 @@ public:
   {
     if (!read_only) {
       kbd->ClearKeyAction(key_action);
-      if (key_value != SDLK_UNKNOWN) {
+      if (key_value != SDL_SCANCODE_UNKNOWN) {
         kbd->SaveKeyEvent(key_action, key_value,
 #ifdef ANDROID
                           ctrl_box->GetValue(),

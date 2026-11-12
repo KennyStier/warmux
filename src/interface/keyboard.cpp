@@ -33,7 +33,9 @@
 #include <cstdlib>
 #include <libxml/tree.h>
 
-#define MODIFIER_OFFSET (SDLK_LAST + 1)
+// Key codes are SDL scancodes (< SDL_NUM_SCANCODES) plus modifier bits
+// encoded as multiples of MODIFIER_OFFSET
+#define MODIFIER_OFFSET (SDL_NUM_SCANCODES + 1)
 #define SHIFT_BIT 0x1
 #define ALT_BIT 0x2
 #define CONTROL_BIT 0x4
@@ -41,9 +43,6 @@
 #define CONTROL_OFFSET (MODIFIER_OFFSET * CONTROL_BIT)
 #define ALT_OFFSET (MODIFIER_OFFSET * ALT_BIT)
 
-#if SDL_MINOR_VERSION != 2
-#  define SDLK_LAST  SDL_NUM_SCANCODES
-#endif
 
 
 int  Keyboard::GetRawKeyCode(int key_code) const
@@ -97,18 +96,17 @@ Keyboard::Keyboard()
   , modifier_bits(0)
   , modifier_only_bits(0)
 {
-  //Disable repeated events when a key is kept down
-  SDL_EnableKeyRepeat(0,0);
   SetDefaultConfig();
 
   // Registring SDL event
   RegisterEvent(SDL_KEYDOWN);
   RegisterEvent(SDL_KEYUP);
+  RegisterEvent(SDL_TEXTINPUT); // chat input
 }
 
 void Keyboard::SetDefaultConfig()
 {
-  SetKeyAction(SDLK_ESCAPE, ManMachineInterface::KEY_QUIT);
+  SetKeyAction(SDL_SCANCODE_ESCAPE, ManMachineInterface::KEY_QUIT);
 }
 
 void Keyboard::SetConfig(const xmlNode *node)
@@ -137,7 +135,7 @@ void Keyboard::SetConfig(const xmlNode *node)
     // Set internal key
     key = GetKeyFromKeyName(key_name);
     // Reject config set for other values
-    if (SDLK_BACKSPACE == key || SDLK_DELETE == key)
+    if (SDL_SCANCODE_BACKSPACE == key || SDL_SCANCODE_DELETE == key)
       continue;
 
     if (shift) {
@@ -167,7 +165,7 @@ void Keyboard::SaveConfig(xmlNode *node) const
     for (uint i = 0; i < actions.size(); i++) {
       int key = it->first;
 
-      if (key == SDLK_UNKNOWN)
+      if (key == SDL_SCANCODE_UNKNOWN)
         continue;
 
       bool shift = false, control = false, alt = false;
@@ -239,7 +237,7 @@ void Keyboard::HandleKeyComboEvent(int key_code, Key_Event_t event_type)
 }
 
 static int GetModifierBitsFromSDL() {
-  SDLMod sdl_modifier_bits = SDL_GetModState();
+  SDL_Keymod sdl_modifier_bits = SDL_GetModState();
   int result = 0;
   if (sdl_modifier_bits & KMOD_SHIFT)
     result |= SHIFT_BIT;
@@ -255,7 +253,11 @@ static int GetModifierBitsFromSDL() {
 
 bool Keyboard::IsModifier(int raw_key_code)
 {
-  return raw_key_code>=SDLK_NUMLOCK && raw_key_code<=SDLK_COMPOSE;
+  return (raw_key_code >= SDL_SCANCODE_LCTRL && raw_key_code <= SDL_SCANCODE_RGUI)
+      || raw_key_code == SDL_SCANCODE_NUMLOCKCLEAR
+      || raw_key_code == SDL_SCANCODE_CAPSLOCK
+      || raw_key_code == SDL_SCANCODE_SCROLLLOCK
+      || raw_key_code == SDL_SCANCODE_MODE;
 }
 
 // Set WARMUX_DEBUG_INPUT=1 to trace raw key events on stderr
@@ -272,15 +274,23 @@ static bool DebugInput()
 bool Keyboard::HandleKeyEvent(const SDL_Event& evnt)
 {
   if (DebugInput() && (evnt.type == SDL_KEYDOWN || evnt.type == SDL_KEYUP)) {
-    Uint8 *state = SDL_GetKeyState(NULL);
-    fprintf(stderr, "[input] %8u %-4s sym=%-4d (%s) scancode=%d held_now=%d\n",
+    const Uint8 *state = SDL_GetKeyboardState(NULL);
+    fprintf(stderr, "[input] %8u %-4s sym=%-4d (%s) scancode=%d repeat=%d held_now=%d\n",
             SDL_GetTicks(), evnt.type == SDL_KEYDOWN ? "DOWN" : "UP",
             (int)evnt.key.keysym.sym, SDL_GetKeyName(evnt.key.keysym.sym),
-            (int)evnt.key.keysym.scancode, (int)state[evnt.key.keysym.sym]);
+            (int)evnt.key.keysym.scancode, (int)evnt.key.repeat,
+            (int)state[evnt.key.keysym.scancode]);
   }
   // Not a registred event
   if (!IsRegistredEvent(evnt.type))
     return false;
+
+  //Handle input text for Chat session in Network game
+  if (evnt.type == SDL_TEXTINPUT) {
+    if (Game::GetInstance()->chatsession.CheckInput())
+      Game::GetInstance()->chatsession.HandleTextInput(evnt);
+    return false;
+  }
 
   Key_Event_t event_type;
   switch(evnt.type) {
@@ -303,11 +313,15 @@ bool Keyboard::HandleKeyEvent(const SDL_Event& evnt)
     return false;
   }
 
-  SDLKey basic_key_code = evnt.key.keysym.sym;
+  // Gameplay tracks held keys itself: drop SDL's auto-repeat presses
+  if (evnt.key.repeat)
+    return false;
+
+  SDL_Scancode basic_key_code = evnt.key.keysym.scancode;
 
 #ifdef DEBUG
   if (IsLOGGING("killsynchro")
-      && basic_key_code == SDLK_k
+      && basic_key_code == SDL_SCANCODE_K
       && event_type == KEY_RELEASED) {
     fprintf(stderr, "\n\nKILLING NETWORK SYNCHRONISATION!\n\n");
     RandomSync().SetSeed(0);
@@ -318,12 +332,12 @@ bool Keyboard::HandleKeyEvent(const SDL_Event& evnt)
   if (IsModifier(basic_key_code)) {
     int modifier_changed = modifier_only_bits ^ GetModifierBitsFromSDL();
     if (event_type == KEY_RELEASED) {
-      for (std::set<SDLKey>::const_iterator it = pressed_keys.begin(); it != pressed_keys.end(); it++ ) {
+      for (std::set<SDL_Scancode>::const_iterator it = pressed_keys.begin(); it != pressed_keys.end(); it++ ) {
         int key_code = *it + MODIFIER_OFFSET * modifier_changed;
         HandleKeyComboEvent(key_code, KEY_RELEASED);
       }
     } else if (modifier_only_bits && event_type == KEY_PRESSED) {
-      for (std::set<SDLKey>::const_iterator it = pressed_keys.begin(); it != pressed_keys.end(); it++ ) {
+      for (std::set<SDL_Scancode>::const_iterator it = pressed_keys.begin(); it != pressed_keys.end(); it++ ) {
         int key_code = *it + MODIFIER_OFFSET * modifier_only_bits;
         HandleKeyComboEvent(key_code, KEY_RELEASED);
       }
@@ -342,9 +356,9 @@ bool Keyboard::HandleKeyEvent(const SDL_Event& evnt)
   // held (seen with sdl12-compat on Wayland). Gameplay tracks held keys
   // itself, so drop both halves: a release for a key that is still
   // physically down, and a repeated press with unchanged modifiers.
-  if (basic_key_code > SDLK_UNKNOWN && basic_key_code < SDLK_LAST) {
+  if (basic_key_code > SDL_SCANCODE_UNKNOWN && basic_key_code < SDL_NUM_SCANCODES) {
     if (event_type == KEY_RELEASED) {
-      const Uint8 *key_state = SDL_GetKeyState(NULL);
+      const Uint8 *key_state = SDL_GetKeyboardState(NULL);
       if (key_state && key_state[basic_key_code]) {
         if (DebugInput())
           fprintf(stderr, "[input]          ignored synthetic UP\n");
@@ -363,7 +377,7 @@ bool Keyboard::HandleKeyEvent(const SDL_Event& evnt)
   modifier_bits = GetModifierBitsFromSDL();
 
   if (modifier_bits != previous_modifier_bits) {
-    std::set<SDLKey>::const_iterator it = pressed_keys.find(basic_key_code);
+    std::set<SDL_Scancode>::const_iterator it = pressed_keys.find(basic_key_code);
     if (it !=  pressed_keys.end()) {
       key_code = basic_key_code + MODIFIER_OFFSET * previous_modifier_bits;
       HandleKeyComboEvent(key_code, KEY_RELEASED);

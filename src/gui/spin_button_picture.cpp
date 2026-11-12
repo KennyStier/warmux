@@ -131,14 +131,14 @@ Widget* SpinButtonWithPicture::ClickUp(const Point2i &mousePosition, uint button
   }
 
   bool is_click = Mouse::IS_CLICK_BUTTON(button);
-  //if (button == Mouse::BUTTON_RIGHT() || button == SDL_BUTTON_WHEELDOWN) {
+  //if (button == Mouse::BUTTON_RIGHT() || button == WX_BUTTON_WHEELDOWN) {
   if ( (is_click && mousePosition.x <= (GetPositionX() + GetSizeX()/2))
-       || button == SDL_BUTTON_WHEELDOWN ) {
+       || button == WX_BUTTON_WHEELDOWN ) {
     DecValue();
     return this;
   } else if ( (is_click && mousePosition.x > (GetPositionX() + GetSizeX()/2))
-              || button == SDL_BUTTON_WHEELUP ) {
-  //} else if (button == Mouse::BUTTON_LEFT() || button == SDL_BUTTON_WHEELUP) {
+              || button == WX_BUTTON_WHEELUP ) {
+  //} else if (button == Mouse::BUTTON_LEFT() || button == WX_BUTTON_WHEELUP) {
     IncValue();
     return this;
   }

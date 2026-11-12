@@ -427,7 +427,7 @@ void NetworkConnectionMenu::ThreadRefreshList()
   SDL_SemPost(net_info.lock);
 
   net_info.finished = false;
-  net_info.thread_refresh = SDL_CreateThread(RefreshNetInfo, NULL);
+  net_info.thread_refresh = SDL_CreateThread(RefreshNetInfo, "net-info", NULL);
 }
 
 void NetworkConnectionMenu::HandleEvent(const SDL_Event& evnt)

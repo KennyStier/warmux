@@ -86,7 +86,7 @@ bool TalkBox::TextHasFocus() const
   return line_to_send_tbox->HasFocus();
 }
 
-bool TalkBox::SendKey(SDL_keysym key)
+bool TalkBox::SendKey(SDL_Keysym key)
 {
   bool r = false;
 
@@ -104,6 +104,13 @@ bool TalkBox::SendKey(SDL_keysym key)
   }
 
   return r;
+}
+
+bool TalkBox::SendText(const std::string& text)
+{
+  if (line_to_send_tbox->HasFocus())
+    return line_to_send_tbox->SendText(text);
+  return WidgetList::SendText(text);
 }
 
 void TalkBox::Clear()

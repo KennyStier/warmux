@@ -264,12 +264,19 @@ void MultiTabs::NeedRedrawing()
     tabs[current_tab].box->NeedRedrawing();
 }
 
-bool MultiTabs::SendKey(const SDL_keysym& key)
+bool MultiTabs::SendText(const std::string& text)
+{
+  if (tabs.empty())
+    return false;
+  return tabs[current_tab].box->SendText(text);
+}
+
+bool MultiTabs::SendKey(const SDL_Keysym& key)
 {
   if (tabs.empty())
     return false;
 
-  if (SDL_GetModState()&(KMOD_CTRL|KMOD_META)) {
+  if (SDL_GetModState()&(KMOD_CTRL|KMOD_GUI)) {
     switch (key.sym) {
     case SDLK_PAGEUP:
       PrevTab();
@@ -301,10 +308,10 @@ Widget* MultiTabs::ClickUp(const Point2i &mousePosition, uint button)
                            size.x, prev_tab_bt->GetSizeY());
 
     if (rect_header.Contains(mousePosition)) {
-      if (button == SDL_BUTTON_WHEELDOWN) {
+      if (button == WX_BUTTON_WHEELDOWN) {
         PrevTab();
 
-      } else if (button == SDL_BUTTON_WHEELUP) {
+      } else if (button == WX_BUTTON_WHEELUP) {
         NextTab();
 
       } else {

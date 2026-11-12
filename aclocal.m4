@@ -1696,7 +1696,6 @@ AC_SUBST(am__xargs_n)
 
 m4_include([build/m4/ax_cflags_warn_all.m4])
 m4_include([build/m4/libcurl.m4])
-m4_include([build/m4/sdl.m4])
 m4_include([m4/build-to-host.m4])
 m4_include([m4/gettext.m4])
 m4_include([m4/host-cpu-c-abi.m4])

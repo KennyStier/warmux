@@ -53,7 +53,7 @@ void GraphCanvas::SetAxis(const std::string& xname, const std::string& yname)
   yaxis = font->CreateSurface(yname, black_color).RotoZoom(M_PI/2, ONE, ONE);
 #ifdef HAVE_HANDHELD
   /* The text being black, after rotation, the color key has been set to white */
-  yaxis.SetColorKey(SDL_SRCCOLORKEY, 0xFFFF);
+  yaxis.SetColorKey(WX_SRCCOLORKEY, 0xFFFF);
 #endif
 }
 

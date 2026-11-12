@@ -93,12 +93,12 @@ Widget * ScrollBox::ClickUp(const Point2i & mousePosition, uint button)
     int  new_offset = offset;
 
     // The event involves the scrollbar or its buttons
-    if ((button == SDL_BUTTON_WHEELDOWN && Contains(mousePosition)) ||
+    if ((button == WX_BUTTON_WHEELDOWN && Contains(mousePosition)) ||
         (is_click && m_down->Contains(mousePosition))) {
 
       // bottom button
       new_offset = offset+SCROLL_SPEED;
-    } else if ((button == SDL_BUTTON_WHEELUP && Contains(mousePosition)) ||
+    } else if ((button == WX_BUTTON_WHEELUP && Contains(mousePosition)) ||
                (is_click && m_up->Contains(mousePosition))) {
 
       // top button
@@ -276,7 +276,7 @@ void ScrollBox::Pack()
   m_down->SetPosition(position + size - m_down->GetSize() - border_size);
 }
 
-bool ScrollBox::SendKey(const SDL_keysym & key)
+bool ScrollBox::SendKey(const SDL_Keysym & key)
 {
   if (!WidgetList::SendKey(key)) {
     int new_offset = offset;

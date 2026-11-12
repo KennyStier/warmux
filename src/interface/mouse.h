@@ -30,7 +30,7 @@
 
 // Forward declarations
 union SDL_Event;
-typedef struct _SDL_TimerID *SDL_TimerID;
+typedef int SDL_TimerID;
 class MouseCursor;
 
 class Mouse : public Singleton<Mouse>

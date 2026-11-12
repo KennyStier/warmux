@@ -76,12 +76,9 @@ int ManMachineInterface::GetKeyAssociatedToAction(Key_t at) const
 // Handle a pressed key
 void ManMachineInterface::HandleKeyPressed(const Key_t &key)
 {
-  // Key repeat is useful in the menu, but we are handling it manually
-  // during the game
-  if (PressedKeys[key]) {
-    SDL_EnableKeyRepeat(0,0);
+  // Held keys are tracked here; ignore presses of an already-held key
+  if (PressedKeys[key])
     return;
-  }
 
   switch (key) {
     case KEY_MOVE_CAMERA_RIGHT:
@@ -455,7 +452,7 @@ void ManMachineInterface::HandleKeyReleased(const Key_t &key)
 
     case KEY_NEXT_CHARACTER:
       if (GameMode::GetInstance()->AllowCharacterSelection()) {
-        SDLMod mod = SDL_GetModState();
+        SDL_Keymod mod = SDL_GetModState();
         if (mod & KMOD_CTRL) {
           ActiveTeam().PreviousCharacter();
         } else {
@@ -509,517 +506,144 @@ void ManMachineInterface::ClearKeyAction(Key_t at)
     layout[key].clear();
 }
 
+// Key names as stored in config.xml (inherited from SDL 1.2 keysym names)
+// mapped to SDL2 scancodes, which are used as internal key codes.
+// Keys that only exist as shifted symbols or SDL 1.2 'world' keys have no
+// physical-key equivalent and are not listed.
+static const struct { const char *name; SDL_Scancode scancode; } key_names[] = {
+  { "unknown", SDL_SCANCODE_UNKNOWN },
+  { "backspace", SDL_SCANCODE_BACKSPACE },
+  { "tab", SDL_SCANCODE_TAB },
+  { "clear", SDL_SCANCODE_CLEAR },
+  { "return", SDL_SCANCODE_RETURN },
+  { "pause", SDL_SCANCODE_PAUSE },
+  { "escape", SDL_SCANCODE_ESCAPE },
+  { "space", SDL_SCANCODE_SPACE },
+  { "quote", SDL_SCANCODE_APOSTROPHE },
+  { "comma", SDL_SCANCODE_COMMA },
+  { "minus", SDL_SCANCODE_MINUS },
+  { "period", SDL_SCANCODE_PERIOD },
+  { "slash", SDL_SCANCODE_SLASH },
+  { "0", SDL_SCANCODE_0 },
+  { "1", SDL_SCANCODE_1 },
+  { "2", SDL_SCANCODE_2 },
+  { "3", SDL_SCANCODE_3 },
+  { "4", SDL_SCANCODE_4 },
+  { "5", SDL_SCANCODE_5 },
+  { "6", SDL_SCANCODE_6 },
+  { "7", SDL_SCANCODE_7 },
+  { "8", SDL_SCANCODE_8 },
+  { "9", SDL_SCANCODE_9 },
+  { "semicolon", SDL_SCANCODE_SEMICOLON },
+  { "equals", SDL_SCANCODE_EQUALS },
+  { "leftbracket", SDL_SCANCODE_LEFTBRACKET },
+  { "backslash", SDL_SCANCODE_BACKSLASH },
+  { "rightbracket", SDL_SCANCODE_RIGHTBRACKET },
+  { "backquote", SDL_SCANCODE_GRAVE },
+  { "a", SDL_SCANCODE_A },
+  { "b", SDL_SCANCODE_B },
+  { "c", SDL_SCANCODE_C },
+  { "d", SDL_SCANCODE_D },
+  { "e", SDL_SCANCODE_E },
+  { "f", SDL_SCANCODE_F },
+  { "g", SDL_SCANCODE_G },
+  { "h", SDL_SCANCODE_H },
+  { "i", SDL_SCANCODE_I },
+  { "j", SDL_SCANCODE_J },
+  { "k", SDL_SCANCODE_K },
+  { "l", SDL_SCANCODE_L },
+  { "m", SDL_SCANCODE_M },
+  { "n", SDL_SCANCODE_N },
+  { "o", SDL_SCANCODE_O },
+  { "p", SDL_SCANCODE_P },
+  { "q", SDL_SCANCODE_Q },
+  { "r", SDL_SCANCODE_R },
+  { "s", SDL_SCANCODE_S },
+  { "t", SDL_SCANCODE_T },
+  { "u", SDL_SCANCODE_U },
+  { "v", SDL_SCANCODE_V },
+  { "w", SDL_SCANCODE_W },
+  { "x", SDL_SCANCODE_X },
+  { "y", SDL_SCANCODE_Y },
+  { "z", SDL_SCANCODE_Z },
+  { "delete", SDL_SCANCODE_DELETE },
+  { "kp0", SDL_SCANCODE_KP_0 },
+  { "kp1", SDL_SCANCODE_KP_1 },
+  { "kp2", SDL_SCANCODE_KP_2 },
+  { "kp3", SDL_SCANCODE_KP_3 },
+  { "kp4", SDL_SCANCODE_KP_4 },
+  { "kp5", SDL_SCANCODE_KP_5 },
+  { "kp6", SDL_SCANCODE_KP_6 },
+  { "kp7", SDL_SCANCODE_KP_7 },
+  { "kp8", SDL_SCANCODE_KP_8 },
+  { "kp9", SDL_SCANCODE_KP_9 },
+  { "kp_period", SDL_SCANCODE_KP_PERIOD },
+  { "kp_divide", SDL_SCANCODE_KP_DIVIDE },
+  { "kp_multiply", SDL_SCANCODE_KP_MULTIPLY },
+  { "kp_minus", SDL_SCANCODE_KP_MINUS },
+  { "kp_plus", SDL_SCANCODE_KP_PLUS },
+  { "kp_enter", SDL_SCANCODE_KP_ENTER },
+  { "kp_equals", SDL_SCANCODE_KP_EQUALS },
+  { "up", SDL_SCANCODE_UP },
+  { "down", SDL_SCANCODE_DOWN },
+  { "right", SDL_SCANCODE_RIGHT },
+  { "left", SDL_SCANCODE_LEFT },
+  { "insert", SDL_SCANCODE_INSERT },
+  { "home", SDL_SCANCODE_HOME },
+  { "end", SDL_SCANCODE_END },
+  { "pageup", SDL_SCANCODE_PAGEUP },
+  { "pagedown", SDL_SCANCODE_PAGEDOWN },
+  { "f1", SDL_SCANCODE_F1 },
+  { "f2", SDL_SCANCODE_F2 },
+  { "f3", SDL_SCANCODE_F3 },
+  { "f4", SDL_SCANCODE_F4 },
+  { "f5", SDL_SCANCODE_F5 },
+  { "f6", SDL_SCANCODE_F6 },
+  { "f7", SDL_SCANCODE_F7 },
+  { "f8", SDL_SCANCODE_F8 },
+  { "f9", SDL_SCANCODE_F9 },
+  { "f10", SDL_SCANCODE_F10 },
+  { "f11", SDL_SCANCODE_F11 },
+  { "f12", SDL_SCANCODE_F12 },
+  { "f13", SDL_SCANCODE_F13 },
+  { "f14", SDL_SCANCODE_F14 },
+  { "F15", SDL_SCANCODE_F15 },
+  { "numlock", SDL_SCANCODE_NUMLOCKCLEAR },
+  { "capslock", SDL_SCANCODE_CAPSLOCK },
+  { "scrollock", SDL_SCANCODE_SCROLLLOCK },
+  { "rshift", SDL_SCANCODE_RSHIFT },
+  { "lshift", SDL_SCANCODE_LSHIFT },
+  { "rctrl", SDL_SCANCODE_RCTRL },
+  { "lctrl", SDL_SCANCODE_LCTRL },
+  { "ralt", SDL_SCANCODE_RALT },
+  { "lalt", SDL_SCANCODE_LALT },
+  { "rmeta", SDL_SCANCODE_RGUI },
+  { "lmeta", SDL_SCANCODE_LGUI },
+  { "lsuper", SDL_SCANCODE_LGUI },
+  { "rsuper", SDL_SCANCODE_RGUI },
+  { "mode", SDL_SCANCODE_MODE },
+  { "compose", SDL_SCANCODE_APPLICATION },
+  { "help", SDL_SCANCODE_HELP },
+  { "print", SDL_SCANCODE_PRINTSCREEN },
+  { "sysreq", SDL_SCANCODE_SYSREQ },
+  { "menu", SDL_SCANCODE_MENU },
+  { "power", SDL_SCANCODE_POWER },
+  { "undo", SDL_SCANCODE_UNDO },
+};
+
 int ManMachineInterface::GetKeyFromKeyName(const std::string &name) const
 {
-  if(name == "unknown") return SDLK_UNKNOWN;
-
-  // The keyboard syms have been cleverly chosen to map to ASCII
-  if(name == "backspace") return SDLK_BACKSPACE;
-  if(name == "tab") return SDLK_TAB;
-  if(name == "clear") return SDLK_CLEAR;
-  if(name == "return") return SDLK_RETURN;
-  if(name == "pause") return SDLK_PAUSE;
-  if(name == "escape") return SDLK_ESCAPE;
-  if(name == "space") return SDLK_SPACE;
-  if(name == "exclaim") return SDLK_EXCLAIM;
-  if(name == "quotedbl") return SDLK_QUOTEDBL;
-  if(name == "hash") return SDLK_HASH;
-  if(name == "dollar") return SDLK_DOLLAR;
-  if(name == "ampersand") return SDLK_AMPERSAND;
-  if(name == "quote") return SDLK_QUOTE;
-  if(name == "leftparen") return SDLK_LEFTPAREN;
-  if(name == "rightparen") return SDLK_RIGHTPAREN;
-  if(name == "asterisk") return SDLK_ASTERISK;
-  if(name == "plus") return SDLK_PLUS;
-  if(name == "comma") return SDLK_COMMA;
-  if(name == "minus") return SDLK_MINUS;
-  if(name == "period") return SDLK_PERIOD;
-  if(name == "slash") return SDLK_SLASH;
-  if(name == "0") return SDLK_0;
-  if(name == "1") return SDLK_1;
-  if(name == "2") return SDLK_2;
-  if(name == "3") return SDLK_3;
-  if(name == "4") return SDLK_4;
-  if(name == "5") return SDLK_5;
-  if(name == "6") return SDLK_6;
-  if(name == "7") return SDLK_7;
-  if(name == "8") return SDLK_8;
-  if(name == "9") return SDLK_9;
-  if(name == "colon") return SDLK_COLON;
-  if(name == "semicolon") return SDLK_SEMICOLON;
-  if(name == "less") return SDLK_LESS;
-  if(name == "equals") return SDLK_EQUALS;
-  if(name == "greater") return SDLK_GREATER;
-  if(name == "question") return SDLK_QUESTION;
-  if(name == "at") return SDLK_AT;
-
-  //Skip uppercase letters
-  if(name == "leftbracket") return SDLK_LEFTBRACKET;
-  if(name == "backslash") return SDLK_BACKSLASH;
-  if(name == "rightbracket") return SDLK_RIGHTBRACKET;
-  if(name == "caret") return SDLK_CARET;
-  if(name == "underscore") return SDLK_UNDERSCORE;
-  if(name == "backquote") return SDLK_BACKQUOTE;
-  if(name == "a") return SDLK_a;
-  if(name == "b") return SDLK_b;
-  if(name == "c") return SDLK_c;
-  if(name == "d") return SDLK_d;
-  if(name == "e") return SDLK_e;
-  if(name == "f") return SDLK_f;
-  if(name == "g") return SDLK_g;
-  if(name == "h") return SDLK_h;
-  if(name == "i") return SDLK_i;
-  if(name == "j") return SDLK_j;
-  if(name == "k") return SDLK_k;
-  if(name == "l") return SDLK_l;
-  if(name == "m") return SDLK_m;
-  if(name == "n") return SDLK_n;
-  if(name == "o") return SDLK_o;
-  if(name == "p") return SDLK_p;
-  if(name == "q") return SDLK_q;
-  if(name == "r") return SDLK_r;
-  if(name == "s") return SDLK_s;
-  if(name == "t") return SDLK_t;
-  if(name == "u") return SDLK_u;
-  if(name == "v") return SDLK_v;
-  if(name == "w") return SDLK_w;
-  if(name == "x") return SDLK_x;
-  if(name == "y") return SDLK_y;
-  if(name == "z") return SDLK_z;
-  if(name == "delete") return SDLK_DELETE;
-  // End of ASCII mapped keysyms
-
-#if SDL_MINOR_VERSION == 2
-  // International keyboard syms
-  if(name == "world_0") return SDLK_WORLD_0;
-  if(name == "world_1") return SDLK_WORLD_1;
-  if(name == "world_2") return SDLK_WORLD_2;
-  if(name == "world_3") return SDLK_WORLD_3;
-  if(name == "world_4") return SDLK_WORLD_4;
-  if(name == "world_5") return SDLK_WORLD_5;
-  if(name == "world_6") return SDLK_WORLD_6;
-  if(name == "world_7") return SDLK_WORLD_7;
-  if(name == "world_8") return SDLK_WORLD_8;
-  if(name == "world_9") return SDLK_WORLD_9;
-  if(name == "world_10") return SDLK_WORLD_10;
-  if(name == "world_11") return SDLK_WORLD_11;
-  if(name == "world_12") return SDLK_WORLD_12;
-  if(name == "world_13") return SDLK_WORLD_13;
-  if(name == "world_14") return SDLK_WORLD_14;
-  if(name == "world_15") return SDLK_WORLD_15;
-  if(name == "world_16") return SDLK_WORLD_16;
-  if(name == "world_17") return SDLK_WORLD_17;
-  if(name == "world_18") return SDLK_WORLD_18;
-  if(name == "world_19") return SDLK_WORLD_19;
-  if(name == "world_20") return SDLK_WORLD_20;
-  if(name == "world_21") return SDLK_WORLD_21;
-  if(name == "world_22") return SDLK_WORLD_22;
-  if(name == "world_23") return SDLK_WORLD_23;
-  if(name == "world_24") return SDLK_WORLD_24;
-  if(name == "world_25") return SDLK_WORLD_25;
-  if(name == "world_26") return SDLK_WORLD_26;
-  if(name == "world_27") return SDLK_WORLD_27;
-  if(name == "world_28") return SDLK_WORLD_28;
-  if(name == "world_29") return SDLK_WORLD_29;
-  if(name == "world_30") return SDLK_WORLD_30;
-  if(name == "world_31") return SDLK_WORLD_31;
-  if(name == "world_32") return SDLK_WORLD_32;
-  if(name == "world_33") return SDLK_WORLD_33;
-  if(name == "world_34") return SDLK_WORLD_34;
-  if(name == "world_35") return SDLK_WORLD_35;
-  if(name == "world_36") return SDLK_WORLD_36;
-  if(name == "world_37") return SDLK_WORLD_37;
-  if(name == "world_38") return SDLK_WORLD_38;
-  if(name == "world_39") return SDLK_WORLD_39;
-  if(name == "world_40") return SDLK_WORLD_40;
-  if(name == "world_41") return SDLK_WORLD_41;
-  if(name == "world_42") return SDLK_WORLD_42;
-  if(name == "world_43") return SDLK_WORLD_43;
-  if(name == "world_44") return SDLK_WORLD_44;
-  if(name == "world_45") return SDLK_WORLD_45;
-  if(name == "world_46") return SDLK_WORLD_46;
-  if(name == "world_47") return SDLK_WORLD_47;
-  if(name == "world_48") return SDLK_WORLD_48;
-  if(name == "world_49") return SDLK_WORLD_49;
-  if(name == "world_50") return SDLK_WORLD_50;
-  if(name == "world_51") return SDLK_WORLD_51;
-  if(name == "world_52") return SDLK_WORLD_52;
-  if(name == "world_53") return SDLK_WORLD_53;
-  if(name == "world_54") return SDLK_WORLD_54;
-  if(name == "world_55") return SDLK_WORLD_55;
-  if(name == "world_56") return SDLK_WORLD_56;
-  if(name == "world_57") return SDLK_WORLD_57;
-  if(name == "world_58") return SDLK_WORLD_58;
-  if(name == "world_59") return SDLK_WORLD_59;
-  if(name == "world_60") return SDLK_WORLD_60;
-  if(name == "world_61") return SDLK_WORLD_61;
-  if(name == "world_62") return SDLK_WORLD_62;
-  if(name == "world_63") return SDLK_WORLD_63;
-  if(name == "world_64") return SDLK_WORLD_64;
-  if(name == "world_65") return SDLK_WORLD_65;
-  if(name == "world_66") return SDLK_WORLD_66;
-  if(name == "world_67") return SDLK_WORLD_67;
-  if(name == "world_68") return SDLK_WORLD_68;
-  if(name == "world_69") return SDLK_WORLD_69;
-  if(name == "world_70") return SDLK_WORLD_70;
-  if(name == "world_71") return SDLK_WORLD_71;
-  if(name == "world_72") return SDLK_WORLD_72;
-  if(name == "world_73") return SDLK_WORLD_73;
-  if(name == "world_74") return SDLK_WORLD_74;
-  if(name == "world_75") return SDLK_WORLD_75;
-  if(name == "world_76") return SDLK_WORLD_76;
-  if(name == "world_77") return SDLK_WORLD_77;
-  if(name == "world_78") return SDLK_WORLD_78;
-  if(name == "world_79") return SDLK_WORLD_79;
-  if(name == "world_80") return SDLK_WORLD_80;
-  if(name == "world_81") return SDLK_WORLD_81;
-  if(name == "world_82") return SDLK_WORLD_82;
-  if(name == "world_83") return SDLK_WORLD_83;
-  if(name == "world_84") return SDLK_WORLD_84;
-  if(name == "world_85") return SDLK_WORLD_85;
-  if(name == "world_86") return SDLK_WORLD_86;
-  if(name == "world_87") return SDLK_WORLD_87;
-  if(name == "world_88") return SDLK_WORLD_88;
-  if(name == "world_89") return SDLK_WORLD_89;
-  if(name == "world_90") return SDLK_WORLD_90;
-  if(name == "world_91") return SDLK_WORLD_91;
-  if(name == "world_92") return SDLK_WORLD_92;
-  if(name == "world_93") return SDLK_WORLD_93;
-  if(name == "world_94") return SDLK_WORLD_94;
-  if(name == "world_95") return SDLK_WORLD_95;
-#endif
-
-  // Numeric keypad
-  if(name == "kp0") return SDLK_KP0;
-  if(name == "kp1") return SDLK_KP1;
-  if(name == "kp2") return SDLK_KP2;
-  if(name == "kp3") return SDLK_KP3;
-  if(name == "kp4") return SDLK_KP4;
-  if(name == "kp5") return SDLK_KP5;
-  if(name == "kp6") return SDLK_KP6;
-  if(name == "kp7") return SDLK_KP7;
-  if(name == "kp8") return SDLK_KP8;
-  if(name == "kp9") return SDLK_KP9;
-  if(name == "kp_period") return SDLK_KP_PERIOD;
-  if(name == "kp_divide") return SDLK_KP_DIVIDE;
-  if(name == "kp_multiply") return SDLK_KP_MULTIPLY;
-  if(name == "kp_minus") return SDLK_KP_MINUS;
-  if(name == "kp_plus") return SDLK_KP_PLUS;
-  if(name == "kp_enter") return SDLK_KP_ENTER;
-  if(name == "kp_equals") return SDLK_KP_EQUALS;
-
-  // Arrows + Home/End pad
-  if(name == "up") return SDLK_UP;
-  if(name == "down") return SDLK_DOWN;
-  if(name == "right") return SDLK_RIGHT;
-  if(name == "left") return SDLK_LEFT;
-  if(name == "insert") return SDLK_INSERT;
-  if(name == "home") return SDLK_HOME;
-  if(name == "end") return SDLK_END;
-  if(name == "pageup") return SDLK_PAGEUP;
-  if(name == "pagedown") return SDLK_PAGEDOWN;
-
-  // Function keys
-  if(name == "f1") return SDLK_F1;
-  if(name == "f2") return SDLK_F2;
-  if(name == "f3") return SDLK_F3;
-  if(name == "f4") return SDLK_F4;
-  if(name == "f5") return SDLK_F5;
-  if(name == "f6") return SDLK_F6;
-  if(name == "f7") return SDLK_F7;
-  if(name == "f8") return SDLK_F8;
-  if(name == "f9") return SDLK_F9;
-  if(name == "f10") return SDLK_F10;
-  if(name == "f11") return SDLK_F11;
-  if(name == "f12") return SDLK_F12;
-  if(name == "f13") return SDLK_F13;
-  if(name == "f14") return SDLK_F14;
-  if(name == "F15") return SDLK_F15;
-
-  // Key state modifier keys
-  if(name == "numlock") return SDLK_NUMLOCK;
-  if(name == "capslock") return SDLK_CAPSLOCK;
-  if(name == "scrollock") return SDLK_SCROLLOCK;
-  if(name == "rshift") return SDLK_RSHIFT;
-  if(name == "lshift") return SDLK_LSHIFT;
-  if(name == "rctrl") return SDLK_RCTRL;
-  if(name == "lctrl") return SDLK_LCTRL;
-  if(name == "ralt") return SDLK_RALT;
-  if(name == "lalt") return SDLK_LALT;
-  if(name == "rmeta") return SDLK_RMETA;
-  if(name == "lmeta") return SDLK_LMETA;
-  if(name == "lsuper") return SDLK_LSUPER;
-  if(name == "rsuper") return SDLK_RSUPER;
-  if(name == "mode") return SDLK_MODE;
-  if(name == "compose") return SDLK_COMPOSE;
-
-  // Miscellaneous function keys
-  if(name == "help") return SDLK_HELP;
-  if(name == "print") return SDLK_PRINT;
-  if(name == "sysreq") return SDLK_SYSREQ;
-  if(name == "break") return SDLK_BREAK;
-  if(name == "menu") return SDLK_MENU;
-  if(name == "power") return SDLK_POWER;
-  if(name == "euro") return SDLK_EURO;
-  if(name == "undo") return SDLK_UNDO;
-
-  return SDLK_UNKNOWN;
+  for (size_t i = 0; i < sizeof(key_names)/sizeof(key_names[0]); i++)
+    if (name == key_names[i].name)
+      return key_names[i].scancode;
+  return SDL_SCANCODE_UNKNOWN;
 }
 
 std::string ManMachineInterface::GetKeyNameFromKey(int key) const
 {
-  if(key == SDLK_UNKNOWN) return "unknown";
-
-  // The keyboard syms have been cleverly chosen to map to ASCII
-  if(key == SDLK_BACKSPACE) return "backspace";
-  if(key == SDLK_TAB) return "tab";
-  if(key == SDLK_CLEAR) return "clear";
-  if(key == SDLK_RETURN) return "return";
-  if(key == SDLK_PAUSE) return "pause";
-  if(key == SDLK_ESCAPE) return "escape";
-  if(key == SDLK_SPACE) return "space";
-  if(key == SDLK_EXCLAIM) return "exclaim";
-  if(key == SDLK_QUOTEDBL) return "quotedbl";
-  if(key == SDLK_HASH) return "hash";
-  if(key == SDLK_DOLLAR) return "dollar";
-  if(key == SDLK_AMPERSAND) return "ampersand";
-  if(key == SDLK_QUOTE) return "quote";
-  if(key == SDLK_LEFTPAREN) return "leftparen";
-  if(key == SDLK_RIGHTPAREN) return "rightparen";
-  if(key == SDLK_ASTERISK) return "asterisk";
-  if(key == SDLK_PLUS) return "plus";
-  if(key == SDLK_COMMA) return "comma";
-  if(key == SDLK_MINUS) return "minus";
-  if(key == SDLK_PERIOD) return "period";
-  if(key == SDLK_SLASH) return "slash";
-  if(key == SDLK_0) return "0";
-  if(key == SDLK_1) return "1";
-  if(key == SDLK_2) return "2";
-  if(key == SDLK_3) return "3";
-  if(key == SDLK_4) return "4";
-  if(key == SDLK_5) return "5";
-  if(key == SDLK_6) return "6";
-  if(key == SDLK_7) return "7";
-  if(key == SDLK_8) return "8";
-  if(key == SDLK_9) return "9";
-  if(key == SDLK_COLON) return "colon";
-  if(key == SDLK_SEMICOLON) return "semicolon";
-  if(key == SDLK_LESS) return "less";
-  if(key == SDLK_EQUALS) return "equals";
-  if(key == SDLK_GREATER) return "greater";
-  if(key == SDLK_QUESTION) return "question";
-  if(key == SDLK_AT) return "at";
-
-  //Skip uppercase letters
-  if(key == SDLK_LEFTBRACKET) return "leftbracket";
-  if(key == SDLK_BACKSLASH) return "backslash";
-  if(key == SDLK_RIGHTBRACKET) return "rightbracket";
-  if(key == SDLK_CARET) return "caret";
-  if(key == SDLK_UNDERSCORE) return "underscore";
-  if(key == SDLK_BACKQUOTE) return "backquote";
-  if(key == SDLK_a) return "a";
-  if(key == SDLK_b) return "b";
-  if(key == SDLK_c) return "c";
-  if(key == SDLK_d) return "d";
-  if(key == SDLK_e) return "e";
-  if(key == SDLK_f) return "f";
-  if(key == SDLK_g) return "g";
-  if(key == SDLK_h) return "h";
-  if(key == SDLK_i) return "i";
-  if(key == SDLK_j) return "j";
-  if(key == SDLK_k) return "k";
-  if(key == SDLK_l) return "l";
-  if(key == SDLK_m) return "m";
-  if(key == SDLK_n) return "n";
-  if(key == SDLK_o) return "o";
-  if(key == SDLK_p) return "p";
-  if(key == SDLK_q) return "q";
-  if(key == SDLK_r) return "r";
-  if(key == SDLK_s) return "s";
-  if(key == SDLK_t) return "t";
-  if(key == SDLK_u) return "u";
-  if(key == SDLK_v) return "v";
-  if(key == SDLK_w) return "w";
-  if(key == SDLK_x) return "x";
-  if(key == SDLK_y) return "y";
-  if(key == SDLK_z) return "z";
-  if(key == SDLK_DELETE) return "delete";
-  // End of ASCII mapped keysyms
-
-#if SDL_MINOR_VERSION == 2
-  // International keyboard syms
-  if(key == SDLK_WORLD_0) return "world_0";
-  if(key == SDLK_WORLD_1) return "world_1";
-  if(key == SDLK_WORLD_2) return "world_2";
-  if(key == SDLK_WORLD_3) return "world_3";
-  if(key == SDLK_WORLD_4) return "world_4";
-  if(key == SDLK_WORLD_5) return "world_5";
-  if(key == SDLK_WORLD_6) return "world_6";
-  if(key == SDLK_WORLD_7) return "world_7";
-  if(key == SDLK_WORLD_8) return "world_8";
-  if(key == SDLK_WORLD_9) return "world_9";
-  if(key == SDLK_WORLD_10) return "world_10";
-  if(key == SDLK_WORLD_11) return "world_11";
-  if(key == SDLK_WORLD_12) return "world_12";
-  if(key == SDLK_WORLD_13) return "world_13";
-  if(key == SDLK_WORLD_14) return "world_14";
-  if(key == SDLK_WORLD_15) return "world_15";
-  if(key == SDLK_WORLD_16) return "world_16";
-  if(key == SDLK_WORLD_17) return "world_17";
-  if(key == SDLK_WORLD_18) return "world_18";
-  if(key == SDLK_WORLD_19) return "world_19";
-  if(key == SDLK_WORLD_20) return "world_20";
-  if(key == SDLK_WORLD_21) return "world_21";
-  if(key == SDLK_WORLD_22) return "world_22";
-  if(key == SDLK_WORLD_23) return "world_23";
-  if(key == SDLK_WORLD_24) return "world_24";
-  if(key == SDLK_WORLD_25) return "world_25";
-  if(key == SDLK_WORLD_26) return "world_26";
-  if(key == SDLK_WORLD_27) return "world_27";
-  if(key == SDLK_WORLD_28) return "world_28";
-  if(key == SDLK_WORLD_29) return "world_29";
-  if(key == SDLK_WORLD_30) return "world_30";
-  if(key == SDLK_WORLD_31) return "world_31";
-  if(key == SDLK_WORLD_32) return "world_32";
-  if(key == SDLK_WORLD_33) return "world_33";
-  if(key == SDLK_WORLD_34) return "world_34";
-  if(key == SDLK_WORLD_35) return "world_35";
-  if(key == SDLK_WORLD_36) return "world_36";
-  if(key == SDLK_WORLD_37) return "world_37";
-  if(key == SDLK_WORLD_38) return "world_38";
-  if(key == SDLK_WORLD_39) return "world_39";
-  if(key == SDLK_WORLD_40) return "world_40";
-  if(key == SDLK_WORLD_41) return "world_41";
-  if(key == SDLK_WORLD_42) return "world_42";
-  if(key == SDLK_WORLD_43) return "world_43";
-  if(key == SDLK_WORLD_44) return "world_44";
-  if(key == SDLK_WORLD_45) return "world_45";
-  if(key == SDLK_WORLD_46) return "world_46";
-  if(key == SDLK_WORLD_47) return "world_47";
-  if(key == SDLK_WORLD_48) return "world_48";
-  if(key == SDLK_WORLD_49) return "world_49";
-  if(key == SDLK_WORLD_50) return "world_50";
-  if(key == SDLK_WORLD_51) return "world_51";
-  if(key == SDLK_WORLD_52) return "world_52";
-  if(key == SDLK_WORLD_53) return "world_53";
-  if(key == SDLK_WORLD_54) return "world_54";
-  if(key == SDLK_WORLD_55) return "world_55";
-  if(key == SDLK_WORLD_56) return "world_56";
-  if(key == SDLK_WORLD_57) return "world_57";
-  if(key == SDLK_WORLD_58) return "world_58";
-  if(key == SDLK_WORLD_59) return "world_59";
-  if(key == SDLK_WORLD_60) return "world_60";
-  if(key == SDLK_WORLD_61) return "world_61";
-  if(key == SDLK_WORLD_62) return "world_62";
-  if(key == SDLK_WORLD_63) return "world_63";
-  if(key == SDLK_WORLD_64) return "world_64";
-  if(key == SDLK_WORLD_65) return "world_65";
-  if(key == SDLK_WORLD_66) return "world_66";
-  if(key == SDLK_WORLD_67) return "world_67";
-  if(key == SDLK_WORLD_68) return "world_68";
-  if(key == SDLK_WORLD_69) return "world_69";
-  if(key == SDLK_WORLD_70) return "world_70";
-  if(key == SDLK_WORLD_71) return "world_71";
-  if(key == SDLK_WORLD_72) return "world_72";
-  if(key == SDLK_WORLD_73) return "world_73";
-  if(key == SDLK_WORLD_74) return "world_74";
-  if(key == SDLK_WORLD_75) return "world_75";
-  if(key == SDLK_WORLD_76) return "world_76";
-  if(key == SDLK_WORLD_77) return "world_77";
-  if(key == SDLK_WORLD_78) return "world_78";
-  if(key == SDLK_WORLD_79) return "world_79";
-  if(key == SDLK_WORLD_80) return "world_80";
-  if(key == SDLK_WORLD_81) return "world_81";
-  if(key == SDLK_WORLD_82) return "world_82";
-  if(key == SDLK_WORLD_83) return "world_83";
-  if(key == SDLK_WORLD_84) return "world_84";
-  if(key == SDLK_WORLD_85) return "world_85";
-  if(key == SDLK_WORLD_86) return "world_86";
-  if(key == SDLK_WORLD_87) return "world_87";
-  if(key == SDLK_WORLD_88) return "world_88";
-  if(key == SDLK_WORLD_89) return "world_89";
-  if(key == SDLK_WORLD_90) return "world_90";
-  if(key == SDLK_WORLD_91) return "world_91";
-  if(key == SDLK_WORLD_92) return "world_92";
-  if(key == SDLK_WORLD_93) return "world_93";
-  if(key == SDLK_WORLD_94) return "world_94";
-  if(key == SDLK_WORLD_95) return "world_95";
-#endif
-
-  // Numeric keypad
-  if(key == SDLK_KP0) return "kp0";
-  if(key == SDLK_KP1) return "kp1";
-  if(key == SDLK_KP2) return "kp2";
-  if(key == SDLK_KP3) return "kp3";
-  if(key == SDLK_KP4) return "kp4";
-  if(key == SDLK_KP5) return "kp5";
-  if(key == SDLK_KP6) return "kp6";
-  if(key == SDLK_KP7) return "kp7";
-  if(key == SDLK_KP8) return "kp8";
-  if(key == SDLK_KP9) return "kp9";
-  if(key == SDLK_KP_PERIOD) return "kp_period";
-  if(key == SDLK_KP_DIVIDE) return "kp_divide";
-  if(key == SDLK_KP_MULTIPLY) return "kp_multiply";
-  if(key == SDLK_KP_MINUS) return "kp_minus";
-  if(key == SDLK_KP_PLUS) return "kp_plus";
-  if(key == SDLK_KP_ENTER) return "kp_enter";
-  if(key == SDLK_KP_EQUALS) return "kp_equals";
-
-  // Arrows + Home/End pad
-  if(key == SDLK_UP) return "up";
-  if(key == SDLK_DOWN) return "down";
-  if(key == SDLK_RIGHT) return "right";
-  if(key == SDLK_LEFT) return "left";
-  if(key == SDLK_INSERT) return "insert";
-  if(key == SDLK_HOME) return "home";
-  if(key == SDLK_END) return "end";
-  if(key == SDLK_PAGEUP) return "pageup";
-  if(key == SDLK_PAGEDOWN) return "pagedown";
-
-  // Function keys
-  if(key == SDLK_F1) return "f1";
-  if(key == SDLK_F2) return "f2";
-  if(key == SDLK_F3) return "f3";
-  if(key == SDLK_F4) return "f4";
-  if(key == SDLK_F5) return "f5";
-  if(key == SDLK_F6) return "f6";
-  if(key == SDLK_F7) return "f7";
-  if(key == SDLK_F8) return "f8";
-  if(key == SDLK_F9) return "f9";
-  if(key == SDLK_F10) return "f10";
-  if(key == SDLK_F11) return "f11";
-  if(key == SDLK_F12) return "f12";
-  if(key == SDLK_F13) return "f13";
-  if(key == SDLK_F14) return "f14";
-  if(key == SDLK_F15) return "f15";
-
-  // Key state modifier keys
-  if(key == SDLK_NUMLOCK) return "numlock";
-  if(key == SDLK_CAPSLOCK) return "capslock";
-  if(key == SDLK_SCROLLOCK) return "scrollock";
-  if(key == SDLK_RSHIFT) return "rshift";
-  if(key == SDLK_LSHIFT) return "lshift";
-  if(key == SDLK_RCTRL) return "rctrl";
-  if(key == SDLK_LCTRL) return "lctrl";
-  if(key == SDLK_RALT) return "ralt";
-  if(key == SDLK_LALT) return "lalt";
-  if(key == SDLK_RMETA) return "rmeta";
-  if(key == SDLK_LMETA) return "lmeta";
-  if(key == SDLK_LSUPER) return "lsuper";
-  if(key == SDLK_RSUPER) return "rsuper";
-  if(key == SDLK_MODE) return "mode";
-  if(key == SDLK_COMPOSE) return "compose";
-
-  // Miscellaneous function keys
-  if(key == SDLK_HELP) return "help";
-  if(key == SDLK_PRINT) return "print";
-  if(key == SDLK_SYSREQ) return "sysreq";
-  if(key == SDLK_BREAK) return "break";
-  if(key == SDLK_MENU) return "menu";
-  if(key == SDLK_POWER) return "power";
-  if(key == SDLK_EURO) return "euro";
-  if(key == SDLK_UNDO) return "undo";
-
+  for (size_t i = 0; i < sizeof(key_names)/sizeof(key_names[0]); i++)
+    if (key == key_names[i].scancode)
+      return key_names[i].name;
   return "unknown";
 }
 

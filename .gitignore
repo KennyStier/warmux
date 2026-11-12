@@ -1,2 +1,4 @@
 autom4te.cache/
 *~
+packaging/arch/*
+!packaging/arch/PKGBUILD

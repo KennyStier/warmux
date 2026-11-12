@@ -23,7 +23,7 @@
 #define KEYBOARD_H
 //-----------------------------------------------------------------------------
 #include <set>
-#include "SDL_keysym.h"
+#include <SDL_keyboard.h>
 
 #include <WARMUX_singleton.h>
 
@@ -37,7 +37,7 @@ class Keyboard : public Singleton<Keyboard>, public ManMachineInterface
 private:
   int modifier_bits;
   int modifier_only_bits;
-  std::set<SDLKey> pressed_keys;
+  std::set<SDL_Scancode> pressed_keys;
   void HandleKeyComboEvent(int key_code, Key_Event_t event_type);
 protected:
   friend class Singleton<Keyboard>;

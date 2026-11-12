@@ -294,7 +294,7 @@ ResultsMenu::ResultsMenu(std::vector<TeamResults*>& v, bool disconnected)
                                     dark_gray_color, Text::ALIGN_CENTER_TOP));
   }
 
-  podium_img.SetAlpha(SDL_SRCALPHA, 0);
+  podium_img.SetAlpha(WX_SRCALPHA, 0);
   podium = new PictureWidget(podium_img);
   winner_box->AddWidget(podium);
   if (IsPodiumSeparate()) {

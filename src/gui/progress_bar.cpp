@@ -70,7 +70,7 @@ ProgressBar::ProgressBar(uint _x,
   orientation(_orientation)
 {
   image.NewSurface(Point2i(width, height), SDL_SWSURFACE, false);
-  image.SetColorKey(SDL_SRCCOLORKEY, 0);
+  image.SetColorKey(WX_SRCCOLORKEY, 0);
 }
 
 void ProgressBar::SetMinMaxValueColor(const Color & min,
@@ -91,7 +91,7 @@ void ProgressBar::InitPos(uint px, uint py,
   width = pwidth;
   height = pheight;
   image.NewSurface(Point2i(width, height), SDL_SWSURFACE, false);
-  image.SetColorKey(SDL_SRCCOLORKEY, 0);
+  image.SetColorKey(WX_SRCCOLORKEY, 0);
 }
 
 /*

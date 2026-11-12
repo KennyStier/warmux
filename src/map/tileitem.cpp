@@ -198,10 +198,9 @@ TileItem_BaseColorKey::TileItem_BaseColorKey(uint8_t alpha_threshold)
 TileItem_BaseColorKey::TileItem_BaseColorKey(uint8_t bpp, uint8_t alpha_threshold)
   : TileItem_NonEmpty(alpha_threshold)
 {
-  SDL_Surface     *surf = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_SRCCOLORKEY,
-                                               CELL_SIZE.x, CELL_SIZE.y, bpp,
+  SDL_Surface     *surf = SDL_CreateRGBSurface(0, CELL_SIZE.x, CELL_SIZE.y, bpp,
                                                0, 0, 0, 0);
-  m_surface = Surface(SDL_DisplayFormat(surf));
+  m_surface = Surface(SDL_ConvertSurface(surf, Surface::GetDisplayFormat(), 0));
   SDL_FreeSurface(surf);
   MapColorKey();
 }
@@ -215,7 +214,7 @@ void TileItem_BaseColorKey::ForceEmpty()
 void TileItem_BaseColorKey::MapColorKey()
 {
   color_key = m_surface.MapRGBA(255, 0, 255, 0);
-  m_surface.SetColorKey(SDL_SRCCOLORKEY|SDL_RLEACCEL, color_key);
+  m_surface.SetColorKey(WX_SRCCOLORKEY|SDL_RLEACCEL, color_key);
 }
 
 void TileItem_BaseColorKey::Dig(const Point2i &position, const Surface& dig)
@@ -224,7 +223,7 @@ void TileItem_BaseColorKey::Dig(const Point2i &position, const Surface& dig)
   m_end_check.SetValues(m_surface.GetSize().min(position+dig.GetSize()));
 
   const SDL_PixelFormat *fmt = dig.GetSurface()->format;
-  Uint32 dig_ckey = (fmt->BitsPerPixel==32) ? 0 : fmt->colorkey;
+  Uint32 dig_ckey = (fmt->BitsPerPixel==32) ? 0 : dig.GetColorKey();
 
   for (int py = m_start_check.y ; py < m_end_check.y ; py++) {
     for (int px = m_start_check.x ; px < m_end_check.x ; px++) {
@@ -276,7 +275,7 @@ void TileItem_BaseColorKey::MergeSprite(const Point2i &position, Surface& spr)
   m_end_check.SetValues(m_surface.GetSize().min(position+spr.GetSize()));
 
   const SDL_PixelFormat *fmt = spr.GetSurface()->format;
-  Uint32 spr_ckey = (fmt->BitsPerPixel==32) ? 0 : fmt->colorkey;
+  Uint32 spr_ckey = (fmt->BitsPerPixel==32) ? 0 : spr.GetColorKey();
 
   spr.Lock();
 
@@ -314,14 +313,10 @@ void TileItem_BaseColorKey::MergeSprite(const Point2i &position, Surface& spr)
 TileItem_ColorKey16::TileItem_ColorKey16(void *pixels, int pitch, uint8_t threshold)
   : TileItem_BaseColorKey(threshold)
 {
-  SDL_PixelFormat fmt = { NULL /* palette */, 32 /*bpp*/, 4 /*Bpp*/,
-                          0 /*Rloss*/, 0 /*Gloss*/, 0 /*Bloss*/, 0 /*Aloss*/,
-                          16 /*Rshift*/, 8 /*Gshift*/, 0 /*Bshift*/, 24 /*Ashift*/,
-                          0xFF0000, 0xFF00, 0xFF, 0xFF000000
-#if SDL_MINOR_VERSION != 3
-                          , 0 /*colorkey*/, 0 /*alpha*/
-#endif
-                        };
+  // Note: 16-bit colour-key tiles are only used in 16-bit display mode,
+  // which the SDL2 build no longer has (see Tile::InitPreview).
+  static SDL_PixelFormat *argb = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
+  SDL_PixelFormat &fmt = *argb;
   m_surface = Surface::DisplayFormatColorKey((uint32_t *)pixels, &fmt,
                                              CELL_SIZE.x, CELL_SIZE.y, pitch, threshold);
 
@@ -425,11 +420,8 @@ TileItem_ColorKey24::TileItem_ColorKey24(void *pixels, int pitch, uint8_t thresh
 
   SDL_Surface *surf = SDL_CreateRGBSurfaceFrom(pixels, CELL_SIZE.x, CELL_SIZE.y, 32, pitch,
                                                0xFF0000, 0xFF00, 0xFF, 0xFF000000);
-  SDL_SetAlpha(surf, 0, 0);
-  SDL_PixelFormat fmt;
-  memset(&fmt, 0, sizeof(fmt));
-  fmt.BitsPerPixel = 24;
-  m_surface = Surface(SDL_ConvertSurface(surf, &fmt, SDL_SWSURFACE));
+  SDL_SetSurfaceBlendMode(surf, SDL_BLENDMODE_NONE);
+  m_surface = Surface(SDL_ConvertSurfaceFormat(surf, SDL_PIXELFORMAT_RGB24, 0));
   SDL_FreeSurface(surf);
   MapColorKey();
 }
@@ -528,7 +520,7 @@ TileItem_AlphaSoftware::TileItem_AlphaSoftware(uint8_t alpha_threshold)
   : TileItem_NonEmpty(alpha_threshold)
 {
   // Calls NewSurface, which properly sets to display format alpha
-  m_surface = Surface(CELL_SIZE, SDL_SWSURFACE|SDL_SRCALPHA, true);
+  m_surface = Surface(CELL_SIZE, SDL_SWSURFACE|WX_SRCALPHA, true);
 }
 
 void TileItem_AlphaSoftware::ForceEmpty()
@@ -544,7 +536,8 @@ TileItem_AlphaSoftware::TileItem_AlphaSoftware(void *pixels, int pitch, uint8_t 
   SDL_Surface *surf = SDL_CreateRGBSurfaceFrom(pixels, CELL_SIZE.x, CELL_SIZE.y, 32, pitch,
                                                0xFF0000, 0xFF00, 0xFF, 0xFF000000);
   // Required to have a copy of the area
-  m_surface = Surface(SDL_DisplayFormatAlpha(surf));
+  m_surface = Surface(SDL_ConvertSurfaceFormat(surf, SDL_PIXELFORMAT_ARGB8888, 0));
+  SDL_SetSurfaceBlendMode(m_surface.GetSurface(), SDL_BLENDMODE_BLEND);
   SDL_FreeSurface(surf);
 
   // Check if the tile is in fact transparent (ie even if empty, must not be deleted)

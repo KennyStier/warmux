@@ -70,7 +70,8 @@ public:
                       const Point2i &lastMousePosition);
   virtual void Pack();
 
-  virtual bool SendKey(const SDL_keysym&);
+  virtual bool SendKey(const SDL_Keysym&);
+  virtual bool SendText(const std::string&);
   virtual Widget* Click(const Point2i &mousePosition, uint button);
   virtual Widget* ClickUp(const Point2i &mousePosition, uint button);
 

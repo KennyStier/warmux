@@ -290,7 +290,14 @@ void WidgetList::SetFocusOnPreviousWidget()
   SetFocusOn(w, true);
 }
 
-bool WidgetList::SendKey(SDL_keysym key)
+bool WidgetList::SendText(const std::string & text)
+{
+  if (selected_widget != NULL)
+    return selected_widget->SendText(text);
+  return false;
+}
+
+bool WidgetList::SendKey(SDL_Keysym key)
 {
   if (selected_widget != NULL)
     return selected_widget->SendKey(key);

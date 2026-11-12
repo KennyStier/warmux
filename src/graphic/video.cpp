@@ -19,10 +19,8 @@
 
 #include <algorithm>
 #include <iostream>
+#include <SDL.h>
 #include <SDL_image.h>
-#ifdef ANDROID
-#  include <SDL_screenkeyboard.h>
-#endif
 
 #include <WARMUX_file_tools.h>
 
@@ -32,11 +30,15 @@
 #include "include/constant.h"
 #include "map/camera.h"
 
+static int SDLCALL InputFilter(void *data, SDL_Event *event);
 
 Video::Video()
-  :SDLReady(false)
+  : SDLReady(false)
   , fullscreen(false)
   , icon(NULL)
+  , sdl_window(NULL)
+  , renderer(NULL)
+  , texture(NULL)
 {
   SetMaxFps(50);
 
@@ -45,21 +47,9 @@ Video::Video()
 
   InitSDL();
 
-#ifdef WIN32
-  // The SDL manual of SDL_WM_SetIcon states that "Win32 icons must be 32x32.":
-  icon = IMG_Load((config->GetDataDir() + "icon\\warmux.xpm").c_str());
-#elif !defined(ANDROID)
   // The icon must be larger then 32x32 pixels as some desktops display
-  // larger icons. For example on a mac system, the icon is displayed
-  // in a resolution of 64x64 pixels.
-  // The even higher resolution allows the system to scale the icon down
-  // to an anti-aliased version.
+  // larger icons; the window manager scales it down as needed.
   icon = IMG_Load((config->GetDataDir() + "icon/warmux_128x128.xpm").c_str());
-#endif
-  // SDL_WM_SetIcon must be called before the first call to SDL_SetVideoMode
-#ifndef MAEMO
-  SDL_WM_SetIcon(icon, NULL);
-#endif
 
   window.SetSurface(NULL, false);
   window.SetAutoFree(false);
@@ -75,10 +65,10 @@ Video::Video()
     // decorations, instead of the smallest one.
     w = available_configs.begin()->GetX();
     h = available_configs.begin()->GetY();
-    const SDL_VideoInfo *info = SDL_GetVideoInfo();
-    if (info && info->current_w > 0 && info->current_h > 0) {
-      int max_w = info->current_w * 9 / 10;
-      int max_h = info->current_h * 9 / 10;
+    SDL_DisplayMode desktop;
+    if (SDL_GetDesktopDisplayMode(0, &desktop) == 0 && desktop.w > 0 && desktop.h > 0) {
+      int max_w = desktop.w * 9 / 10;
+      int max_h = desktop.h * 9 / 10;
       for (std::list<Point2i>::const_iterator res = available_configs.begin();
            res != available_configs.end(); ++res) {
         if (res->GetX() <= max_w && res->GetY() <= max_h
@@ -99,14 +89,26 @@ Video::Video()
   AddUniqueConfigSorted(window.GetWidth(), window.GetHeight());
 
   SetWindowCaption(std::string("WarMUX ") + Constants::WARMUX_VERSION);
+
+  SDL_AddEventWatch(WindowEventWatch, this);
+  SDL_SetEventFilter(InputFilter, this);
 }
 
 Video::~Video()
 {
+  SDL_SetEventFilter(NULL, NULL);
+  SDL_DelEventWatch(WindowEventWatch, this);
   if (icon) {
     SDL_FreeSurface(icon);
     icon = NULL;
   }
+  window.SetSurface(NULL, true);
+  if (texture)
+    SDL_DestroyTexture(texture);
+  if (renderer)
+    SDL_DestroyRenderer(renderer);
+  if (sdl_window)
+    SDL_DestroyWindow(sdl_window);
   if (SDLReady) {
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
     SDLReady = false;
@@ -131,9 +133,6 @@ void Video::AddUniqueConfigSorted(int w, int h)
 {
   Point2i p(w, h);
 
-  std::list<Point2i>::iterator res  = available_configs.begin(),
-                               end  = available_configs.end();
-
   for (std::list<Point2i>::iterator res = available_configs.begin();
        res != available_configs.end();
        res++) {
@@ -152,24 +151,16 @@ void Video::AddUniqueConfigSorted(int w, int h)
 
 void Video::ComputeAvailableConfigs()
 {
-  //Generate video mode list
-  SDL_Rect **modes;
-
-  // Get available fullscreen modes
-  modes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_SWSURFACE);
-
-  // Check is there are any modes available
-  if (modes != NULL){
-    // We also had the current window resolution if it is not already in the list!
-    for (int i=0;modes[i];++i) {
-      if (modes[i]->w>=480 && modes[i]->h>=320) {
-        AddUniqueConfigSorted(modes[i]->w, modes[i]->h);
-      }
-    }
+  // Since the renderer scales the game to the window, any resolution works.
+  // Offer the display's own modes...
+  int n = SDL_GetNumDisplayModes(0);
+  for (int i = 0; i < n; i++) {
+    SDL_DisplayMode mode;
+    if (SDL_GetDisplayMode(0, i, &mode) == 0 && mode.w >= 480 && mode.h >= 320)
+      AddUniqueConfigSorted(mode.w, mode.h);
   }
 
-  // If biggest resolution is big enough, we propose standard resolutions
-  // such as 1600x1200, 1280x1024, 1024x768, 800x600.
+  // ...plus standard resolutions such as 1600x1200, 1280x1024, 1024x768, 800x600.
   for (std::list<Point2i>::iterator res = Config::GetInstance()->GetResolutionAvailable().begin();
        res != Config::GetInstance()->GetResolutionAvailable().end();
        res++) {
@@ -177,31 +168,68 @@ void Video::ComputeAvailableConfigs()
   }
 }
 
-bool Video::__SetConfig(const int width, const int height, const bool _fullscreen)
+bool Video::CreateWindowAndRenderer(int w, int h, bool fs)
 {
-  int flags = SDL_SWSURFACE;
-#ifdef HAVE_HANDHELD
-  int bpp   = 16;
-#else
-  int bpp   = Config::GetInstance()->GetQuality()==QUALITY_32BPP ? 32 : 16;
-#endif
+  Uint32 flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
+  if (fs)
+    flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
-#ifdef HAVE_TOUCHSCREEN
-  bool __fullscreen = true;
-#else
-  bool __fullscreen = _fullscreen;
-#endif
-
-  flags |= (__fullscreen) ? SDL_FULLSCREEN : 0;
-#ifdef __SYMBIAN32__
-  flags = 0;
-#endif
-
-  window.SetSurface(SDL_SetVideoMode(width, height, bpp, flags));
-  if (window.IsNull())
+  sdl_window = SDL_CreateWindow("WarMUX", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                w, h, flags);
+  if (!sdl_window)
     return false;
 
-  fullscreen = __fullscreen;
+  if (icon)
+    SDL_SetWindowIcon(sdl_window, icon);
+
+  // Smooth scaling looks better than nearest-neighbour at arbitrary ratios
+  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+
+  renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
+  if (!renderer) {
+    fprintf(stderr, "WARNING: no accelerated renderer (%s), using software\n", SDL_GetError());
+    renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_SOFTWARE);
+  }
+  if (!renderer) {
+    SDL_DestroyWindow(sdl_window);
+    sdl_window = NULL;
+    return false;
+  }
+  return true;
+}
+
+bool Video::__SetConfig(const int width, const int height, const bool _fullscreen)
+{
+  if (!sdl_window) {
+    if (!CreateWindowAndRenderer(width, height, _fullscreen))
+      return false;
+  } else {
+    if (SDL_SetWindowFullscreen(sdl_window, _fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) < 0)
+      return false;
+    if (!_fullscreen)
+      SDL_SetWindowSize(sdl_window, width, height);
+  }
+
+  // (Re)create the game surface and its texture if the resolution changed
+  if (window.IsNull() || window.GetWidth() != width || window.GetHeight() != height) {
+    SDL_Texture *new_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888,
+                                                 SDL_TEXTUREACCESS_STREAMING, width, height);
+    if (!new_texture)
+      return false;
+    SDL_Surface *screen = SDL_CreateRGBSurfaceWithFormat(0, width, height, 32,
+                                                         SDL_PIXELFORMAT_RGB888);
+    if (!screen) {
+      SDL_DestroyTexture(new_texture);
+      return false;
+    }
+    if (texture)
+      SDL_DestroyTexture(texture);
+    texture = new_texture;
+    window.SetSurface(screen, true);
+  }
+
+  SDL_RenderSetLogicalSize(renderer, width, height);
+  fullscreen = _fullscreen;
 
   return true;
 }
@@ -228,28 +256,25 @@ bool Video::SetConfig(const int width, const int height, const bool _fullscreen)
   }
   old_fullscreen = fullscreen;
 
-  // Trying with hardware acceleration
   r = __SetConfig(width, height, _fullscreen);
   if (!r) {
     fprintf(stderr,
             "WARNING: Fail to initialize main window with the following configuration:\n"
-            " %dx%d, fullscreen: %d\n", old_width, old_height, _fullscreen);
+            " %dx%d, fullscreen: %d (%s)\n", width, height, _fullscreen, SDL_GetError());
 
     // Trying previous configuration
     if (! __SetConfig(old_width, old_height, old_fullscreen)) {
-
       // previous configuration fails !?!
-
       // let's have another try without fullscreen
       if (! __SetConfig(old_width, old_height, false)) {
         Error(Format("ERROR: Fail to initialize main window with the following configuration:\n"
-                     " %dx%d, no fullscreen,\n", old_width, old_height));
+                     " %dx%d, no fullscreen: %s\n", old_width, old_height, SDL_GetError()));
         exit(EXIT_FAILURE);
       }
     }
   }
 
-  Camera::GetInstance()->SetSize(width, height);
+  Camera::GetInstance()->SetSize(window.GetWidth(), window.GetHeight());
 
   // refresh all the map when switching to higher resolution
   if (!window_was_null)
@@ -260,18 +285,15 @@ bool Video::SetConfig(const int width, const int height, const bool _fullscreen)
 
 void Video::ToggleFullscreen()
 {
-#ifndef WIN32
-  SDL_WM_ToggleFullScreen(window.GetSurface());
-  fullscreen = !fullscreen;
-#else
-  SetConfig(window.GetWidth(), window.GetHeight(), !fullscreen);
-  AppWarmux::GetInstance()->RefreshDisplay();
-#endif
+  if (SDL_SetWindowFullscreen(sdl_window, fullscreen ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP) == 0)
+    fullscreen = !fullscreen;
+  Present();
 }
 
 void Video::SetWindowCaption(const std::string& caption) const
 {
-  SDL_WM_SetCaption(caption.c_str(), NULL);
+  if (sdl_window)
+    SDL_SetWindowTitle(sdl_window, caption.c_str());
 }
 
 void Video::InitSDL()
@@ -284,18 +306,103 @@ void Video::InitSDL()
     exit(EXIT_FAILURE);
   }
 
-#ifdef ANDROID
-  SDL_Rect r = {0,0,0,0};
-  SDL_ANDROID_SetScreenKeyboardButtonPos(SDL_ANDROID_SCREENKEYBOARD_BUTTON_TEXT, &r);
-#endif
-
-  SDL_EnableUNICODE(1);
   SDLReady = true;
 }
 
 void Video::Flip()
 {
-  window.Flip();
+  if (!texture || window.IsNull())
+    return;
+  SDL_UpdateTexture(texture, NULL, window.GetSurface()->pixels, window.GetSurface()->pitch);
+  Present();
+}
+
+void Video::Present()
+{
+  if (!renderer || !texture)
+    return;
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+  SDL_RenderClear(renderer);
+  SDL_RenderCopy(renderer, texture, NULL, NULL);
+  SDL_RenderPresent(renderer);
+}
+
+static int SDLCALL InputFilter(void *data, SDL_Event *event)
+{
+  Video *video = static_cast<Video*>(data);
+
+  if (event->type == SDL_MOUSEBUTTONDOWN || event->type == SDL_MOUSEBUTTONUP) {
+    // Keep side buttons from being mistaken for the wheel
+    if (event->button.button == SDL_BUTTON_X1)
+      event->button.button = 6;
+    else if (event->button.button == SDL_BUTTON_X2)
+      event->button.button = 7;
+    return 1;
+  }
+
+  if (event->type == SDL_MOUSEWHEEL) {
+    int dy = event->wheel.y;
+    if (event->wheel.direction == SDL_MOUSEWHEEL_FLIPPED)
+      dy = -dy;
+    if (!dy || !video->GetSDLWindow())
+      return 0;
+
+    int x, y;
+    SDL_GetMouseState(&x, &y); // window coordinates; the renderer converts them
+    SDL_Event click;
+    SDL_zero(click);
+    click.button.windowID = SDL_GetWindowID(video->GetSDLWindow());
+    click.button.which = event->wheel.which;
+    click.button.button = (dy > 0) ? WX_BUTTON_WHEELUP : WX_BUTTON_WHEELDOWN;
+    click.button.clicks = 1;
+    click.button.x = x;
+    click.button.y = y;
+    for (int n = (dy > 0) ? dy : -dy; n > 0; n--) {
+      click.type = SDL_MOUSEBUTTONDOWN;
+      click.button.state = SDL_PRESSED;
+      SDL_PushEvent(&click);
+      click.type = SDL_MOUSEBUTTONUP;
+      click.button.state = SDL_RELEASED;
+      SDL_PushEvent(&click);
+    }
+    return 0; // drop the original wheel event
+  }
+  return 1;
+}
+
+int Video::WindowEventWatch(void *data, SDL_Event *event)
+{
+  // Menus only redraw on input, so show the last frame again whenever the
+  // window is uncovered or resized instead of leaving it black.
+  if (event->type == SDL_WINDOWEVENT) {
+    switch (event->window.event) {
+    case SDL_WINDOWEVENT_EXPOSED:
+    case SDL_WINDOWEVENT_SIZE_CHANGED:
+      static_cast<Video*>(data)->Present();
+      break;
+    default:
+      break;
+    }
+  }
+  return 0;
+}
+
+Point2i Video::WindowToGame(int x, int y) const
+{
+  if (!renderer)
+    return Point2i(x, y);
+  float lx, ly;
+  SDL_RenderWindowToLogical(renderer, x, y, &lx, &ly);
+  return Point2i((int)lx, (int)ly);
+}
+
+Point2i Video::GameToWindow(int x, int y) const
+{
+  if (!renderer)
+    return Point2i(x, y);
+  int wx, wy;
+  SDL_RenderLogicalToWindow(renderer, (float)x, (float)y, &wx, &wy);
+  return Point2i(wx, wy);
 }
 
 bool Video::SaveScreenshot()
@@ -322,6 +429,16 @@ bool Video::SaveScreenshot()
   return false;
 }
 
+
+Uint32 GetGameMouseState(int *x, int *y)
+{
+  int wx, wy;
+  Uint32 buttons = SDL_GetMouseState(&wx, &wy);
+  Point2i p = AppWarmux::GetInstance()->video->WindowToGame(wx, wy);
+  if (x) *x = p.x;
+  if (y) *y = p.y;
+  return buttons;
+}
 
 Surface& GetMainWindow()
 {

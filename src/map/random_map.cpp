@@ -53,7 +53,7 @@ RandomMap::RandomMap(Profile *profile, const int width, const int height)
 {
   this->profile = profile;
   SetSize(width, height);
-  result = Surface(Point2i(width, height), SDL_SWSURFACE|SDL_SRCALPHA, true);
+  result = Surface(Point2i(width, height), SDL_SWSURFACE|WX_SRCALPHA, true);
   random_shape = NULL;
   bezier_shape = NULL;
   expanded_bezier_shape = NULL;

@@ -273,7 +273,7 @@ void Tile::PutSprite(const Point2i& pos, Sprite* spr)
     pdst += pitch<<(CELL_BITS-m_shift);
   }
 
-  s.SetAlpha(SDL_SRCALPHA, 0);
+  s.SetAlpha(WX_SRCALPHA, 0);
 
   m_preview->Unlock();
   m_last_preview_redraw = GameTime::GetInstance()->Read();
@@ -325,15 +325,15 @@ void Tile::InitPreview()
 
   if (m_preview)
     delete m_preview;
-  Quality qual = Config::GetInstance()->GetQuality();
-  m_use_alpha = qual > QUALITY_16BPP;
+  // The screen is always 32-bit under SDL2, so always use alpha tiles
+  m_use_alpha = true;
   if (!m_use_alpha) {
     m_preview = new Surface(world_size, SDL_SWSURFACE, false);
-    m_preview->SetColorKey(SDL_SRCCOLORKEY|SDL_RLEACCEL, 0xF81F);
+    m_preview->SetColorKey(WX_SRCCOLORKEY|SDL_RLEACCEL, 0xF81F);
     m_preview->Fill(0xF81F);
   } else {
     m_preview = new Surface(world_size, SDL_SWSURFACE, true);
-    // Having an alpha channel forces SDL_SRCALPHA, so we must remove it
+    // Having an alpha channel forces WX_SRCALPHA, so we must remove it
     m_preview->SetAlpha(0, 0);
   }
 
@@ -620,15 +620,15 @@ void Tile::DrawTile_Clipped(const Rectanglei & worldClip) const
 
 Surface Tile::GetPart(const Rectanglei& rec)
 {
-  Surface part(rec.GetSize(), SDL_SWSURFACE|SDL_SRCALPHA, true);
+  Surface part(rec.GetSize(), SDL_SWSURFACE|WX_SRCALPHA, true);
   part.SetAlpha(0, 0);
   part.Fill(0x00000000);
-  part.SetAlpha(SDL_SRCALPHA, 0);
+  part.SetAlpha(WX_SRCALPHA, 0);
 
   Point2i firstCell = Clamp(rec.GetPosition()>> CELL_BITS);
   Point2i lastCell = Clamp((rec.GetPosition() + rec.GetSize())>> CELL_BITS);
   Point2i i = nbCells - 1;
-  bool    force_copy = SDL_GetVideoInfo()->vfmt->BytesPerPixel>2;
+  bool    force_copy = true; // 32-bit display
 
   for (i.y = firstCell.y; i.y <= lastCell.y; i.y++) {
     for (i.x = firstCell.x; i.x <= lastCell.x; i.x++) {
@@ -656,7 +656,7 @@ Surface Tile::GetPart(const Rectanglei& rec)
 
       if (force_copy) tin->GetSurface().SetAlpha(0, 0);
       part.Blit(tin->GetSurface(), src, dst);
-      if (force_copy) tin->GetSurface().SetAlpha(SDL_SRCALPHA, 0);
+      if (force_copy) tin->GetSurface().SetAlpha(WX_SRCALPHA, 0);
     }
   }
   return part;

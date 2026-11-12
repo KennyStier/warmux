@@ -20,6 +20,7 @@
  *****************************************************************************/
 
 #include "game/config.h"
+#include "graphic/video.h"
 #include "game/game_mode.h"
 #include "menu/teams_selection_box.h"
 #include "menu/team_box.h"
@@ -207,9 +208,9 @@ Widget* LocalTeamsSelectionBox::ClickUp(const Point2i &mousePosition, uint butto
 
         // Validate where the click really landed
         if (r.Contains(mousePosition)) {
-          if (button == Mouse::BUTTON_LEFT() || button == SDL_BUTTON_WHEELDOWN) {
+          if (button == Mouse::BUTTON_LEFT() || button == WX_BUTTON_WHEELDOWN) {
             NextTeam(i);
-          } else if (button == Mouse::BUTTON_RIGHT() || button == SDL_BUTTON_WHEELUP) {
+          } else if (button == Mouse::BUTTON_RIGHT() || button == WX_BUTTON_WHEELUP) {
             PrevTeam(i);
           }
           return at;

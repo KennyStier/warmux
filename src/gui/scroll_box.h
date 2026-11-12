@@ -26,7 +26,7 @@
 #include "gui/vertical_box.h"
 
 // Forward declaration
-struct SDL_keysym;
+struct SDL_Keysym;
 class VBox;
 class Button;
 
@@ -77,7 +77,7 @@ public:
                       const Point2i &lastMousePosition);
   virtual Widget* Click(const Point2i & mousePosition, uint button);
   virtual Widget* ClickUp(const Point2i & mousePosition, uint button);
-  virtual bool SendKey(const SDL_keysym & key);
+  virtual bool SendKey(const SDL_Keysym & key);
   virtual void Pack();
 
   // to add a widget

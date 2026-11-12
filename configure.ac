@@ -161,7 +161,7 @@ dnl ========================================================================
 dnl === Checks for required libraries to be present                        =
 dnl ========================================================================
 
-SDL_VERSION=1.2.6
+SDL_VERSION=2.0.18
 
 dnl === Internet game discovery ============================================
 dnl The original upstream host is gone, so both default to empty (disabled).
@@ -230,36 +230,17 @@ else
   fi
 fi
 
-dnl === Check for SDL ======================================================
-
-AM_PATH_SDL($SDL_VERSION,
-            :,
-            AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!]))
+dnl === Check for SDL2 and its companion libraries ========================
+dnl Clipboard access now goes through SDL2, so X11 is no longer needed.
+PKG_PROG_PKG_CONFIG()
+PKG_CHECK_MODULES(SDL, [sdl2 >= $SDL_VERSION SDL2_image SDL2_mixer SDL2_ttf SDL2_net SDL2_gfx],
+                  [], [AC_MSG_ERROR([SDL2 and SDL2_image, SDL2_mixer, SDL2_ttf, SDL2_net, SDL2_gfx are required: $SDL_PKG_ERRORS])])
 CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS"
 
-dnl === Check for X11 ======================================================
-dnl Deactivated on purpose under OSX (in case X11 SDK is installed)
-if test "x$OSX" != "xyes" ; then
-  AC_CHECK_HEADER(X11/Xlib.h, check_x11="yes",check_x11="no")
-  if test x${check_x11} = xno ; then
-    AC_CHECK_HEADER(X11R6/Xlib.h,
-                    [ check_x11="yes"
-                      LDFLAGS="-L/usr/X11R6/include $CFLAGS"],
-                    check_x11="no")
-  fi
-  if test x${check_x11} = xyes ; then
-    AC_CHECK_LIB(X11, XOpenDisplay,
-                 [ LIBS="$LIBS -lX11"
-                   AC_DEFINE(USE_X11, 1, [Define to use X11 copy'n'paste]) ],
-                 [])
-  fi
-fi
-
-dnl === Check for libxml2 and libpng using pkg-confg =======================
-PKG_PROG_PKG_CONFIG()
+dnl === Check for libxml2 and libpng using pkg-config ======================
 PKG_CHECK_MODULES(LIBXML2, libxml-2.0, [], [AC_MSG_FAILURE([libxml2 not found])])
 PKG_CHECK_MODULES(LIBPNG, libpng, [], [AC_MSG_FAILURE([libpng not found])])
 CFLAGS="$CFLAGS $LIBPNG_CFLAGS $LIBXML2_CFLAGS"
@@ -288,39 +269,9 @@ else
   fi
 fi
 
-dnl === Check for SDL_gfx ==================================================
-
-AC_ARG_WITH(sdl-gfx-prefix,
-            [  --with-sdl-gfx-prefix=DIR       specify where SDL_gfx library is installed],
-            [SDL_GFX_PREFIX="$withval"])
-AC_SUBST(SDL_GFX_PREFIX)
-if test "x$SDL_GFX_PREFIX" != "x"; then
-  CPPFLAGS="$CPPFLAGS -I$SDL_GFX_PREFIX/include/SDL"
-  CXXFLAGS="$CXXFLAGS -I$SDL_GFX_PREFIX/include/SDL"
-  LIBS="-L$SDL_GFX_PREFIX/lib $LIBS"
-fi
 if test "$static" = yes; then
   LIBS="$LIBS -lm -ldl -lfreetype -lz"
 fi
-AC_CHECK_HEADER(SDL_rotozoom.h,,AC_MSG_ERROR(Please install SDL_gfx))
-AC_CHECK_LIB(SDL_gfx, rotozoomSurfaceXY,, AC_MSG_ERROR(Please install SDL_gfx))
-AC_MSG_CHECKING([whether SDL_gfx - version >= 2.0.22 ])
-AC_RUN_IFELSE([
-#include <stdio.h>
-#include <SDL_gfxPrimitives.h>
-#undef main
-int main(void)
-{
-  FILE *f = fopen("conftest.out", "wt+");
-  fprintf(f, "%i.%i.%i\n",
-         SDL_GFXPRIMITIVES_MAJOR, SDL_GFXPRIMITIVES_MINOR, SDL_GFXPRIMITIVES_MICRO);
-  fclose(f);
-  int ver = SDL_GFXPRIMITIVES_MAJOR*1000+SDL_GFXPRIMITIVES_MINOR*100+SDL_GFXPRIMITIVES_MICRO;
-  return ver < 2022;
-}],
-  [echo "`cat conftest.out`, OK"],
-  [cat conftest.out
-   AC_MSG_ERROR(Please upgrade SDL_gfx)])
 
 dnl === Check for curl =====================================================
 
@@ -342,10 +293,6 @@ AM_CONDITIONAL(MAEMO, test "x${enable_maemo}" = "xyes")
 
 dnl === Check for SDL image, mixer, etc. ===================================
 
-AC_CHECK_LIB(SDL_image, IMG_Load,,check_sdl_image="no")
-AC_CHECK_LIB(SDL_mixer, Mix_OpenAudio,,check_sdl_mixer="no")
-AC_CHECK_LIB([SDL_ttf], [TTF_OpenFont],,check_sdl_ttf="no")
-AC_CHECK_LIB([SDL_net], [SDLNet_Init],,check_sdl_net="no")
 if test "${WIN32}" = "yes"; then
   LIBS="$LIBS -lwsock32 -lws2_32 -luser32"
   CXXFLAGS="$CXXFLAGS -D_WIN32_WINNT=0x501"

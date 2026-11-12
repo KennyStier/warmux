@@ -697,9 +697,9 @@ bool Game::Run()
   bool game_finished = false;
   isGameLaunched = true;
 
-  // Menus enable key repeat; gameplay tracks held keys itself and must not
-  // receive synthetic repeats (they break charge-up weapons and the rope)
-  SDL_EnableKeyRepeat(0, 0);
+  // No text input during play: input methods (IMEs) could grab game keys.
+  // The in-game chat turns it back on while it is open.
+  SDL_StopTextInput();
 
   // Time to display the next frame
   time_of_next_frame = 0;
@@ -753,7 +753,7 @@ bool Game::Run()
 #endif
     MessageEndOfGame();
 
-  SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+  SDL_StartTextInput(); // back to the menus
 
   return game_finished;
 }

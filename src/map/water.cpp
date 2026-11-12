@@ -92,12 +92,12 @@ void Water::Init()
 #ifdef HAVE_HANDHELD
   surface = GetResourceManager().LoadImage(res, image, false);
   pattern.NewSurface(Point2i(PATTERN_WIDTH, PATTERN_HEIGHT),
-                     SDL_SWSURFACE|SDL_SRCCOLORKEY, false);
-  pattern.SetColorKey(SDL_SRCCOLORKEY|SDL_RLEACCEL, 0);
+                     SDL_SWSURFACE|WX_SRCCOLORKEY, false);
+  pattern.SetColorKey(WX_SRCCOLORKEY|SDL_RLEACCEL, 0);
 #else
   surface = GetResourceManager().LoadImage(res, image, true);
   pattern.NewSurface(Point2i(PATTERN_WIDTH, PATTERN_HEIGHT),
-                     SDL_SWSURFACE|SDL_SRCALPHA, true);
+                     SDL_SWSURFACE|WX_SRCALPHA, true);
 #endif
 
   shift1 = 0;

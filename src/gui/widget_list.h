@@ -62,7 +62,8 @@ public:
   virtual void NeedRedrawing();
 
   // methods specialized from Widget to manage the list of widgets
-  virtual bool SendKey(SDL_keysym key);
+  virtual bool SendKey(SDL_Keysym key);
+  virtual bool SendText(const std::string & text);
   virtual Widget* Click(const Point2i &mousePosition, uint button);
   virtual Widget* ClickUp(const Point2i &mousePosition, uint button);
 

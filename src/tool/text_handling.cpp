@@ -69,38 +69,21 @@ static bool RemoveUTF8CharAfter(std::string& text, std::string::size_type& pos)
 }
 
 
-static bool InsertUTF8Char(std::string& text, std::string::size_type& pos, const SDL_keysym& key)
+bool TextInsert(std::string& text, std::string::size_type& pos, const std::string& utf8)
 {
   // check cursor position
   if (pos > text.size()) {
     pos = text.size();
   }
+  if (utf8.empty())
+    return false;
 
-  if (key.unicode > 0)
-    {
-      if (key.unicode < 0x80) // 1 byte char
-        {
-          text.insert(pos++, 1, (char)key.unicode);
-        }
-      else if (key.unicode < 0x800) // 2 byte char
-        {
-          text.insert(pos++, 1, (char)(((key.unicode & 0x7c0) >> 6) | 0xc0));
-          text.insert(pos++, 1, (char)((key.unicode & 0x3f) | 0x80));
-        }
-      else // if (key.unicode < 0x10000) // 3 byte char
-        {
-          text.insert(pos++, 1, (char)(((key.unicode & 0xf000) >> 12) | 0xe0));
-          text.insert(pos++, 1, (char)(((key.unicode & 0xfc0) >> 6) | 0x80));
-          text.insert(pos++, 1, (char)((key.unicode & 0x3f) | 0x80));
-        }
-      return true;
-    }
-
-  // this is not a valid char
-  return false;
+  text.insert(pos, utf8);
+  pos += utf8.size();
+  return true;
 }
 
-static bool processModifier(std::string& text, std::string::size_type& pos, const SDL_keysym& key)
+static bool processModifier(std::string& text, std::string::size_type& pos, const SDL_Keysym& key)
 {
   switch (key.sym)
     {
@@ -113,7 +96,7 @@ static bool processModifier(std::string& text, std::string::size_type& pos, cons
     }
 }
 
-bool TextHandle(std::string& text, std::string::size_type& pos, const SDL_keysym& key)
+bool TextHandle(std::string& text, std::string::size_type& pos, const SDL_Keysym& key)
 {
   bool r = true;
 
@@ -155,10 +138,12 @@ bool TextHandle(std::string& text, std::string::size_type& pos, const SDL_keysym
     break;
 
   default:
-    if (SDL_GetModState()&(KMOD_CTRL|KMOD_META))
+    if (SDL_GetModState()&(KMOD_CTRL|KMOD_GUI))
       r = processModifier(text, pos, key);
     else
-      r = InsertUTF8Char(text, pos, key);
+      // Characters arrive separately as SDL_TEXTINPUT (see TextInsert);
+      // claim printable keys so they don't trigger shortcuts while typing
+      r = !(key.sym & SDLK_SCANCODE_MASK) && key.sym >= SDLK_SPACE;
     break;
   }
 

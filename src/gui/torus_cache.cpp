@@ -117,7 +117,7 @@ void TorusCache::Refresh(float angle, float open)
     poly->Draw(m_torus);
     delete poly;
 
-    m_torus->SetAlpha(SDL_SRCALPHA, 0);
+    m_torus->SetAlpha(WX_SRCALPHA, 0);
   }
   m_last_angle = angle;
 }

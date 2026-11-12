@@ -32,6 +32,11 @@
 struct SDL_Surface;
 struct SDL_PixelFormat;
 
+// Surface options inherited from SDL 1.2, which SDL2 no longer has as flags.
+// Pass them to the Surface constructor, SetAlpha() and SetColorKey().
+#define WX_SRCALPHA    0x00010000  // blend using alpha (per-pixel or per-surface)
+#define WX_SRCCOLORKEY 0x00001000  // treat the colour key as transparent
+
 class Surface
 {
 private:
@@ -126,13 +131,16 @@ public:
   void MergeSurface(Surface &spr, const Point2i &position);
 
   int SetColorKey(Uint32 flag, Uint32 key);
+  bool HasColorKey() const;
+  Uint32 GetColorKey() const;
+
+  // The 32-bit format of the screen; "display format" conversions target it
+  static SDL_PixelFormat *GetDisplayFormat();
 
   void GetRGBA(Uint32 color, Uint8 &r, Uint8 &g, Uint8 &b, Uint8 &a) const;
   Uint32 MapRGBA(Uint8 r, Uint8 g, Uint8 b, Uint8 a) const;
   Color GetColor(Uint32 color) const;
   Uint32 MapColor(const Color& color) const;
-
-  void Flip();
 
   int BoxColor(const Rectanglei &rect, const Color &color);
   int RectangleColor(const Rectanglei &rect, const Color &color, const uint &border_size = 1);
@@ -171,7 +179,6 @@ public:
   inline int GetWidth() const { return surface->w; }
   inline int GetHeight() const { return surface->h; }
 
-  Uint32 GetFlags() const { return surface->flags; };
   /** Return the length of a surface scanline in bytes. */
   Uint16 GetPitch() const { return surface->pitch; };
   /** Return the number of bytes used to represent each pixel

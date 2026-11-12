@@ -31,7 +31,7 @@
 #include "tool/resource_manager.h"
 
 class Surface;
-struct SDL_keysym;
+struct SDL_Keysym;
 
 #define W_UNDEF 0
 
@@ -92,7 +92,9 @@ public:
   virtual void Draw(const Point2i & mousePosition) = 0;
   virtual void NeedRedrawing() { need_redrawing = true; }; // set need_redrawing to true; -- virtual for widget_list
 
-  virtual bool SendKey(const SDL_keysym &) { return false; };
+  virtual bool SendKey(const SDL_Keysym &) { return false; };
+  // UTF-8 text typed by the user (SDL_TEXTINPUT); true if consumed
+  virtual bool SendText(const std::string &) { return false; };
   virtual Widget * Click(const Point2i & mousePosition, uint button);
   virtual Widget * ClickUp(const Point2i & mousePosition, uint button);
   const std::string & GetActionName(void) const { return this->actionName; };
