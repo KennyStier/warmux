@@ -77,9 +77,14 @@ jobs:
           path: dist/*.deb
 
   rpm:
-    name: Fedora package
+    name: Fedora ${{ matrix.fedora }} package
     runs-on: ubuntu-latest
-    container: registry.fedoraproject.org/fedora:latest
+    # One build per supported release: library sonames differ between them
+    # (Fedora 45 moved to libxml2.so.16)
+    strategy:
+      matrix:
+        fedora: ['44', '45']
+    container: registry.fedoraproject.org/fedora:${{ matrix.fedora }}
     steps:
       - name: Install dependencies
         run: |
@@ -99,7 +104,7 @@ jobs:
           rpmbuild -bb --define "_topdir $PWD/rpm" rpm/warmux.spec
       - uses: actions/upload-artifact@v4
         with:
-          name: rpm
+          name: rpm-fc${{ matrix.fedora }}
           path: rpm/RPMS/x86_64/warmux-[0-9]*.rpm
 
   release:
@@ -124,7 +129,8 @@ jobs:
           | `warmux-*.flatpak` | Any Linux distribution: `flatpak install --user warmux-*.flatpak` |
           | `warmux-git-*.pkg.tar.zst` | Arch Linux: `sudo pacman -U warmux-git-*.pkg.tar.zst` |
           | `warmux_*.deb` | Ubuntu 24.04+ / Debian: `sudo apt install ./warmux_*.deb` |
-          | `warmux-*.rpm` | Fedora: `sudo dnf install ./warmux-*.rpm` |
+          | `warmux-*.fc44.x86_64.rpm` | Fedora 44: `sudo dnf install ./warmux-*.fc44.x86_64.rpm` |
+          | `warmux-*.fc45.x86_64.rpm` | Fedora 45: `sudo dnf install ./warmux-*.fc45.x86_64.rpm` |
 
           ## Changes
           EOF
