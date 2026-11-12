@@ -14,5 +14,5 @@ AM_CXXFLAGS = -DPACKAGE_VERSION=\"$(PACKAGE_VERSION)\" \
 
 LIBS += @LIBCURL@ @LIBINTL@
 
-warmux_list_games_LDADD=$(top_srcdir)/lib/warmux/libwarmux.a
-warmux_list_games_DEPENDENCIES=$(top_srcdir)/lib/warmux/libwarmux.a
+warmux_list_games_LDADD=$(top_builddir)/lib/warmux/libwarmux.a
+warmux_list_games_DEPENDENCIES=$(top_builddir)/lib/warmux/libwarmux.a

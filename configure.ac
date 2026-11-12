@@ -21,6 +21,7 @@ AC_CANONICAL_TARGET
 
 #AC_CONFIG_AUX_DIR([config])
 AM_INIT_AUTOMAKE([foreign 1.5])
+AC_CONFIG_MACRO_DIRS([m4 build/m4])
 
 AM_GNU_GETTEXT([external], [need-ngettext])
 AM_CONDITIONAL([NLS], test "$USE_NLS" = "yes")
@@ -387,7 +388,7 @@ dnl ========================================================================
 dnl === Data file substitution.                                          ===
 dnl ========================================================================
 
-DATA_FILES=`cd data ; find . \( -name CVS -o -name ".svn*" -o -name "Makefile*" -o -name "warmux*.desktop" \) -prune -o -name ".#*" -o -type d -o -print`
+DATA_FILES=`cd "$srcdir/data" ; find . \( -name CVS -o -name ".svn*" -o -name "Makefile*" -o -name "warmux*.desktop" \) -prune -o -name ".#*" -o -type d -o -print`
 DATA_FILES=`echo $DATA_FILES`
 
 AC_SUBST([DATA_FILES])

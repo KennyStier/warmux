@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I m4 -I build/m4
+
 SUBDIRS = data lib src
 
 if NLS

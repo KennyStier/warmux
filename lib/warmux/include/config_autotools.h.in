@@ -4,11 +4,11 @@
    language is requested. */
 #undef ENABLE_NLS
 
-/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
-   CoreFoundation framework. */
-#undef HAVE_CFLOCALECOPYCURRENT
+/* Define to 1 if you have the Mac OS X function
+   CFLocaleCopyPreferredLanguages in the CoreFoundation framework. */
+#undef HAVE_CFLOCALECOPYPREFERREDLANGUAGES
 
-/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
+/* Define to 1 if you have the Mac OS X function CFPreferencesCopyAppValue in
    the CoreFoundation framework. */
 #undef HAVE_CFPREFERENCESCOPYAPPVALUE
 
@@ -16,7 +16,7 @@
    */
 #undef HAVE_DCGETTEXT
 
-/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
+/* Define to 1 if you have the <dirent.h> header file, and it defines 'DIR'.
    */
 #undef HAVE_DIRENT_H
 
@@ -32,29 +32,29 @@
 /* Define to 1 if you have a functional curl library. */
 #undef HAVE_LIBCURL
 
-/* Define to 1 if you have the `SDL_gfx' library (-lSDL_gfx). */
+/* Define to 1 if you have the 'SDL_gfx' library (-lSDL_gfx). */
 #undef HAVE_LIBSDL_GFX
 
-/* Define to 1 if you have the `SDL_image' library (-lSDL_image). */
+/* Define to 1 if you have the 'SDL_image' library (-lSDL_image). */
 #undef HAVE_LIBSDL_IMAGE
 
-/* Define to 1 if you have the `SDL_mixer' library (-lSDL_mixer). */
+/* Define to 1 if you have the 'SDL_mixer' library (-lSDL_mixer). */
 #undef HAVE_LIBSDL_MIXER
 
-/* Define to 1 if you have the `SDL_net' library (-lSDL_net). */
+/* Define to 1 if you have the 'SDL_net' library (-lSDL_net). */
 #undef HAVE_LIBSDL_NET
 
-/* Define to 1 if you have the `SDL_ttf' library (-lSDL_ttf). */
+/* Define to 1 if you have the 'SDL_ttf' library (-lSDL_ttf). */
 #undef HAVE_LIBSDL_TTF
 
-/* Define to 1 if you have the <memory.h> header file. */
-#undef HAVE_MEMORY_H
-
-/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
+/* Define to 1 if you have the <ndir.h> header file, and it defines 'DIR'. */
 #undef HAVE_NDIR_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
@@ -65,11 +65,11 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
-/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
+/* Define to 1 if you have the <sys/dir.h> header file, and it defines 'DIR'.
    */
 #undef HAVE_SYS_DIR_H
 
-/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
+/* Define to 1 if you have the <sys/ndir.h> header file, and it defines 'DIR'.
    */
 #undef HAVE_SYS_NDIR_H
 
@@ -154,7 +154,9 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Define to 1 if you have the ANSI C header files. */
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
 
 /* Define to use FriBidi */

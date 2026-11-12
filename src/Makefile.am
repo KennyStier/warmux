@@ -445,5 +445,5 @@ else
 LIBS += @LIBCURL@
 endif
 
-warmux_LDADD=$(top_srcdir)/lib/fixedpoint/libfixedpoint.a $(top_srcdir)/lib/warmux/libwarmux.a
-warmux_DEPENDENCIES=$(top_srcdir)/lib/fixedpoint/libfixedpoint.a $(top_srcdir)/lib/warmux/libwarmux.a
+warmux_LDADD=$(top_builddir)/lib/fixedpoint/libfixedpoint.a $(top_builddir)/lib/warmux/libwarmux.a
+warmux_DEPENDENCIES=$(top_builddir)/lib/fixedpoint/libfixedpoint.a $(top_builddir)/lib/warmux/libwarmux.a
