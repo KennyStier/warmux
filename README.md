@@ -22,6 +22,7 @@ the original project.
   out-of-tree builds, Arch's hardened build flags and LTO.
 - **Held keys work properly**: charge-up weapons (bazooka, grenades) and
   rope swinging no longer cut out after a quarter second.
+- **Game controller support**: plug in a pad and play, menus included.
 - **Better text input**: typing uses SDL2 text input (works with input
   methods and any Unicode), and paste uses the system clipboard everywhere.
 - **Network play no longer depends on the defunct upstream server**. Point it
@@ -93,6 +94,23 @@ Useful `configure` options:
 | P | Pause |
 | F10 | Toggle fullscreen |
 | Esc | Leave the game |
+
+### Game controllers
+
+Any controller SDL recognises (Xbox, PlayStation, Switch Pro, 8BitDo and
+most others) works in the menus and in game, with no setup:
+
+| Control | Action |
+|---|---|
+| Left stick / D-pad | Walk, aim; navigate menus |
+| A | Fire (hold to charge); confirm in menus |
+| B / X / Y | Jump / high jump / back jump (B goes back in menus) |
+| RB | Next weapon in the current category |
+| LB | Next weapon category |
+| LT / RT | Weapon setting (e.g. timer) down / up |
+| Right stick, R3 | Move the camera, re-centre on the character |
+| Back | Next character |
+| Start | Pause menu |
 
 Key bindings refer to physical key positions (a US layout's positions), so
 on AZERTY and similar layouts letter bindings stay where a QWERTY user would

@@ -22,6 +22,8 @@
 #include <iostream>
 
 #include "menu/menu.h"
+#include <cstdio>
+#include <cstdlib>
 #include "graphic/sprite.h"
 #include "graphic/video.h"
 #include "gui/big/button_pic.h"
@@ -36,6 +38,7 @@
 #include "gui/text_box.h"
 #include "gui/vertical_box.h"
 #include "include/app.h"
+#include "interface/joystick.h"
 #include "interface/keyboard.h"
 #include "interface/mouse.h"
 #include "sound/jukebox.h"
@@ -356,6 +359,21 @@ bool Menu::HandleGlobalEvent(const SDL_Event & evnt)
 
 void Menu::HandleEvent(const SDL_Event& evnt)
 {
+  // Game controllers navigate menus like the arrow, Enter and Escape keys
+  SDL_Keycode pad_key = Joystick::MenuKey(evnt);
+  if (pad_key != SDLK_UNKNOWN) {
+    if (getenv("WARMUX_DEBUG_INPUT"))
+      fprintf(stderr, "[input] menu: controller -> %s\n", SDL_GetKeyName(pad_key));
+    SDL_Event key;
+    SDL_zero(key);
+    key.type = SDL_KEYDOWN;
+    key.key.state = SDL_PRESSED;
+    key.key.keysym.sym = pad_key;
+    key.key.keysym.scancode = SDL_GetScancodeFromKey(pad_key);
+    HandleEvent(key);
+    return;
+  }
+
   if (evnt.type == SDL_QUIT) {
 #if defined MAEMO || defined __SYMBIAN32__
     AppWarmux::EmergencyExit();

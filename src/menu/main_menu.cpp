@@ -50,7 +50,8 @@ MainMenu::MainMenu() :
     Menu("main_menu/bg_main", vNo)
 {
   Point2i size(120,110);
-  Box* box = new GridBox(2, 4, 6, true);
+  Box* box = new GridBox(GRID_ROWS, GRID_COLUMNS, 6, true);
+  grid = box;
 
   play = new ButtonPic(_("Play"), "menu/ico_play", size);
   box->AddWidget(play);
@@ -77,6 +78,10 @@ MainMenu::MainMenu() :
   box->AddWidget(quit);
 
   widgets.AddWidget(box);
+
+  ButtonPic *order[] = { play, network, options, bench, help, credits, replay, quit };
+  for (int i = 0; i < GRID_COLUMNS * GRID_ROWS; i++)
+    buttons[i] = order[i];
 
   // We must "pack" all the widgets before centering the box to compute its size
   box->Pack();
@@ -199,9 +204,24 @@ bool MainMenu::signal_cancel()
   return true;
 }
 
+void MainMenu::MoveFocus(int dx, int dy)
+{
+  Widget *current = grid->GetCurrentKeyboardSelectedWidget();
+  int index = 0;
+  for (int i = 0; i < GRID_COLUMNS * GRID_ROWS; i++)
+    if (buttons[i] == current)
+      index = i;
+
+  int col = (index % GRID_COLUMNS + dx + GRID_COLUMNS) % GRID_COLUMNS;
+  int row = (index / GRID_COLUMNS + dy + GRID_ROWS) % GRID_ROWS;
+  grid->SetFocusOn(buttons[row * GRID_COLUMNS + col], false); // don't warp the mouse
+  RedrawMenu();
+}
+
 bool MainMenu::signal_ok()
 {
-  Widget * w = widgets.GetCurrentKeyboardSelectedWidget();
+  // The focused button lives in the grid, not in the top-level list
+  Widget * w = grid->GetCurrentKeyboardSelectedWidget();
   if (w) {
     SelectAction(w);
   } else {

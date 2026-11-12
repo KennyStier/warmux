@@ -47,6 +47,7 @@
 #include "menu/replay_menu.h"
 #include "network/randomsync.h"
 #include "particles/particle.h"
+#include "interface/joystick.h"
 #include "replay/replay.h"
 #include "sound/jukebox.h"
 #include "tool/stats.h"
@@ -87,6 +88,8 @@ AppWarmux::AppWarmux():
 {
   RandomLocal().InitRandom();
   std::cout << "[ " << _("Run game") << " ]" << std::endl;
+  // Open game controllers now, so they also work in the menus
+  Joystick::GetInstance();
 }
 
 AppWarmux::~AppWarmux()

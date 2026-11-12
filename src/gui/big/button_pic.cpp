@@ -100,8 +100,9 @@ void ButtonPic::Draw(const Point2i &mousePosition)
 
   surf.Blit(m_img_normal, Point2i(tmp_x, tmp_y));
 
-  if (Contains(mousePosition)) {
-    surf.RectangleColor(*this, c_red, 1);
+  // Outline when hovered, or focused with the keyboard or a controller
+  if (Contains(mousePosition) || HasFocus()) {
+    surf.RectangleColor(*this, c_red, HasFocus() ? 2 : 1);
     txt_label->SetColor(black_color);
   } else {
     txt_label->SetColor(dark_gray_color);

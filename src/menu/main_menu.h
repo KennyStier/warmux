@@ -28,12 +28,19 @@
 // Forward declarations
 class Text;
 class ButtonPic;
+class Box;
 
 class MainMenu : public Menu
 {
   ButtonPic *play, *network, *options, *bench;
   ButtonPic *help, *credits, *replay, *quit;
   Text * version_text, *website_text;
+
+  // Keyboard/controller navigation of the 4x2 button grid
+  static const int GRID_COLUMNS = 4, GRID_ROWS = 2;
+  Box *grid;
+  ButtonPic *buttons[GRID_COLUMNS * GRID_ROWS];
+  void MoveFocus(int dx, int dy);
 
 public:
   typedef enum
@@ -63,6 +70,11 @@ protected:
    bool signal_ok();
    bool signal_cancel();
    void SelectAction(const Widget * widget);
+   void key_up()    { MoveFocus(0, -1); }
+   void key_down()  { MoveFocus(0, 1); }
+   void key_left()  { MoveFocus(-1, 0); }
+   void key_right() { MoveFocus(1, 0); }
+   void key_tab()   { MoveFocus(1, 0); }
 
 private:
    virtual void DrawBackground();
