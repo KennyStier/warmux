@@ -49,6 +49,7 @@ public:
   Cluster(ClusterBombConfig& cfg,
           WeaponLauncher * p_launcher);
   void Refresh();
+  using WeaponProjectile::Shoot;
   void Shoot(const Point2i & pos, Double strength, Double angle);
   virtual void SetEnergyDelta(int delta, bool do_report = true);
 

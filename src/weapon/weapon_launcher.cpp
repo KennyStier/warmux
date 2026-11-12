@@ -218,7 +218,6 @@ void WeaponProjectile::Shoot(Double strength)
   }
 #else
   Point2i hole_position = launcher->GetGunHolePosition() - GetSize() / 2;
-  Point2d f_hole_position = hole_position * METER_PER_PIXEL;
   SetXY(hole_position);
   PutOutOfGround(angle);
   SetSpeed(strength, angle);

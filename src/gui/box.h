@@ -43,6 +43,7 @@ public:
 
   void SetMargin(uint _margin) { margin = _margin; };
 
+  using Widget::SetBorder;
   void SetBorder(uint b) { border_size = b; };
   void SetNoBorder() { border_size = 0; };
 

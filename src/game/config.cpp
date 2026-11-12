@@ -627,7 +627,7 @@ bool Config::SaveXml(bool save_current_teams)
         it = GetTeamsList().playing_list.begin(),
         end = GetTeamsList().playing_list.end();
 
-      for (int i=0; it!=end; ++it, i++) {
+      for (; it!=end; ++it) {
         ConfigTeam config;
         config.id = (**it).GetId();
         config.player_name = (**it).GetPlayerName();
@@ -770,7 +770,7 @@ void Config::SetNetworkLocalTeams()
     it = GetTeamsList().playing_list.begin(),
     end = GetTeamsList().playing_list.end();
 
-  for (int i=0; it != end; ++it, i++) {
+  for (; it != end; ++it) {
     if ((**it).IsLocal()) {
       ConfigTeam config;
       config.id = (**it).GetId();

@@ -105,7 +105,7 @@ void Interface::LoadDataInternal(Profile *res)
                              GameMode::GetInstance()->character.init_energy);
 
   // Labels
-  uint fsize = Font::FONT_SMALL*powf(zoom, 0.85f)+0.5f;
+  uint fsize = (int)Font::FONT_SMALL*powf(zoom, 0.85f)+0.5f;
   if (fsize < 10) fsize = 10;
   t_character_name = new Text("None", m_text_color, fsize, Font::FONT_BOLD, false);
   t_team_name = new Text("None", m_text_color, fsize, Font::FONT_BOLD, false);
@@ -118,12 +118,12 @@ void Interface::LoadDataInternal(Profile *res)
   if (replay) {
     char tmp[] = { 'x', '1', 0 };
     tmp[1] = 48+(uint)GameTime::GetConstInstance()->GetSpeed();
-    t_speed = new Text(tmp, primary_red_color, Font::FONT_HUGE*zoom+0.5f, Font::FONT_BOLD, true);
+    t_speed = new Text(tmp, primary_red_color, (int)Font::FONT_HUGE*zoom+0.5f, Font::FONT_BOLD, true);
   }
 
   // Timer
-  global_timer = new Text("0", gray_color, Font::FONT_BIG*zoom+0.5f, Font::FONT_BOLD, false);
-  timer = new Text("0", black_color, Font::FONT_MEDIUM*zoom+0.5f, Font::FONT_BOLD, false);
+  global_timer = new Text("0", gray_color, (int)Font::FONT_BIG*zoom+0.5f, Font::FONT_BOLD, false);
+  timer = new Text("0", black_color, (int)Font::FONT_MEDIUM*zoom+0.5f, Font::FONT_BOLD, false);
 
   wind_bar.InitPos(0, 0, 82*zoom-1.5f, 15*zoom-1.5f);
 }

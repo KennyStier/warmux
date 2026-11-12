@@ -285,8 +285,6 @@ void printTo(std::ostream & os, const fixed_point<p> & r, int digits = -1)
   os << ".";
 
   to_print -= left_of_dot;
-  fixed_point<p> zero = 0;
-
   int zeros = 0;
   if (to_print < 0) {
     to_print = - to_print;

@@ -170,6 +170,8 @@ static void Action_Network_MasterChangeState(Action *a)
   case WNet::NETWORK_PLAYING:
     if (Game::GetInstance()->IsGameFinished())
       break;
+    // Ready-to-play while already playing is a protocol error
+    [[fallthrough]];
 
   default:
     NET_ASSERT(false)

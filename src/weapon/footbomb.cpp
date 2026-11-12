@@ -56,6 +56,7 @@ public:
               WeaponLauncher * p_launcher);
   void Refresh();
   virtual void SetEnergyDelta(int delta, bool do_report = true);
+  using WeaponProjectile::Shoot;
   void Shoot(const Point2i & pos, Double strength, Double angle, int recursions);
 
 protected:

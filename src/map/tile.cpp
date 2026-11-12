@@ -673,7 +673,7 @@ Tile::SynchTileList Tile::GetTilesToSynch()
     TileItem_NonEmpty *t = static_cast<TileItem_NonEmpty*>(item[i]);
 
     if (t->NeedSynch()) {
-      SynchTileInfo info = { i, t->GetSynchsum() };
+      SynchTileInfo info = { (uint16_t)i, t->GetSynchsum() };
       list.push_back(info);
     }
   }

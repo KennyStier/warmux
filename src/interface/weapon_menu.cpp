@@ -119,7 +119,7 @@ void WeaponMenuItem::Draw(Surface * dest)
   int nb_bullets = ActiveTeam().ReadNbAmmos(weapon->GetType());
   Point2i tmp = GetOffsetAlignment() + Point2i(0, item->GetWidth() - 10);
 
-  char buffer[5] = { 0, };
+  char buffer[16] = { 0, };
   if (nb_bullets ==  INFINITE_AMMO) {
 #define UTF8_INFINITE "\xE2\x88\x9E"
     PolygonItem::Draw(dest);
@@ -133,7 +133,7 @@ void WeaponMenuItem::Draw(Surface * dest)
 
         tmp.x += m_parent->m_not_yet_available->GetWidth()-5;
         tmp.y += 10;
-        snprintf(buffer, 4, "%i ", num);
+        snprintf(buffer, sizeof(buffer), "%i ", num);
         Font::GetInstance(Font::FONT_SMALL, Font::FONT_BOLD)->WriteLeft(tmp, buffer, dark_red_color);
       } else {
         item->SetAlpha(0.3);
@@ -331,11 +331,6 @@ void WeaponsMenu::RefreshWeaponList()
 
 AffineTransform2D WeaponsMenu::ComputeToolTransformation()
 {
-  uint scroll_border = 0;
-  if (Config::GetInstance()->GetScrollOnBorder()) {
-    scroll_border = Config::GetInstance()->GetScrollBorderSize();
-  }
-
   Point2i start = click_pos - Point2i(tools_menu->GetWidth(), 0);
   Point2i end = click_pos + Point2i(weapons_menu->GetWidth()+10, 0);
 
@@ -349,11 +344,6 @@ AffineTransform2D WeaponsMenu::ComputeToolTransformation()
 
 AffineTransform2D WeaponsMenu::ComputeWeaponTransformation()
 {
-  uint scroll_border = 0;
-  if (Config::GetInstance()->GetScrollOnBorder()) {
-    scroll_border = Config::GetInstance()->GetScrollBorderSize();
-  }
-
   // Init animation parameter
   Point2i start = click_pos
                 - Point2i(weapons_menu->GetWidth()+10+tools_menu->GetWidth(), 0);

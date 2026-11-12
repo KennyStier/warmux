@@ -107,6 +107,7 @@ class CluzookaCluster : public WeaponProjectile, public Spawner< CluzookaCluster
 public:
   CluzookaCluster(ExplosiveWeaponConfig& cfg, WeaponLauncher * p_launcher);
   void Refresh();
+  using WeaponProjectile::Shoot;
   void Shoot(const Point2i & start_pos, Double strength, Double angle, uint recurse_times);
   virtual void SetEnergyDelta(int delta, bool do_report = true);
 
@@ -128,7 +129,7 @@ void CluzookaCluster::Shoot(const Point2i & start_pos, Double strength, Double a
 #ifdef CLUSTERS_SPAWN_CLUSTERS
   m_recursion_depth = recurse_times;
 #else
-  recurse_times = 0; // to keep compiler happy
+  (void)recurse_times;
 #endif
 
   Camera::GetInstance()->FollowObject(this);

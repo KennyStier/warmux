@@ -20,7 +20,7 @@
  *****************************************************************************/
 
 #ifndef STRING_TOOLS_H
-#define STRING_TOOLS__H
+#define STRING_TOOLS_H
 
 #include <WARMUX_base.h>
 #include <string>

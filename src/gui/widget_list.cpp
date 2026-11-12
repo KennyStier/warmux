@@ -297,7 +297,7 @@ bool WidgetList::SendText(const std::string & text)
   return false;
 }
 
-bool WidgetList::SendKey(SDL_Keysym key)
+bool WidgetList::SendKey(const SDL_Keysym & key)
 {
   if (selected_widget != NULL)
     return selected_widget->SendKey(key);

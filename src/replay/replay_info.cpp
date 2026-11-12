@@ -47,8 +47,9 @@ void Write32(FILE *out, uint32_t val)
 uint32_t Read32(FILE *in)
 {
   uint32_t render;
-  int i_dont_care = fread(&render, 1, 4, in);
-  i_dont_care = 0;
+  render = 0;
+  if (fread(&render, 1, 4, in) != 4)
+    render = 0; // truncated file: treated as zero, as before
   return SDLNet_Read32(&render);
 }
 

@@ -74,10 +74,9 @@ bool XmlReader::Load(const std::string &filename)
 
   Reset();
 
-  // Activate Entities
-  xmlSubstituteEntitiesDefault(1);
-
-  doc = xmlParseFile(filename.c_str());
+  // Parse with entity substitution (replaces the deprecated global
+  // xmlSubstituteEntitiesDefault(1) + xmlParseFile)
+  doc = xmlReadFile(filename.c_str(), NULL, XML_PARSE_NOENT);
   if (!doc)
     return false;
 

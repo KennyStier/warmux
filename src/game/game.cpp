@@ -1026,16 +1026,13 @@ bool Game::NewBox()
     }
   }
 
-  // Type of box : 1 = MedKit, 2 = Bonus Box.
+  // Either a MedKit or a Bonus Box
   ObjBox * box;
-  int type;
   MSG_DEBUG("random.get", "Game::NewBox(...) box type?");
   if (RandomSync().GetBool()) {
     box = new Medkit();
-    type = 1;
   } else {
     box = new BonusBox(weapons_list->GetRandomWeaponToDrop());
-    type = 2;
   }
   // Randomize container
   box->Randomize();

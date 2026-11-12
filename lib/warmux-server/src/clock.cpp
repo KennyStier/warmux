@@ -22,7 +22,7 @@
 #include <WSERVER_clock.h>
 
 static char time_str[16];
-static char date_str[16];
+static char date_str[32];
 
 BasicClock::BasicClock()
 {
@@ -44,7 +44,7 @@ const char* BasicClock::DateStr()
   struct tm* t;
   time_t now = time(NULL);
   t = localtime(&now);
-  snprintf(date_str, 16, "%2i/%02i/%04i", t->tm_mday, t->tm_mon+1, t->tm_year+1900);
+  snprintf(date_str, sizeof(date_str), "%2i/%02i/%04i", t->tm_mday, t->tm_mon+1, t->tm_year+1900);
   return date_str;
 }
 

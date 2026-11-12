@@ -41,7 +41,8 @@ public:
     type = count;
     Map.push_back(name);
   }
-  MemberType(const MemberType& other) { type = other.type; }
+  MemberType(const MemberType&) = default;
+  MemberType& operator=(const MemberType&) = default;
   operator int() const { return type; }
   operator const std::string&() const { return Map[type]; }
   bool operator ==(const std::string& name) const { return Map[type] == name; }

@@ -175,7 +175,6 @@ void ScrollBox::__Update(const Point2i & mousePosition,
     int new_offset = offset;
 
     if (scroll_mode == SCROLL_MODE_THUMB) {
-      Point2i track_pos  = GetScrollTrackPos();
       int     height     = GetTrackHeight();
 
       new_offset = start_drag_offset +

@@ -35,7 +35,7 @@ AIStrategy::CompareResult AIStrategy::CompareRatingWith(AIStrategy * other) cons
   if (this->GetRating() + RATING_EPSILON < other->GetRating())
     return AIStrategy::LOWER_RATING;
 
-  if (this->GetRating() - LOWER_RATING > other->GetRating())
+  if (this->GetRating() - RATING_EPSILON > other->GetRating())
     return AIStrategy::HIGHER_RATING;
 
   return AIStrategy::SIMILAR_RATING;

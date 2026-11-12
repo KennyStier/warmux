@@ -35,6 +35,7 @@ class WeaponStrengthBar : public ProgressBar
   void FetchData();
 
 public:
+  using ProgressBar::DrawXY; // the const version still draws without fetching data
   WeaponStrengthBar();
   ~WeaponStrengthBar();
   virtual void DrawXY(const Point2i &pos);

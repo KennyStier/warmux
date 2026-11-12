@@ -56,7 +56,7 @@ public:
 
   virtual void Pack();
   virtual void Draw(const Point2i &mousePosition);
-  virtual Widget* Click(const Point2i&, uint) const { return NULL; };
+  virtual Widget* Click(const Point2i&, uint) { return NULL; };
   virtual Widget* ClickUp(const Point2i &mousePosition, uint button);
 
   const std::string GetValue() const { return m_choices[m_index].first; };
