@@ -2,7 +2,7 @@
 # Builds the latest commit of https://github.com/KennyStier/warmux
 
 pkgname=warmux-git
-pkgver=11.04.1.r7.ge8e151e
+pkgver=11.04.1.r11.g07d97bb
 pkgrel=1
 pkgdesc="Turn-based artillery game with free-software mascots (maintained fork, includes index/game servers)"
 arch=('x86_64' 'aarch64')
@@ -20,6 +20,13 @@ sha256sums=('SKIP')
 pkgver() {
   cd warmux
   printf "11.04.1.r%s.g%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short=7 HEAD)"
+}
+
+prepare() {
+  cd warmux
+  # makepkg reuses this checkout between runs; drop old build output so
+  # objects compiled against older dependencies are never linked in
+  git clean -dfxq
 }
 
 build() {
