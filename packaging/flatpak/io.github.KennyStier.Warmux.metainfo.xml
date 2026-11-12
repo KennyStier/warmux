@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.KennyStier.Warmux</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0-or-later</project_license>
+  <name>Warmux</name>
+  <summary>Turn-based artillery battles between free-software mascots</summary>
+  <developer id="io.github.kennystier">
+    <name>KennyStier and the Warmux team</name>
+  </developer>
+  <description>
+    <p>
+      Teams of free-software mascots (Tux, Gnu, Firefox, Wilber and friends)
+      take turns blasting each other across destructible 2D maps with
+      bazookas, grenades, baseball bats, ropes and plenty of other
+      questionable equipment.
+    </p>
+    <p>
+      Play hot-seat on one computer, against the AI, or over the network.
+      This is a maintained fork of Warmux 11.04, ported to SDL2: it runs
+      natively on Wayland, renders at the size of its window and keeps held
+      keys working for charge-up weapons and the rope.
+    </p>
+  </description>
+  <launchable type="desktop-id">io.github.KennyStier.Warmux.desktop</launchable>
+  <url type="homepage">https://github.com/KennyStier/warmux</url>
+  <url type="bugtracker">https://github.com/KennyStier/warmux/issues</url>
+  <categories>
+    <category>Game</category>
+    <category>StrategyGame</category>
+  </categories>
+  <content_rating type="oars-1.1">
+    <content_attribute id="violence-cartoon">moderate</content_attribute>
+    <content_attribute id="social-chat">intense</content_attribute>
+  </content_rating>
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </supports>
+  <releases>
+    <release version="11.04.1" date="2026-11-11">
+      <description>
+        <p>SDL2 port, window-size rendering, modern toolchain support.</p>
+      </description>
+    </release>
+  </releases>
+</component>

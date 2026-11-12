@@ -10,7 +10,7 @@ url="https://github.com/KennyStier/warmux"
 license=('GPL-2.0-or-later')
 depends=('sdl2' 'sdl2_image' 'sdl2_gfx' 'sdl2_ttf' 'sdl2_mixer' 'sdl2_net'
          'curl' 'libxml2' 'libpng' 'libstdc++' 'glibc' 'hicolor-icon-theme')
-makedepends=('git')
+makedepends=('git' 'autoconf' 'automake')
 provides=('warmux')
 conflicts=('warmux' 'warmux-data')
 replaces=('wormux')
@@ -27,6 +27,8 @@ prepare() {
   # makepkg reuses this checkout between runs; drop old build output so
   # objects compiled against older dependencies are never linked in
   git clean -dfxq
+  # Regenerate the build system with the installed autotools
+  autoreconf -fi
 }
 
 build() {

@@ -32,7 +32,9 @@
 
 #include "sample_cache.h"
 
-typedef struct Mix_Music Mix_Music;
+// The struct behind Mix_Music changed name between SDL2_mixer releases,
+// so take the real declaration rather than forward-declaring it
+#include <SDL_mixer.h>
 
 //-----------------------------------------------------------------------------
 

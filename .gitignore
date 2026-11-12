@@ -2,3 +2,5 @@ autom4te.cache/
 *~
 packaging/arch/*
 !packaging/arch/PKGBUILD
+_flatpak/
+.flatpak-builder/

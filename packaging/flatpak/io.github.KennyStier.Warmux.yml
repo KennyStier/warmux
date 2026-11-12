@@ -1,0 +1,131 @@
+# Flatpak manifest for Warmux.
+#
+# Build and install locally from the repository root:
+#   flatpak-builder --user --install --force-clean _flatpak \
+#       packaging/flatpak/io.github.KennyStier.Warmux.yml
+# Run:
+#   flatpak run io.github.KennyStier.Warmux
+
+id: io.github.KennyStier.Warmux
+runtime: org.freedesktop.Platform
+runtime-version: '26.08'
+sdk: org.freedesktop.Sdk
+command: warmux
+
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --device=dri        # hardware-accelerated scaling of the game surface
+  - --device=input      # gamepads
+  - --share=network     # network games
+
+cleanup:
+  - /include
+  - /lib/pkgconfig
+  - /lib/cmake
+  - /share/aclocal
+  - '*.la'
+  - '*.a'
+
+modules:
+  # The runtime ships SDL2 as sdl2-compat (on top of SDL3) but without the
+  # sdl2.pc / sdl2-config names that the SDL2_* libraries look for.
+  - name: sdl2-shim
+    buildsystem: simple
+    build-commands:
+      - install -Dm644 sdl2.pc /app/lib/pkgconfig/sdl2.pc
+      - install -Dm755 sdl2-config /app/bin/sdl2-config
+    sources:
+      - type: inline
+        dest-filename: sdl2.pc
+        contents: |
+          Name: sdl2
+          Description: SDL2 (provided by the runtime's sdl2-compat)
+          Version: 2.32.0
+          Requires: sdl2-compat
+      - type: inline
+        dest-filename: sdl2-config
+        contents: |
+          #!/bin/sh
+          for arg in "$@"; do
+            case "$arg" in
+              --version) pkg-config --modversion sdl2-compat ;;
+              --cflags) pkg-config --cflags sdl2-compat ;;
+              --libs|--static-libs) pkg-config --libs sdl2-compat ;;
+              --prefix|--exec-prefix) echo /usr ;;
+            esac
+          done
+    cleanup:
+      - '*'
+
+  - name: SDL2_image
+    config-opts:
+      - --disable-static
+    sources:
+      - type: archive
+        url: https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.12/SDL2_image-2.8.12.tar.gz
+        sha256: 393f5efb50536ec13ca4f4affb69cc9966d3c3f969e6c5e701faddf9f9785381
+
+  - name: SDL2_mixer
+    config-opts:
+      - --disable-static
+    sources:
+      - type: archive
+        url: https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.8.2/SDL2_mixer-2.8.2.tar.gz
+        sha256: 938dff531d00ace2296557a6599abe6f34599e2f34f0a4a08a397e2ccac8b8f7
+
+  - name: SDL2_ttf
+    config-opts:
+      - --disable-static
+      - --disable-freetype-builtin
+      - --disable-harfbuzz-builtin
+    sources:
+      - type: archive
+        url: https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.24.0/SDL2_ttf-2.24.0.tar.gz
+        sha256: 0b2bf1e7b6568adbdbc9bb924643f79d9dedafe061fa1ed687d1d9ac4e453bfd
+
+  - name: SDL2_net
+    config-opts:
+      - --disable-static
+    sources:
+      - type: archive
+        url: https://github.com/libsdl-org/SDL_net/releases/download/release-2.4.0/SDL2_net-2.4.0.tar.gz
+        sha256: 9cbca2527feb3f1a622d48ba65cc7dee9b1e3f2c55ceafb7d7720bb058aafb30
+
+  - name: SDL2_gfx
+    config-opts:
+      - --disable-static
+      - --disable-mmx   # 32-bit x86 assembly only
+    sources:
+      - type: archive
+        url: https://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-1.0.4.tar.gz
+        mirror-urls:
+          - https://downloads.sourceforge.net/project/sdl2gfx/SDL2_gfx-1.0.4.tar.gz
+        sha256: 63e0e01addedc9df2f85b93a248f06e8a04affa014a835c2ea34bfe34e576262
+
+  - name: warmux
+    builddir: true
+    config-opts:
+      - --disable-servers
+    post-install:
+      # Name desktop integration after the app ID, as Flatpak requires
+      - rm /app/share/applications/warmux_files.desktop
+      - mv /app/share/applications/warmux.desktop /app/share/applications/${FLATPAK_ID}.desktop
+      - desktop-file-edit --set-icon=${FLATPAK_ID} /app/share/applications/${FLATPAK_ID}.desktop
+      - for f in /app/share/icons/hicolor/*/apps/warmux.*; do mv "$f" "${f%/warmux.*}/${FLATPAK_ID}.${f##*.}"; done
+      - install -Dm644 ${FLATPAK_BUILDER_BUILDDIR}/packaging/flatpak/${FLATPAK_ID}.metainfo.xml /app/share/metainfo/${FLATPAK_ID}.metainfo.xml
+    sources:
+      - type: dir
+        path: ../..
+        skip:
+          - _flatpak
+          - .flatpak-builder
+          - packaging/arch
+      # Regenerate the build system with the SDK's autotools; copying the
+      # tree changes timestamps, and make would otherwise try to rerun the
+      # exact automake version that generated the committed files
+      - type: shell
+        commands:
+          - autoreconf -fi
