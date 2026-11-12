@@ -90,6 +90,10 @@ public:
   bool IsVideoFullScreen() const { return video_fullscreen; };
   void SetVideoFullScreen(const bool set_fullscreen) { video_fullscreen = set_fullscreen; };
 
+  // Display scale in percent; 0 follows the desktop's scale factor
+  uint GetVideoScale() const { return video_scale; };
+  void SetVideoScale(const uint scale) { video_scale = scale; };
+
   uint GetVideoWidth() const { return video_width; };
   void SetVideoWidth(const uint width) { video_width = width; };
 
@@ -198,6 +202,7 @@ protected:
   uint video_width;
   uint video_height;
   bool video_fullscreen;
+  uint video_scale;
   uint max_fps;
   bool bling_bling_interface;
   std::list<Point2i> resolution_available;

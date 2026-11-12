@@ -113,6 +113,7 @@ Config::Config()
   , default_mouse_cursor(false)
   , video_width(0)
   , video_height(0)
+  , video_scale(0)
 
 #ifdef HAVE_TOUCHSCREEN
   , video_fullscreen(true) // No other mode supported
@@ -507,6 +508,7 @@ void Config::LoadXml(const xmlNode *xml)
     XmlReader::ReadUint(elem, "width", video_width);
     XmlReader::ReadUint(elem, "height", video_height);
     XmlReader::ReadBool(elem, "full_screen", video_fullscreen);
+    XmlReader::ReadUint(elem, "scale", video_scale);
 
     uint qual;
     if (XmlReader::ReadUint(elem, "quality", qual)) {
@@ -664,9 +666,11 @@ bool Config::SaveXml(bool save_current_teams)
   doc.WriteElement(video_node, "default_mouse_cursor", bool2str(default_mouse_cursor));
   doc.WriteElement(video_node, "scroll_on_border", bool2str(scroll_on_border));
   doc.WriteElement(video_node, "scroll_border_size", uint2str(scroll_border_size));
-  doc.WriteElement(video_node, "width", uint2str(video->window.GetWidth()));
-  doc.WriteElement(video_node, "height", uint2str(video->window.GetHeight()));
+  // The window's size, which differs from the game's render size when scaled
+  doc.WriteElement(video_node, "width", uint2str(video->GetWindowSize().x));
+  doc.WriteElement(video_node, "height", uint2str(video->GetWindowSize().y));
   doc.WriteElement(video_node, "full_screen", bool2str(video->IsFullScreen()));
+  doc.WriteElement(video_node, "scale", uint2str(video_scale));
   doc.WriteElement(video_node, "quality", uint2str(quality));
   doc.WriteElement(video_node, "max_fps", uint2str(video->GetMaxFps()));
 

@@ -58,6 +58,9 @@ class Video
   // Size the window currently has (in points), applied to the game surface
   // by ApplyPendingResize() at a point where it is safe to do so
   Point2i window_size;
+  // Display scale in percent (0 = auto: render at the window's logical size)
+  uint scale_percent;
+  Point2i TargetGameSize() const;
 
   std::list<Point2i> available_configs;
   void ComputeAvailableConfigs();
@@ -94,6 +97,13 @@ public:
   // recorded as they happen and applied here, between frames.
   bool HasPendingResize() const;
   bool ApplyPendingResize();
+
+  // 100 renders one game pixel per screen pixel (sharpest on HiDPI screens),
+  // larger values make the interface bigger; 0 follows the desktop scale.
+  // Takes effect at the next safe point, like a window resize.
+  void SetScale(uint percent) { scale_percent = percent; }
+  uint GetScale() const { return scale_percent; }
+  Point2i GetWindowSize() const { return window_size; }
 
   // Upload the game surface and show it
   void Flip(void);

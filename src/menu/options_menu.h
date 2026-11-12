@@ -56,6 +56,7 @@ private:
 
 #ifndef HAVE_TOUCHSCREEN
   ComboBox *cbox_video_mode;
+  ComboBox *opt_display_scale;
   CheckBox *full_screen;
 #endif
   SpinButtonWithPicture *opt_max_fps;

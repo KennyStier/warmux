@@ -133,8 +133,24 @@ OptionMenu::OptionMenu() :
   graphic_options->AddWidget(opt_quality);
 
   // No resolution picker: the game renders at the size of its window
-  // (or of the screen when fullscreen)
+  // (or of the screen when fullscreen), adjusted by the display scale
   cbox_video_mode = NULL;
+  {
+    std::vector<std::pair<std::string, std::string> > scales;
+    scales.push_back(std::pair<std::string, std::string>("0", _("Auto")));
+    scales.push_back(std::pair<std::string, std::string>("100", "100%"));
+    scales.push_back(std::pair<std::string, std::string>("125", "125%"));
+    scales.push_back(std::pair<std::string, std::string>("150", "150%"));
+    scales.push_back(std::pair<std::string, std::string>("200", "200%"));
+    std::string current = "0";
+    uint cur = app->video->GetScale();
+    for (size_t i = 0; i < scales.size(); i++)
+      if ((uint)atoi(scales[i].first.c_str()) == cur)
+        current = scales[i].first;
+    opt_display_scale = new ComboBox(_("Display scale"), "menu/resolution", option_size,
+                                     scales, current);
+    graphic_options->AddWidget(opt_display_scale);
+  }
 
   tabs->AddNewTab("unused", _("Graphics"), graphic_options);
 
@@ -443,8 +459,13 @@ void OptionMenu::SaveOptions()
 #ifdef HAVE_TOUCHSCREEN
   app->video->SetConfig(window.GetWidth(), window.GetHeight(), true);
 #else
-  // Only fullscreen can change; the window size is the resolution
-  app->video->SetConfig(window.GetWidth(), window.GetHeight(), full_screen->GetValue());
+  // Only fullscreen and the display scale can change; the window size
+  // determines the resolution
+  uint scale = (uint)atoi(opt_display_scale->GetValue().c_str());
+  config->SetVideoScale(scale);
+  app->video->SetScale(scale); // applied when leaving the menu
+  Point2i win = app->video->GetWindowSize();
+  app->video->SetConfig(win.x, win.y, full_screen->GetValue());
 
   uint x = (window.GetWidth() - actions_buttons->GetSizeX())/2;
   uint y = window.GetHeight() - actions_buttons->GetSizeY();

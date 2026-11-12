@@ -16,8 +16,10 @@ the original project.
   `sdl12-compat` layer, and feels noticeably snappier.
 - **Renders at your window's size**: no resolution picker and no blurry
   upscaling. Fullscreen uses the desktop resolution (no mode switch), and
-  resizing or re-tiling the window during a match just works. HiDPI screens
-  keep a normal interface size.
+  resizing or re-tiling the window during a match just works.
+- **Display scale** (Options → Graphics): *Auto* follows the desktop's scale
+  factor; *100%* renders one game pixel per screen pixel, the sharpest on
+  HiDPI screens; *125–200%* enlarge the interface, handy on a TV.
 - **Builds on modern toolchains**: GCC 16, autoconf 2.7x, automake 1.17+,
   out-of-tree builds, Arch's hardened build flags and LTO.
 - **Held keys work properly**: charge-up weapons (bazooka, grenades) and

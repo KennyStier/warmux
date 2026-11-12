@@ -39,11 +39,13 @@ Video::Video()
   , sdl_window(NULL)
   , renderer(NULL)
   , texture(NULL)
+  , scale_percent(0)
 {
   SetMaxFps(50);
 
   Config * config = Config::GetInstance();
   SetMaxFps(config->GetMaxFps());
+  scale_percent = config->GetVideoScale();
 
   InitSDL();
 
@@ -250,15 +252,28 @@ bool Video::__SetConfig(const int width, const int height, const bool _fullscree
     wh = height;
   }
   window_size = Point2i(ww, wh);
-  return ResizeGameSurface(ww, wh);
+  Point2i target = TargetGameSize();
+  return ResizeGameSurface(target.x, target.y);
+}
+
+Point2i Video::TargetGameSize() const
+{
+  if (scale_percent == 0 || !renderer)
+    return window_size; // logical size: the desktop's scale factor applies
+
+  // Real pixels (more than window_size on HiDPI screens) divided by the scale
+  int pw = window_size.x, ph = window_size.y;
+  SDL_GetRendererOutputSize(renderer, &pw, &ph);
+  return Point2i(pw * 100 / (int)scale_percent, ph * 100 / (int)scale_percent);
 }
 
 bool Video::HasPendingResize() const
 {
   if (window.IsNull())
     return false;
-  int w = window_size.x < MIN_GAME_W ? MIN_GAME_W : window_size.x;
-  int h = window_size.y < MIN_GAME_H ? MIN_GAME_H : window_size.y;
+  Point2i target = TargetGameSize();
+  int w = target.x < MIN_GAME_W ? MIN_GAME_W : target.x;
+  int h = target.y < MIN_GAME_H ? MIN_GAME_H : target.y;
   return w != window.GetWidth() || h != window.GetHeight();
 }
 
@@ -266,7 +281,8 @@ bool Video::ApplyPendingResize()
 {
   if (!HasPendingResize())
     return false;
-  if (!ResizeGameSurface(window_size.x, window_size.y))
+  Point2i target = TargetGameSize();
+  if (!ResizeGameSurface(target.x, target.y))
     return false;
   Camera::GetInstance()->SetSize(window.GetWidth(), window.GetHeight());
   AppWarmux::GetInstance()->RefreshDisplay();
