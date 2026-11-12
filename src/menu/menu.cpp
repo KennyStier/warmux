@@ -467,6 +467,8 @@ void Menu::Run(bool skip_menu)
   }
 
   Mouse::pointer_t old_pointer = Mouse::GetInstance()->SetPointer(Mouse::POINTER_STANDARD);
+  // A menu opened during a game draws over its last frame
+  AppWarmux::GetInstance()->video->EndLayers();
 #ifdef HAVE_TOUCHSCREEN
   // Menus are driven by taps as mouse clicks, even when opened during a game,
   // where the touch controls turn that off

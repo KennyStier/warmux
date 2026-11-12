@@ -27,6 +27,7 @@
 #include "color.h"
 #include <WARMUX_base.h>
 #include <WARMUX_point.h>
+#include <vector>
 #include <WARMUX_rectangle.h>
 
 struct SDL_Surface;
@@ -42,6 +43,14 @@ class Surface
 private:
   SDL_Surface* surface;
   bool autoFree;
+  // Pixels per coordinate unit; only the screen uses more than 1 (see
+  // SetScale())
+  int scale;
+  // Full-resolution overlay for text (see SetHiResOverlay()), and where
+  // to record the areas drawn on it
+  SDL_Surface *hires;
+  int hires_scale;
+  std::vector<Rectanglei> *tracker;
   int Blit(const Surface& src, SDL_Rect *srcRect, SDL_Rect *dstRect);
   static SDL_Rect GetSDLRect(const Rectanglei &r);
   static SDL_Rect GetSDLRect(const Point2i &r);
@@ -52,13 +61,13 @@ public:
    *
    * Build a null surface with autoFree at true.
    */
-  explicit Surface() : surface(NULL), autoFree(true) { };
+  explicit Surface() : surface(NULL), autoFree(true), scale(1), hires(NULL), hires_scale(1), tracker(NULL) { };
   /**
    * Constructor building a surface object using an existing SDL_Surface pointer.
    *
    * @param sdl_surface The existing sdl_surface.
    */
-  explicit Surface(SDL_Surface *sdl_surface) : surface(sdl_surface), autoFree(true) { };
+  explicit Surface(SDL_Surface *sdl_surface) : surface(sdl_surface), autoFree(true), scale(1), hires(NULL), hires_scale(1), tracker(NULL) { };
   /**
    * Constructor building a surface object using the NewSurface function.
    *
@@ -68,7 +77,7 @@ public:
    * @see NewSurface
    */
   explicit Surface(const Point2i &size, Uint32 flags, bool useAlpha = true)
-  : surface(NULL), autoFree(true) { NewSurface(size, flags, useAlpha); }
+  : surface(NULL), autoFree(true), scale(1), hires(NULL), hires_scale(1), tracker(NULL) { NewSurface(size, flags, useAlpha); }
   explicit Surface(const std::string &filename);
   Surface(const Surface &src);
   /**
@@ -176,8 +185,29 @@ public:
   bool IsNull() const { return surface == NULL; };
   Point2i GetSize() const { return Point2i( GetWidth(), GetHeight() ); };
 
-  inline int GetWidth() const { return surface->w; }
-  inline int GetHeight() const { return surface->h; }
+  inline int GetWidth() const { return surface->w / scale; }
+  inline int GetHeight() const { return surface->h / scale; }
+
+  /**
+   * High-resolution screen: the surface has `s` pixels per coordinate unit.
+   * Sizes and every drawing call stay in coordinate units, so the game is
+   * unaware; blits are stretched, shapes are drawn at full resolution and
+   * Text draws itself with a larger font (BlitHiRes()).
+   */
+  void SetScale(int s) { scale = s < 1 ? 1 : s; }
+  int GetScale() const { return scale; }
+  /**
+   * During a game frame the screen is drawn at game resolution and only
+   * text goes to a full-resolution overlay `s` (k pixels per unit); the
+   * areas drawn there are added to `t`. NULL: no overlay.
+   */
+  void SetHiResOverlay(SDL_Surface *s, int k, std::vector<Rectanglei> *t)
+    { hires = s; hires_scale = k; tracker = t; }
+  /** Pixels per unit available for sharp text: the scale or the overlay's */
+  int HiResScale() const { return scale > 1 ? scale : (hires ? hires_scale : 1); }
+  /** Blit a full-resolution image, at a position in pixels, onto this
+   *  surface if scaled, else onto its overlay */
+  int BlitHiRes(const Surface& src, const Point2i& pixel_pos);
 
   /** Return the length of a surface scanline in bytes. */
   Uint16 GetPitch() const { return surface->pitch; };

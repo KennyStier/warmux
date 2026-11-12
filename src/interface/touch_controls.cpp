@@ -46,9 +46,12 @@ static const Uint32 HIGH_JUMP_MS = 300;
 TouchControls::TouchControls()
   : enabled(false)
   , layout_for(-1, -1)
+  , cache_scale(0)
 {
-  for (int i = 0; i < BTN_COUNT; i++)
+  for (int i = 0; i < BTN_COUNT; i++) {
     radius[i] = 0;
+    cache_tex[i][0] = cache_tex[i][1] = NULL;
+  }
 }
 
 void TouchControls::Enable()
@@ -85,6 +88,13 @@ void TouchControls::Layout()
   const Surface &window = GetMainWindow();
   const int W = window.GetWidth(), H = window.GetHeight();
   layout_for = Point2i(W, H);
+  for (int i = 0; i < BTN_COUNT; i++)
+    for (int p = 0; p < 2; p++) {
+      cache[i][p] = Surface();
+      if (cache_tex[i][p])
+        SDL_DestroyTexture(cache_tex[i][p]);
+      cache_tex[i][p] = NULL;
+    }
 
   // Sizes in game pixels; at the default scale the game is 540 high, so a
   // radius of 40 is about a centimetre on a phone
@@ -321,54 +331,103 @@ static void Triangle(Surface &s, const Point2i &c, int size, int dx, int dy, con
   s.FilledPolygon(vx, vy, 3, col);
 }
 
+// The button's shapes on `target`, centred on c. `solid`: opaque colours,
+// for the cached copies that get their transparency when blitted
+static void DrawShapes(Surface &target, int b, const Point2i &c, int r,
+                       bool pressed, bool solid)
+{
+  Color fill, line, glyph;
+  if (solid) {
+    fill  = pressed ? Color(225, 225, 225, 255) : Color(25, 25, 25, 255);
+    line  = Color(255, 255, 255, 255);
+    glyph = pressed ? Color(40, 40, 40, 255) : Color(255, 255, 255, 255);
+  } else {
+    fill  = pressed ? Color(255, 255, 255, 150) : Color(0, 0, 0, 90);
+    line  = Color(255, 255, 255, pressed ? 230 : 160);
+    glyph = Color(255, 255, 255, pressed ? 255 : 200);
+  }
+
+  target.FilledCircleColor(c.x, c.y, r, fill);
+  target.CircleColor(c.x, c.y, r, line);
+
+  int g = r * 2 / 5;
+  switch (b) {
+  case TouchControls::BTN_LEFT:  Triangle(target, c, g, -1, 0, glyph); break;
+  case TouchControls::BTN_RIGHT: Triangle(target, c, g, 1, 0, glyph); break;
+  case TouchControls::BTN_UP:    Triangle(target, c, g, 0, -1, glyph); break;
+  case TouchControls::BTN_DOWN:  Triangle(target, c, g, 0, 1, glyph); break;
+  case TouchControls::BTN_JUMP:
+    Triangle(target, c - Point2i(0, g / 2), g * 3 / 4, 0, -1, glyph);
+    Triangle(target, c + Point2i(0, g * 3 / 4), g * 3 / 4, 0, -1, glyph);
+    break;
+  case TouchControls::BTN_FIRE:
+    target.FilledCircleColor(c.x, c.y, r / 3, Color(255, 90, 60, solid || pressed ? 255 : 210));
+    target.CircleColor(c.x, c.y, r * 2 / 3, glyph);
+    break;
+  case TouchControls::BTN_TIMER_LESS:
+  case TouchControls::BTN_TIMER_MORE: {
+    int w = r / 2, t = r / 8 + 1;
+    target.BoxColor(Rectanglei(c.x - w, c.y - t, 2 * w, 2 * t), glyph);
+    if (b == TouchControls::BTN_TIMER_MORE)
+      target.BoxColor(Rectanglei(c.x - t, c.y - w, 2 * t, 2 * w), glyph);
+    break;
+  }
+  case TouchControls::BTN_WEAPONS: {
+    // Three bars: a menu
+    int w = r / 2, t = r / 10 + 1;
+    for (int i = -1; i <= 1; i++)
+      target.BoxColor(Rectanglei(c.x - w, c.y + i * r / 3 - t, 2 * w, 2 * t), glyph);
+    break;
+  }
+  case TouchControls::BTN_CENTER:
+    target.CircleColor(c.x, c.y, r / 2, glyph);
+    target.FilledCircleColor(c.x, c.y, r / 6, glyph);
+    break;
+  }
+}
+
 void TouchControls::DrawButton(int b, bool pressed) const
 {
   Surface &window = GetMainWindow();
   const Point2i &c = center[b];
   const int r = radius[b];
-  Color fill = pressed ? Color(255, 255, 255, 150) : Color(0, 0, 0, 90);
-  Color line(255, 255, 255, pressed ? 230 : 160);
-  Color glyph(255, 255, 255, pressed ? 255 : 200);
+  const int k = window.HiResScale();
 
-  window.FilledCircleColor(c.x, c.y, r, fill);
-  window.CircleColor(c.x, c.y, r, line);
-
-  int g = r * 2 / 5;
-  switch (b) {
-  case BTN_LEFT:  Triangle(window, c, g, -1, 0, glyph); break;
-  case BTN_RIGHT: Triangle(window, c, g, 1, 0, glyph); break;
-  case BTN_UP:    Triangle(window, c, g, 0, -1, glyph); break;
-  case BTN_DOWN:  Triangle(window, c, g, 0, 1, glyph); break;
-  case BTN_JUMP:
-    Triangle(window, c - Point2i(0, g / 2), g * 3 / 4, 0, -1, glyph);
-    Triangle(window, c + Point2i(0, g * 3 / 4), g * 3 / 4, 0, -1, glyph);
-    break;
-  case BTN_FIRE:
-    window.FilledCircleColor(c.x, c.y, r / 3, Color(255, 90, 60, pressed ? 255 : 210));
-    window.CircleColor(c.x, c.y, r * 2 / 3, glyph);
-    break;
-  case BTN_TIMER_LESS:
-  case BTN_TIMER_MORE: {
-    int w = r / 2, t = r / 8 + 1;
-    window.BoxColor(Rectanglei(c.x - w, c.y - t, 2 * w, 2 * t), glyph);
-    if (b == BTN_TIMER_MORE)
-      window.BoxColor(Rectanglei(c.x - t, c.y - w, 2 * t, 2 * w), glyph);
-    break;
+  if (k > 1) {
+    // Full resolution: a cached copy per state, drawn once (drawing the
+    // blended circles every frame is slow at this size)
+    Surface &cached = cache[b][pressed ? 1 : 0];
+    if (cached.IsNull() || cache_scale != k) {
+      int size = 2 * r + 3;
+      Surface tmp(Point2i(size * k, size * k), SDL_SWSURFACE, true);
+      tmp.Fill(0); // transparent
+      tmp.SetScale(k);
+      DrawShapes(tmp, b, Point2i(r + 1, r + 1), r, pressed, true);
+      tmp.SetScale(1);
+      cached = tmp;
+      SDL_Texture *&old_tex = cache_tex[b][pressed ? 1 : 0];
+      if (old_tex) {
+        SDL_DestroyTexture(old_tex);
+        old_tex = NULL;
+      }
+    }
+    cache_scale = k;
+    // The GPU draws it (blending this much in software costs several ms)
+    Video *video = AppWarmux::GetInstance()->video;
+    SDL_Texture *&tex = cache_tex[b][pressed ? 1 : 0];
+    if (!tex)
+      tex = video->CreateTexture(cached);
+    Point2i pixel_pos((c.x - r - 1) * k, (c.y - r - 1) * k);
+    Uint8 alpha = pressed ? 200 : 140;
+    if (!video->QueueSprite(tex, pixel_pos, alpha)) {
+      SDL_SetSurfaceAlphaMod(cached.GetSurface(), alpha);
+      window.BlitHiRes(cached, pixel_pos);
+    }
+  } else {
+    DrawShapes(window, b, c, r, pressed, false);
+    GetWorld().ToRedrawOnScreen(Rectanglei(c - Point2i(r + 1, r + 1),
+                                           Point2i(2 * r + 3, 2 * r + 3)));
   }
-  case BTN_WEAPONS: {
-    // Three bars: a menu
-    int w = r / 2, t = r / 10 + 1;
-    for (int i = -1; i <= 1; i++)
-      window.BoxColor(Rectanglei(c.x - w, c.y + i * r / 3 - t, 2 * w, 2 * t), glyph);
-    break;
-  }
-  case BTN_CENTER:
-    window.CircleColor(c.x, c.y, r / 2, glyph);
-    window.FilledCircleColor(c.x, c.y, r / 6, glyph);
-    break;
-  }
-  GetWorld().ToRedrawOnScreen(Rectanglei(c - Point2i(r + 1, r + 1),
-                                         Point2i(2 * r + 3, 2 * r + 3)));
 }
 
 void TouchControls::Draw()

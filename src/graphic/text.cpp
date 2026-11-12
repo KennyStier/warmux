@@ -23,6 +23,7 @@
 #include "include/app.h"
 #include "include/constant.h"
 #include "interface/interface.h"
+#include "map/camera.h"
 #include "map/map.h"
 #include "tool/xml_document.h"
 
@@ -44,7 +45,8 @@ Text::Text(const std::string & text,
   shadowColor(_shadowColor),
   font_size((Font::font_size_t)fontSize),
   font_style(fontStyle),
-  offset(0)
+  offset(0),
+  hi_scale(0)
 {
   Init();
 }
@@ -61,7 +63,8 @@ Text::Text() :
   shadowColor(),
   font_size(Font::FONT_SMALL),
   font_style(Font::FONT_NORMAL),
-  offset(0)
+  offset(0),
+  hi_scale(0)
 {
 }
 
@@ -130,43 +133,57 @@ Font::font_style_t Text::DetectFontStyle(const std::string & fontStyle)
 
 void Text::Render()
 {
+  hi_scale = 0; // the high-resolution copy is out of date
+  RenderAt(1, surf, background);
+}
+
+// Render at k times the font size (and wrapping width) into s and bg
+void Text::RenderAt(int k, Surface &s, Surface &bg) const
+{
   if (!dummy) {
     if ("" == txt) {
       return;
     }
 
     if (max_width != 0 || txt.find_first_of('\n', 0)!=std::string::npos) {
-      RenderMultiLines();
+      RenderMultiLinesAt(k, s, bg);
       return;
     }
 
-    Font* font = Font::GetInstance(font_size, font_style);
+    Font* font = Font::GetInstance((Font::font_size_t)(font_size * k), font_style);
 
-    surf = font->CreateSurface(txt, color);
+    s = font->CreateSurface(txt, color);
     if (shadowed) {
-      background = font->CreateSurface(txt, shadowColor);
+      bg = font->CreateSurface(txt, shadowColor);
     }
   } else {
-    surf = Surface(Point2i(font_size, font_size), 0);
+    s = Surface(Point2i(font_size * k, font_size * k), 0);
     if (shadowed) {
-      background = Surface(Point2i(font_size, font_size), 0);
+      bg = Surface(Point2i(font_size * k, font_size * k), 0);
     }
   }
 }
 
 void Text::RenderMultiLines()
 {
+  hi_scale = 0;
+  RenderMultiLinesAt(1, surf, background);
+}
+
+void Text::RenderMultiLinesAt(int k, Surface &s, Surface &bg) const
+{
+  const uint max_width = this->max_width * k;
   if ("" == txt) {
     return;
   }
 
-  Font* font = Font::GetInstance(font_size, font_style);
+  Font* font = Font::GetInstance((Font::font_size_t)(font_size * k), font_style);
 
   // Make a first try
   if (font->GetWidth(txt) < int(max_width)) {
-    surf = font->CreateSurface(txt, color);
+    s = font->CreateSurface(txt, color);
     if (shadowed) {
-      background = font->CreateSurface(txt, shadowColor);
+      bg = font->CreateSurface(txt, shadowColor);
     }
     return;
   }
@@ -253,63 +270,46 @@ void Text::RenderMultiLines()
   // but we still want the last line to be properly displayed
   Point2i size(max_line_width,
                GetLineHeight(font)*(ret_lines.size()-1)+font->GetHeight());
-#if 0 // SDL 1.2 colour-key path for handhelds; the SDL2 path below is used everywhere
-  Surface tmp = Surface(size, SDL_SWSURFACE, false);
-  surf = tmp.DisplayFormat();
-
-  tmp = font->CreateSurface(ret_lines[0], color);
-  Uint32 ckey = tmp.GetSurface()->format->colorkey;
-  surf.Fill(ckey);
-  surf.SetColorKey(WX_SRCCOLORKEY|SDL_RLEACCEL, ckey);
-  surf.Blit(tmp);
-
-  // for all remaining lines
-  for (uint i = 1; i < ret_lines.size(); i++) {
-    tmp = font->CreateSurface(ret_lines[i], color);
-    surf.Blit(tmp, Point2i(0, GetLineHeight(font)*i));
-  }
-
-  // Render the shadow !
-  if (!shadowed)
-    return;
-
-  tmp = Surface(size, SDL_SWSURFACE, false);
-  background = tmp.DisplayFormat();
-
-  tmp = font->CreateSurface(ret_lines[0], black_color);
-  ckey = tmp.GetSurface()->format->colorkey;
-  background.Fill(ckey);
-  background.SetColorKey(WX_SRCCOLORKEY|SDL_RLEACCEL, ckey);
-  background.Blit(tmp);
-
-  // Putting pixels of each image in destination surface
-  // for each lines
-  for (uint i = 1; i < ret_lines.size(); i++) {
-    tmp = font->CreateSurface(ret_lines[i], black_color);
-    background.Blit(tmp, Point2i(0, GetLineHeight(font)*i));
-  }
-#else
-  surf = Surface(size, SDL_SWSURFACE|WX_SRCALPHA, true);
+  s = Surface(size, SDL_SWSURFACE|WX_SRCALPHA, true);
 
   // for each line
   for (uint i = 0; i < ret_lines.size(); i++) {
     Surface tmp = font->CreateSurface(ret_lines[i], color);
-    surf.MergeSurface(tmp, Point2i(0, GetLineHeight(font)*i));
+    s.MergeSurface(tmp, Point2i(0, GetLineHeight(font)*i));
   }
 
   // Render the shadow !
   if (!shadowed)
     return;
 
-  background = Surface(size, SDL_SWSURFACE|WX_SRCALPHA, true);
+  bg = Surface(size, SDL_SWSURFACE|WX_SRCALPHA, true);
 
   // Putting pixels of each image in destination surface
   // for each lines
   for (uint i = 0; i < ret_lines.size(); i++) {
     Surface tmp = font->CreateSurface(ret_lines[i], black_color);
-    background.MergeSurface(tmp, Point2i(0, GetLineHeight(font)*i));
+    bg.MergeSurface(tmp, Point2i(0, GetLineHeight(font)*i));
   }
-#endif
+}
+
+// On a high-resolution screen, draw a copy rendered with a font that much
+// larger instead of stretching this one: sharp text
+bool Text::DrawHiRes(const Point2i &pos) const
+{
+  Surface& window = GetMainWindow();
+  int k = window.HiResScale();
+  if (k <= 1 || dummy)
+    return false;
+  if (hi_scale != k) {
+    RenderAt(k, surf_hi, background_hi);
+    hi_scale = k;
+  }
+  if (surf_hi.IsNull())
+    return false;
+  if (shadowed && !background_hi.IsNull())
+    window.BlitHiRes(background_hi, Point2i((pos.x + bg_offset) * k, (pos.y + bg_offset) * k));
+  window.BlitHiRes(surf_hi, Point2i(pos.x * k, pos.y * k));
+  return true;
 }
 
 void Text::DrawLeftTop(const Point2i &position) const
@@ -318,6 +318,12 @@ void Text::DrawLeftTop(const Point2i &position) const
 
   Rectanglei dst_rect(position + Point2i(offset, 0), surf.GetSize());
   Surface& window = GetMainWindow();
+
+  if (DrawHiRes(dst_rect.GetPosition())) {
+    GetWorld().ToRedrawOnScreen(Rectanglei(dst_rect.GetPosition(),
+                                           dst_rect.GetSize() + bg_offset));
+    return;
+  }
 
   if(shadowed){
     Rectanglei shad_rect;
@@ -339,6 +345,16 @@ void Text::DrawLeftTop(const Point2i &position) const
 
 void Text::DrawCenterTopOnMap(const Point2i &pos) const
 {
+  if (GetMainWindow().HiResScale() > 1 && txt != "") {
+    // Same as AbsoluteDraw(), with the sharp copy
+    Rectanglei on_map(Point2i(pos.x - surf.GetWidth() / 2, pos.y),
+                      surf.GetSize() + bg_offset);
+    if (!on_map.Intersect(*Camera::GetInstance()))
+      return;
+    GetWorld().ToRedrawOnMap(on_map);
+    if (DrawHiRes(on_map.GetPosition() - Camera::GetInstance()->GetPosition()))
+      return;
+  }
   if(shadowed)
     AbsoluteDraw(background, Point2i(bg_offset + pos.x - surf.GetWidth() / 2,
                                      bg_offset + pos.y) );

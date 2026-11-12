@@ -57,7 +57,16 @@ protected:
   Font::font_style_t font_style;
   int offset;
 
+  // Copy rendered at the scale of a high-resolution screen (see
+  // Surface::SetScale()), made when first drawn there
+  mutable Surface surf_hi;
+  mutable Surface background_hi;
+  mutable int hi_scale;
+
   virtual void Render();
+  void RenderAt(int k, Surface &s, Surface &bg) const;
+  void RenderMultiLinesAt(int k, Surface &s, Surface &bg) const;
+  bool DrawHiRes(const Point2i &position) const;
   static int GetLineHeight(const Font *f) { return (7*f->GetHeight())>>3; }
   void RenderMultiLines();
 

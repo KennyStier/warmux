@@ -583,21 +583,24 @@ void Game::RefreshObject() const
 
 void Game::Draw()
 {
+  // Game resolution, with text on a full-resolution overlay (see video.h)
+  bool full = AppWarmux::GetInstance()->video->BeginWorldLayer();
+
   // Draw the sky
   StatStart("GameDraw:sky");
-  GetWorld().DrawSky();
+  GetWorld().DrawSky(full);
   StatStop("GameDraw:sky");
 
   // Draw the map
   StatStart("GameDraw:world");
-  GetWorld().Draw();
+  GetWorld().Draw(full);
   StatStop("GameDraw:world");
 
   // Draw objects
   StatStart("GameDraw:objects");
   ObjectsList::GetRef().Draw();
   ParticleEngine::Draw(true);
-  StatStart("GameDraw:objects");
+  StatStop("GameDraw:objects");
 
   // Draw the characters in 2 steps:
   // 1) draw names
@@ -638,6 +641,7 @@ void Game::Draw()
   StatStop("GameDraw:fps_and_map_author_name");
 
   StatStop("GameDraw:other");
+
 
   // Draw the interface (current team information, weapon ammo)
   StatStart("GameDraw:interface");
@@ -682,7 +686,7 @@ void Game::Draw()
   // Draw the mouse pointer
   StatStart("GameDraw:mouse_pointer");
   Mouse::GetInstance()->Draw();
-  StatStart("GameDraw:mouse_pointer");
+  StatStop("GameDraw:mouse_pointer");
 }
 
 void Game::CallDraw()

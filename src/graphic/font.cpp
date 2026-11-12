@@ -50,6 +50,7 @@ Font* Font::GetInstance(font_size_t _fontSize,
       if (!fontMapBold.count(fontSize)) {
         font = new Font(fontSize);
         font->SetBold();
+        font->m_style = FONT_BOLD;
         fontMapBold[fontSize] = font;
       } else {
         return fontMapBold[fontSize];
@@ -59,6 +60,7 @@ Font* Font::GetInstance(font_size_t _fontSize,
       if (!fontMapItalic.count(fontSize)) {
         font = new Font(fontSize);
         font->SetItalic();
+        font->m_style = FONT_ITALIC;
         fontMapItalic[fontSize] = font;
       } else {
         return fontMapItalic[fontSize];
@@ -78,7 +80,9 @@ Font* Font::GetInstance(font_size_t _fontSize,
 
 Font::Font(int size):
   surface_text_table(),
-  m_font(NULL)
+  m_font(NULL),
+  m_size(size),
+  m_style(FONT_NORMAL)
 {
   const std::string filename = Config::GetConstInstance()->GetTtfFilename();
 
@@ -152,6 +156,20 @@ void Font::Write(const Point2i & pos,
 
   // TODO: Remove this line! (and use GameFont instead of Font)
   GetWorld().ToRedrawOnScreen( Rectanglei(pos, surface.GetSize()) );
+}
+
+void Font::Write(const Point2i & pos, const Surface & surface,
+                 const std::string & txt, const Color & color)
+{
+  Surface &window = GetMainWindow();
+  int k = window.HiResScale();
+  if (k > 1) {
+    Font *hi = GetInstance((font_size_t)(m_size * k), (font_style_t)m_style);
+    window.BlitHiRes(hi->Render(txt, color, true), Point2i(pos.x * k, pos.y * k));
+    GetWorld().ToRedrawOnScreen(Rectanglei(pos, surface.GetSize()));
+    return;
+  }
+  Write(pos, surface);
 }
 
 Surface Font::CreateSurface(const std::string & txt,

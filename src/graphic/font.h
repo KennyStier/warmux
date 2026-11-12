@@ -39,7 +39,13 @@ class Font
 
   std::map<std::string, Surface> surface_text_table;
   TTF_Font *m_font;
+  int m_size;
+  int m_style;
   void Write(const Point2i &pos, const Surface &surface) const;
+  // Write txt with its top left corner at pos; sharp on a high-resolution
+  // screen (rendered at its scale, like Text)
+  void Write(const Point2i &pos, const Surface &surface,
+             const std::string &txt, const Color &color);
 
   Font(int size);
 
@@ -74,27 +80,27 @@ public:
   void WriteLeft(const Point2i &pos, const std::string &txt, const Color &color)
   {
     Surface surface(Render(txt, color, true));
-    Write(pos, surface);
+    Write(pos, surface, txt, color);
   }
   void WriteLeftBottom(const Point2i &pos, const std::string &txt, const Color &color)
   {
     Surface surface(Render(txt, color, true));
-    Write(pos - Point2i(0, surface.GetHeight()), surface);
+    Write(pos - Point2i(0, surface.GetHeight()), surface, txt, color);
   }
   void WriteRight(const Point2i &pos, const std::string &txt, const Color &color)
   {
     Surface surface(Render(txt, color, true));
-    Write(pos - Point2i(surface.GetWidth(), 0), surface);
+    Write(pos - Point2i(surface.GetWidth(), 0), surface, txt, color);
   }
   void WriteCenterTop(const Point2i &pos, const std::string &txt, const Color &color)
   {
     Surface surface(Render(txt, color, true));
-    Write(pos - Point2i(surface.GetWidth()>>1, 0), surface);
+    Write(pos - Point2i(surface.GetWidth()>>1, 0), surface, txt, color);
   }
   void WriteCenter(const Point2i &pos, const std::string &txt, const Color &color)
   {
     Surface surface(Render(txt, color, true));
-    Write(pos - Point2i(surface.GetWidth()>>1, surface.GetHeight()), surface);
+    Write(pos - Point2i(surface.GetWidth()>>1, surface.GetHeight()), surface, txt, color);
   }
 
   int GetWidth(const std::string &txt) const;

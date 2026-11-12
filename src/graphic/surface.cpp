@@ -19,6 +19,8 @@
  * Handle a SDL Surface
  *****************************************************************************/
 
+#include <vector>
+#include <algorithm>
 #include <iostream>
 #include <SDL.h>
 #include <SDL2_gfxPrimitives.h>
@@ -46,7 +48,7 @@ SDL_PixelFormat *Surface::GetDisplayFormat()
 static SDL_Surface  *cached_target   = NULL;
 static SDL_Renderer *cached_renderer = NULL;
 
-static SDL_Renderer *RendererFor(SDL_Surface *target)
+static SDL_Renderer *RendererFor(SDL_Surface *target, int scale = 1)
 {
   if (target != cached_target || !cached_renderer) {
     if (cached_renderer)
@@ -56,10 +58,17 @@ static SDL_Renderer *RendererFor(SDL_Surface *target)
     if (!cached_renderer)
       fprintf(stderr, "Can't create software renderer: %s\n", SDL_GetError());
   }
-  // Drawing calls may have changed the clip rect of the surface
+  // Drawing calls may have changed the clip rect of the surface. On a scaled
+  // surface the renderer works in coordinate units (thick lines and boxes);
+  // shapes that should be crisp ask for scale 1 and scale their own points.
   if (cached_renderer) {
+    SDL_RenderSetScale(cached_renderer, (float)scale, (float)scale);
     SDL_Rect clip;
     SDL_GetClipRect(target, &clip);
+    if (scale > 1) {
+      clip.x /= scale; clip.y /= scale;
+      clip.w = (clip.w + scale - 1) / scale; clip.h = (clip.h + scale - 1) / scale;
+    }
     SDL_RenderSetClipRect(cached_renderer, &clip);
   }
   return cached_renderer;
@@ -85,6 +94,10 @@ Surface::Surface(const std::string &filename)
 {
   surface = NULL;
   autoFree = true;
+  scale = 1;
+  hires = NULL;
+  hires_scale = 1;
+  tracker = NULL;
   if (!ImgLoad(filename))
     Error(Format("Unable to open image file '%s': %s", filename.c_str(), IMG_GetError()));
 }
@@ -98,6 +111,10 @@ Surface::Surface(const Surface &src)
 {
   surface = src.surface;
   autoFree = true;
+  scale = 1; // a property of the screen object, not of the pixels
+  hires = NULL;
+  hires_scale = 1;
+  tracker = NULL;
   if (!IsNull())
     surface->refcount++;
 }
@@ -234,8 +251,22 @@ void Surface::SwapClipRect(Rectanglei& rect)
   SDL_Rect newClipRect = GetSDLRect(rect);
   SDL_Rect oldClipRect;
 
+  if (scale > 1) {
+    newClipRect.x *= scale; newClipRect.y *= scale;
+    newClipRect.w *= scale; newClipRect.h *= scale;
+  }
   SDL_GetClipRect(surface, &oldClipRect);
   SDL_SetClipRect(surface, &newClipRect);
+  if (hires) {
+    SDL_Rect o = GetSDLRect(rect);
+    o.x *= hires_scale; o.y *= hires_scale; o.w *= hires_scale; o.h *= hires_scale;
+    SDL_SetClipRect(hires, &o);
+  }
+  if (scale > 1) {
+    oldClipRect.x /= scale; oldClipRect.y /= scale;
+    oldClipRect.w = (oldClipRect.w + scale - 1) / scale;
+    oldClipRect.h = (oldClipRect.h + scale - 1) / scale;
+  }
 
   rect.SetPositionX(oldClipRect.x);
   rect.SetPositionY(oldClipRect.y);
@@ -246,11 +277,39 @@ void Surface::SwapClipRect(Rectanglei& rect)
 
 int Surface::Blit(const Surface& src, SDL_Rect *srcRect, SDL_Rect *dstRect)
 {
-  int ret = SDL_BlitSurface(src.surface, srcRect, surface, dstRect);
+  int ret;
+  if (scale > 1) {
+    // Stretch onto the high-resolution screen
+    SDL_Rect d;
+    d.x = dstRect ? dstRect->x * scale : 0;
+    d.y = dstRect ? dstRect->y * scale : 0;
+    d.w = (srcRect ? srcRect->w : src.surface->w) * scale;
+    d.h = (srcRect ? srcRect->h : src.surface->h) * scale;
+    ret = SDL_BlitScaled(src.surface, srcRect, surface, &d);
+  } else {
+    ret = SDL_BlitSurface(src.surface, srcRect, surface, dstRect);
+  }
   if (ret < 0) {
     printf("Blit failed (code=%i): %s\n", ret, SDL_GetError());
   }
   return ret;
+}
+
+int Surface::BlitHiRes(const Surface& src, const Point2i &pixel_pos)
+{
+  SDL_Surface *target = scale > 1 ? surface : hires;
+  if (!target)
+    return -1;
+  SDL_Rect d = GetSDLRect(pixel_pos);
+  if (tracker) {
+    // Remember what the overlay holds, clipped to it
+    int x1 = std::max(0, (int)d.x), y1 = std::max(0, (int)d.y);
+    int x2 = std::min(target->w, d.x + src.surface->w);
+    int y2 = std::min(target->h, d.y + src.surface->h);
+    if (x2 > x1 && y2 > y1)
+      tracker->push_back(Rectanglei(x1, y1, x2 - x1, y2 - y1));
+  }
+  return SDL_BlitSurface(src.surface, NULL, target, &d);
 }
 
 /**
@@ -445,7 +504,7 @@ Uint32 Surface::MapColor(const Color& color) const
 
   Point2i ptBR = rect.GetBottomRightPoint();
 
-  return boxRGBA(RendererFor(surface), rect.GetPositionX(), rect.GetPositionY(), ptBR.GetX(), ptBR.GetY(), color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  return boxRGBA(RendererFor(surface, scale), rect.GetPositionX(), rect.GetPositionY(), ptBR.GetX(), ptBR.GetY(), color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 }
 
 int Surface::RectangleColor(const Rectanglei &rect, const Color &color,
@@ -457,25 +516,25 @@ int Surface::RectangleColor(const Rectanglei &rect, const Color &color,
   Point2i ptBR = rect.GetBottomRightPoint();
 
   if (border_size == 1)
-    return rectangleRGBA(RendererFor(surface), rect.GetPositionX(), rect.GetPositionY(), ptBR.GetX(), ptBR.GetY(), color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+    return rectangleRGBA(RendererFor(surface, scale), rect.GetPositionX(), rect.GetPositionY(), ptBR.GetX(), ptBR.GetY(), color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 
   // top border
-  boxRGBA(RendererFor(surface),
+  boxRGBA(RendererFor(surface, scale),
            rect.GetPositionX(), rect.GetPositionY(), ptBR.GetX(), rect.GetPositionY()+border_size,
            color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 
   // bottom border
-  boxRGBA(RendererFor(surface),
+  boxRGBA(RendererFor(surface, scale),
            rect.GetPositionX(), ptBR.GetY() - border_size, ptBR.GetX(), ptBR.GetY(),
            color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 
   // left border
-  boxRGBA(RendererFor(surface),
+  boxRGBA(RendererFor(surface, scale),
            rect.GetPositionX(), rect.GetPositionY() + border_size, rect.GetPositionX()+border_size, ptBR.GetY()-border_size,
            color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 
   // right border
-  boxRGBA(RendererFor(surface),
+  boxRGBA(RendererFor(surface, scale),
            ptBR.GetX() - border_size, rect.GetPositionY() + border_size, ptBR.GetX(), ptBR.GetY()-border_size,
            color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 
@@ -484,29 +543,29 @@ int Surface::RectangleColor(const Rectanglei &rect, const Color &color,
 
 int Surface::VlineColor(const uint &x, const uint &y1, const uint &y2, const Color &color)
 {
-  return vlineRGBA(RendererFor(surface), x, y1, y2, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  return vlineRGBA(RendererFor(surface, scale), x, y1, y2, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 }
 
 int Surface::HlineColor(const uint &x1, const uint &x2, const uint &y, const Color &color)
 {
-  return hlineRGBA(RendererFor(surface), x1, x2, y, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  return hlineRGBA(RendererFor(surface, scale), x1, x2, y, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 }
 
 int Surface::LineColor(const uint &x1, const uint &x2, const uint &y1, const uint &y2, const Color &color)
 {
-  return lineRGBA(RendererFor(surface), x1, y1, x2, y2, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  return lineRGBA(RendererFor(surface, scale), x1, y1, x2, y2, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 }
 
 int Surface::AALineColor(const uint &x1, const uint &x2, const uint &y1, const uint &y2, const Color &color)
 {
-  return aalineRGBA(RendererFor(surface), x1, y1, x2, y2, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  return aalineRGBA(RendererFor(surface, scale), x1, y1, x2, y2, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 }
 
 int Surface::AAFadingLineColor(const uint &x1, const uint &x2, const uint &y1, const uint &y2, const Color &color1, const Color &color2)
 {
   // Gradient line, drawn as short anti-aliased segments (used by the
   // sniper rifle's laser beam)
-  SDL_Renderer *r = RendererFor(surface);
+  SDL_Renderer *r = RendererFor(surface, scale);
   const int steps = 16;
   int ret = 0;
   for (int i = 0; i < steps; i++) {
@@ -524,26 +583,51 @@ int Surface::AAFadingLineColor(const uint &x1, const uint &x2, const uint &y1, c
 
 int Surface::CircleColor(const uint &x, const uint &y, const uint &rad, const Color &color)
 {
-  return circleRGBA(RendererFor(surface), x, y, rad, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  if (scale > 1) // crisp at full resolution
+    return circleRGBA(RendererFor(surface), x*scale, y*scale, rad*scale, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  return circleRGBA(RendererFor(surface, scale), x, y, rad, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 }
 
 int Surface::FilledCircleColor(const uint &x, const uint &y, const uint &rad, const Color &color)
 {
-  return filledCircleRGBA(RendererFor(surface), x, y, rad, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  if (scale > 1)
+    return filledCircleRGBA(RendererFor(surface), x*scale, y*scale, rad*scale, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  return filledCircleRGBA(RendererFor(surface, scale), x, y, rad, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 }
 
 int Surface::PieColor(const uint &x, const uint &y, const uint &rad, const int &start, const int &end, const Color &color)
 {
-  return pieRGBA(RendererFor(surface), x, y, rad, start, end, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  if (scale > 1)
+    return pieRGBA(RendererFor(surface), x*scale, y*scale, rad*scale, start, end, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  return pieRGBA(RendererFor(surface, scale), x, y, rad, start, end, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 }
 
 int Surface::FilledPieColor(const uint &x, const uint &y, const uint &rad, const int &start, const int &end, const Color &color)
 {
-  return filledPieRGBA(RendererFor(surface), x, y, rad, start, end, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  if (scale > 1)
+    return filledPieRGBA(RendererFor(surface), x*scale, y*scale, rad*scale, start, end, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  return filledPieRGBA(RendererFor(surface, scale), x, y, rad, start, end, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+}
+
+// Points scaled to pixels for a crisp outline/fill on a scaled surface
+static void ScalePoints(const Sint16 *vx, const Sint16 *vy, int n, int scale,
+                        std::vector<Sint16> &sx, std::vector<Sint16> &sy)
+{
+  sx.resize(n);
+  sy.resize(n);
+  for (int i = 0; i < n; i++) {
+    sx[i] = vx[i] * scale;
+    sy[i] = vy[i] * scale;
+  }
 }
 
 int Surface::AAPolygonColor(const Sint16 * vx, const Sint16 * vy, const int n, const Color & color) {
-  return aapolygonRGBA(RendererFor(surface), vx, vy, n, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  if (scale > 1) {
+    std::vector<Sint16> sx, sy;
+    ScalePoints(vx, vy, n, scale, sx, sy);
+    return aapolygonRGBA(RendererFor(surface), &sx[0], &sy[0], n, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  }
+  return aapolygonRGBA(RendererFor(surface, scale), vx, vy, n, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 }
 
 int Surface::AAPolygonColor(std::list<Point2i> polygon, const Color & color)
@@ -556,8 +640,7 @@ int Surface::AAPolygonColor(std::list<Point2i> polygon, const Color & color)
     vx[i] = point->x;
     vy[i] = point->y;
   }
-  int result = aapolygonRGBA(RendererFor(surface), vx, vy, polygon.size(), color.GetRed(),
-                             color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  int result = AAPolygonColor(vx, vy, polygon.size(), color);
   delete[] vx;
   delete[] vy;
   return result;
@@ -566,7 +649,12 @@ int Surface::AAPolygonColor(std::list<Point2i> polygon, const Color & color)
 int Surface::FilledPolygon(const Sint16 * vx, const Sint16 * vy, const int n, const Color & color)
 {
   // Internal static leak in sdl_gfx
-  return filledPolygonRGBA(RendererFor(surface), vx, vy, n, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  if (scale > 1) {
+    std::vector<Sint16> sx, sy;
+    ScalePoints(vx, vy, n, scale, sx, sy);
+    return filledPolygonRGBA(RendererFor(surface), &sx[0], &sy[0], n, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  }
+  return filledPolygonRGBA(RendererFor(surface, scale), vx, vy, n, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 }
 
 int Surface::FilledPolygon(std::list<Point2i> polygon, const Color & color)
@@ -579,8 +667,7 @@ int Surface::FilledPolygon(std::list<Point2i> polygon, const Color & color)
     vx[i] = point->x;
     vy[i] = point->y;
   }
-  int result = filledPolygonRGBA(RendererFor(surface), vx, vy, polygon.size(), color.GetRed(),
-                                 color.GetGreen(), color.GetBlue(), color.GetAlpha());
+  int result = FilledPolygon(vx, vy, polygon.size(), color);
   delete[] vx;
   delete[] vy;
   return result;
@@ -588,7 +675,7 @@ int Surface::FilledPolygon(std::list<Point2i> polygon, const Color & color)
 
 int Surface::TexturedPolygon(const Sint16 * vx, const Sint16 * vy, const int n, const Surface *texture, const int texture_dx, const int texture_dy)
 {
-  return texturedPolygon(RendererFor(surface), vx, vy, n, texture->surface, texture_dx, texture_dy);
+  return texturedPolygon(RendererFor(surface, scale), vx, vy, n, texture->surface, texture_dx, texture_dy);
 }
 
 int Surface::TexturedPolygon(std::list<Point2i> polygon, const Surface * texture)
@@ -601,7 +688,7 @@ int Surface::TexturedPolygon(std::list<Point2i> polygon, const Surface * texture
     vx[i] = point->x;
     vy[i] = point->y;
   }
-  int result = texturedPolygon(RendererFor(surface), vx, vy, polygon.size(), texture->surface, 0, 0);
+  int result = texturedPolygon(RendererFor(surface, scale), vx, vy, polygon.size(), texture->surface, 0, 0);
   delete[] vx;
   delete[] vy;
   return result;
@@ -629,6 +716,10 @@ int Surface::Fill(const Color &color) const
 int Surface::FillRect(const Rectanglei &dstRect, Uint32 color) const
 {
   SDL_Rect sdlDstRect = GetSDLRect(dstRect);
+  if (scale > 1) {
+    sdlDstRect.x *= scale; sdlDstRect.y *= scale;
+    sdlDstRect.w *= scale; sdlDstRect.h *= scale;
+  }
 
   return SDL_FillRect(surface, &sdlDstRect, color);
 }
@@ -881,6 +972,8 @@ Surface Surface::DisplayFormat()
  */
 Uint32 Surface::GetPixel(int x, int y) const
 {
+  x *= scale;
+  y *= scale;
   int bpp = surface->format->BytesPerPixel;
   /* Here p is the address to the pixel we want to retrieve */
   Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
@@ -915,6 +1008,11 @@ Uint32 Surface::GetPixel(int x, int y) const
  */
 void Surface::PutPixel(int x, int y, Uint32 pixel) const
 {
+  if (scale > 1) {
+    SDL_Rect r = { x * scale, y * scale, scale, scale };
+    SDL_FillRect(surface, &r, pixel);
+    return;
+  }
   int bpp = surface->format->BytesPerPixel;
   /* Here p is the address to the pixel we want to set */
   Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;

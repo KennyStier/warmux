@@ -40,9 +40,11 @@
 
 #include <map>
 #include <SDL_events.h>
+#include <SDL_render.h>
 #include <WARMUX_singleton.h>
 #include <WARMUX_point.h>
 #include "interface/man_machine_interface.h"
+#include "graphic/surface.h"
 
 class TouchControls : public Singleton<TouchControls>, public ManMachineInterface
 {
@@ -67,6 +69,10 @@ private:
   Point2i center[BTN_COUNT];
   int radius[BTN_COUNT];
   Point2i layout_for;     // window size the layout was computed for
+  // Full-resolution copies of the buttons (normal, pressed)
+  mutable Surface cache[BTN_COUNT][2];
+  mutable SDL_Texture *cache_tex[BTN_COUNT][2];  // the same, on the GPU
+  mutable int cache_scale;
 
   void Layout();
   bool Active() const;    // the local human player is playing

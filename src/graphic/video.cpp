@@ -39,6 +39,13 @@ Video::Video()
   , sdl_window(NULL)
   , renderer(NULL)
   , texture(NULL)
+  , screen_surface(NULL)
+  , screen_scale(1)
+  , world_surface(NULL)
+  , world_texture(NULL)
+  , layered(false)
+  , world_fresh(false)
+  , ui_full(true)
   , scale_percent(0)
 {
   SetMaxFps(60);
@@ -104,9 +111,11 @@ Video::~Video()
     SDL_FreeSurface(icon);
     icon = NULL;
   }
-  window.SetSurface(NULL, true);
+  FreeSurfaces();
   if (texture)
     SDL_DestroyTexture(texture);
+  if (world_texture)
+    SDL_DestroyTexture(world_texture);
   if (renderer)
     SDL_DestroyRenderer(renderer);
   if (sdl_window)
@@ -209,39 +218,224 @@ bool Video::CreateWindowAndRenderer(int w, int h, bool fs)
 // Minimum size the game's layout supports
 static const int MIN_GAME_W = 480, MIN_GAME_H = 320;
 
+// Free through Surface, which also drops its cached software renderer
+static void FreeSDLSurface(SDL_Surface *&s)
+{
+  if (s) {
+    Surface tmp(s);
+    s = NULL;
+  }
+}
+
+void Video::FreeSurfaces()
+{
+  window.SetSurface(NULL, false);
+  FreeSDLSurface(screen_surface);
+  FreeSDLSurface(world_surface);
+}
+
 bool Video::ResizeGameSurface(int width, int height)
 {
   if (width < MIN_GAME_W)  width = MIN_GAME_W;
   if (height < MIN_GAME_H) height = MIN_GAME_H;
 
-  // (Re)create the game surface and its texture if the resolution changed
-  if (window.IsNull() || window.GetWidth() != width || window.GetHeight() != height) {
-    SDL_Texture *new_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888,
-                                                 SDL_TEXTUREACCESS_STREAMING, width, height);
-    if (!new_texture)
-      return false;
-    SDL_Surface *screen = SDL_CreateRGBSurfaceWithFormat(0, width, height, 32,
-                                                         SDL_PIXELFORMAT_RGB888);
-    if (!screen) {
-      SDL_DestroyTexture(new_texture);
-      return false;
-    }
-    if (texture)
-      SDL_DestroyTexture(texture);
-    texture = new_texture;
-    window.SetSurface(screen, true);
-  }
-
-  SDL_RenderSetLogicalSize(renderer, width, height);
-
-  // Whole-number stretch (2x on a 1080p phone, HiDPI desktops at 200%):
-  // nearest-neighbour keeps edges and text sharp. Other ratios need
-  // smoothing to avoid uneven pixels.
+  // Full resolution when the window is a whole multiple of the game size
+  // (2x on a 1080p phone, HiDPI desktops at 200%); see video.h
   int pw = width, ph = height;
   SDL_GetRendererOutputSize(renderer, &pw, &ph);
-  bool whole = pw % width == 0 && ph % height == 0 && pw / width == ph / height;
+  int scale = 1;
+  if (pw % width == 0 && ph % height == 0 && pw / width == ph / height)
+    scale = pw / width;
+  if (scale > 4)
+    scale = 4; // beyond that, memory for little gain
+  const int sw = width * scale, sh = height * scale;
+
+  bool same = screen_surface && screen_surface->w == sw && screen_surface->h == sh
+           && screen_scale == scale;
+  if (!same) {
+    // The full-resolution surface keeps an alpha channel for the interface
+    // layer (premultiplied: what blending onto transparent pixels produces)
+    Uint32 fmt = scale > 1 ? SDL_PIXELFORMAT_ARGB8888 : SDL_PIXELFORMAT_RGB888;
+    SDL_Texture *new_texture = SDL_CreateTexture(renderer, fmt,
+                                                 SDL_TEXTUREACCESS_STREAMING, sw, sh);
+    SDL_Surface *new_screen = SDL_CreateRGBSurfaceWithFormat(0, sw, sh, 32, fmt);
+    SDL_Texture *new_world_texture = NULL;
+    SDL_Surface *new_world = NULL;
+    if (scale > 1) {
+      new_world_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888,
+                                            SDL_TEXTUREACCESS_STREAMING, width, height);
+      new_world = SDL_CreateRGBSurfaceWithFormat(0, width, height, 32, SDL_PIXELFORMAT_RGB888);
+    }
+    if (!new_texture || !new_screen || (scale > 1 && (!new_world_texture || !new_world))) {
+      if (new_texture) SDL_DestroyTexture(new_texture);
+      if (new_world_texture) SDL_DestroyTexture(new_world_texture);
+      FreeSDLSurface(new_screen);
+      FreeSDLSurface(new_world);
+      return false;
+    }
+    if (scale > 1) {
+      SDL_SetTextureBlendMode(new_texture,
+        SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR_ONE, SDL_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+                                   SDL_BLENDOPERATION_ADD,
+                                   SDL_BLENDFACTOR_ONE, SDL_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+                                   SDL_BLENDOPERATION_ADD));
+      // An exact 2x/3x stretch: nearest keeps it crisp
+      SDL_SetTextureScaleMode(new_world_texture, SDL_ScaleModeNearest);
+      SDL_FillRect(new_screen, NULL, SDL_MapRGBA(new_screen->format, 0, 0, 0, 255));
+    }
+    FreeSurfaces();
+    if (texture) SDL_DestroyTexture(texture);
+    if (world_texture) SDL_DestroyTexture(world_texture);
+    texture = new_texture;
+    world_texture = new_world_texture;
+    screen_surface = new_screen;
+    world_surface = new_world;
+    screen_scale = scale;
+    world_fresh = true;
+    ui_full = true;
+  }
+  layered = false;
+  window.SetHiResOverlay(NULL, 1, NULL);
+  window.SetAutoFree(false); // the surfaces belong to Video
+  window.SetSurface(screen_surface, false);
+  window.SetScale(screen_scale);
+
+  // Input and layout stay in game coordinates
+  SDL_RenderSetLogicalSize(renderer, width, height);
+
+  // Exact multiples use nearest-neighbour, other ratios need smoothing
+  bool whole = pw % sw == 0 && ph % sh == 0 && pw / sw == ph / sh;
   SDL_SetTextureScaleMode(texture, whole ? SDL_ScaleModeNearest : SDL_ScaleModeLinear);
   return true;
+}
+
+// Merge overlapping or close rectangles, so a few uploads cover them
+static void MergeRects(std::vector<Rectanglei> &v);
+
+SDL_Texture *Video::CreateTexture(Surface &s)
+{
+  if (!renderer || s.IsNull())
+    return NULL;
+  SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, s.GetSurface());
+  if (t)
+    SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
+  return t;
+}
+
+bool Video::QueueSprite(SDL_Texture *t, const Point2i &pixel_pos, Uint8 alpha)
+{
+  if (!layered || !t)
+    return false;
+  int w, h;
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  // The renderer works in game units
+  Sprite sp = { t, pixel_pos.x / (float)screen_scale, pixel_pos.y / (float)screen_scale,
+                w / (float)screen_scale, h / (float)screen_scale, alpha };
+  sprites.push_back(sp);
+  return true;
+}
+
+bool Video::BeginWorldLayer()
+{
+  if (!world_surface)
+    return false;
+  layered = true;
+  sprites.clear();
+
+  // The overlay only holds text: make it transparent again where the last
+  // frames drew (clearing all of it would cost several ms)
+  if (ui_full) {
+    SDL_FillRect(screen_surface, NULL, 0);
+    ui_pending.clear();
+    ui_pending.push_back(Rectanglei(0, 0, screen_surface->w, screen_surface->h));
+    ui_drawn.clear();
+    ui_full = false;
+  } else {
+    MergeRects(ui_drawn);
+    for (size_t i = 0; i < ui_drawn.size(); i++) {
+      SDL_Rect r = { ui_drawn[i].GetPositionX(), ui_drawn[i].GetPositionY(),
+                     ui_drawn[i].GetSizeX(), ui_drawn[i].GetSizeY() };
+      SDL_SetClipRect(screen_surface, NULL);
+      SDL_FillRect(screen_surface, &r, 0);
+    }
+    ui_pending.insert(ui_pending.end(), ui_drawn.begin(), ui_drawn.end());
+    ui_drawn.clear();
+  }
+  SDL_SetClipRect(screen_surface, NULL);
+
+  window.SetSurface(world_surface, false);
+  window.SetScale(1);
+  window.SetHiResOverlay(screen_surface, screen_scale, &ui_drawn);
+  bool full = world_fresh;
+  world_fresh = false;
+  return full;
+}
+
+// Merge overlapping or close rectangles, so a few uploads cover them
+static void MergeRects(std::vector<Rectanglei> &v)
+{
+  const int near = 16;
+  bool merged = true;
+  while (merged) {
+    merged = false;
+    for (size_t i = 0; i < v.size() && !merged; i++) {
+      for (size_t j = i + 1; j < v.size(); j++) {
+        const Rectanglei &a = v[i], &b = v[j];
+        if (a.GetPositionX() - near <= b.GetPositionX() + b.GetSizeX()
+            && b.GetPositionX() - near <= a.GetPositionX() + a.GetSizeX()
+            && a.GetPositionY() - near <= b.GetPositionY() + b.GetSizeY()
+            && b.GetPositionY() - near <= a.GetPositionY() + a.GetSizeY()) {
+          int x1 = std::min(a.GetPositionX(), b.GetPositionX());
+          int y1 = std::min(a.GetPositionY(), b.GetPositionY());
+          int x2 = std::max(a.GetPositionX() + a.GetSizeX(), b.GetPositionX() + b.GetSizeX());
+          int y2 = std::max(a.GetPositionY() + a.GetSizeY(), b.GetPositionY() + b.GetSizeY());
+          v[i] = Rectanglei(x1, y1, x2 - x1, y2 - y1);
+          v.erase(v.begin() + j);
+          merged = true;
+          break;
+        }
+      }
+    }
+  }
+}
+
+void Video::EndLayers()
+{
+  if (!layered)
+    return;
+  layered = false;
+  window.SetHiResOverlay(NULL, 1, NULL);
+  SDL_SetClipRect(screen_surface, NULL);
+  ui_full = true; // the merged frame fills the surface
+  sprites.clear(); // (not merged: only the touch controls use them)
+
+  // Merge: the world stretched underneath, the interface (premultiplied) on top
+  SDL_Surface *ui = SDL_DuplicateSurface(screen_surface);
+  SDL_SetSurfaceBlendMode(world_surface, SDL_BLENDMODE_NONE);
+  SDL_BlitScaled(world_surface, NULL, screen_surface, NULL);
+  if (ui) {
+    SDL_LockSurface(ui);
+    SDL_LockSurface(screen_surface);
+    for (int y = 0; y < ui->h; y++) {
+      Uint32 *src = (Uint32 *)((Uint8 *)ui->pixels + y * ui->pitch);
+      Uint32 *dst = (Uint32 *)((Uint8 *)screen_surface->pixels + y * screen_surface->pitch);
+      for (int x = 0; x < ui->w; x++) {
+        Uint32 a = src[x] >> 24;
+        if (a == 0)
+          continue;
+        Uint32 inv = 255 - a, d = dst[x];
+        Uint32 r = ((src[x] >> 16) & 0xff) + (((d >> 16) & 0xff) * inv) / 255;
+        Uint32 g = ((src[x] >> 8) & 0xff) + (((d >> 8) & 0xff) * inv) / 255;
+        Uint32 b = (src[x] & 0xff) + ((d & 0xff) * inv) / 255;
+        dst[x] = 0xff000000 | (r > 255 ? 255 : r) << 16 | (g > 255 ? 255 : g) << 8 | (b > 255 ? 255 : b);
+      }
+    }
+    SDL_UnlockSurface(screen_surface);
+    SDL_UnlockSurface(ui);
+    SDL_FreeSurface(ui);
+  }
+  window.SetSurface(screen_surface, false);
+  window.SetScale(screen_scale);
 }
 
 bool Video::__SetConfig(const int width, const int height, const bool _fullscreen)
@@ -398,7 +592,23 @@ void Video::Flip()
 {
   if (!texture || window.IsNull())
     return;
-  SDL_UpdateTexture(texture, NULL, window.GetSurface()->pixels, window.GetSurface()->pitch);
+  if (layered) {
+    SDL_UpdateTexture(world_texture, NULL, world_surface->pixels, world_surface->pitch);
+    // Interface layer: only what changed
+    std::vector<Rectanglei> rects(ui_pending);
+    rects.insert(rects.end(), ui_drawn.begin(), ui_drawn.end());
+    ui_pending.clear();
+    MergeRects(rects);
+    for (size_t i = 0; i < rects.size(); i++) {
+      SDL_Rect r = { rects[i].GetPositionX(), rects[i].GetPositionY(),
+                     rects[i].GetSizeX(), rects[i].GetSizeY() };
+      SDL_UpdateTexture(texture, &r,
+                        (Uint8 *)screen_surface->pixels + r.y * screen_surface->pitch + r.x * 4,
+                        screen_surface->pitch);
+    }
+  } else {
+    SDL_UpdateTexture(texture, NULL, screen_surface->pixels, screen_surface->pitch);
+  }
   Present();
 }
 
@@ -408,7 +618,21 @@ void Video::Present()
     return;
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
-  SDL_RenderCopy(renderer, texture, NULL, NULL);
+  if (layered && world_texture) {
+    SDL_RenderCopy(renderer, world_texture, NULL, NULL);
+    SDL_RenderCopy(renderer, texture, NULL, NULL); // blends (see ResizeGameSurface)
+    for (size_t i = 0; i < sprites.size(); i++) {
+      SDL_FRect d = { sprites[i].x, sprites[i].y, sprites[i].w, sprites[i].h };
+      SDL_SetTextureAlphaMod(sprites[i].texture, sprites[i].alpha);
+      SDL_RenderCopyF(renderer, sprites[i].texture, NULL, &d);
+    }
+  } else {
+    SDL_BlendMode mode;
+    SDL_GetTextureBlendMode(texture, &mode);
+    SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_NONE);
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_SetTextureBlendMode(texture, mode);
+  }
   SDL_RenderPresent(renderer);
 }
 

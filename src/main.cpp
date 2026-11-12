@@ -242,6 +242,7 @@ void AppWarmux::RefreshDisplay()
       Game::GetCurrentMenu()->RedrawMenu();
       return;
     } else {
+      video->BeginWorldLayer();
       GetWorld().DrawSky(true);
       GetWorld().Draw(true);
     }
