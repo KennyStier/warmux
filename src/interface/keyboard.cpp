@@ -28,6 +28,9 @@
 #include "tool/xml_document.h"
 
 #include <SDL_events.h>
+#include <SDL_timer.h>
+#include <cstdio>
+#include <cstdlib>
 #include <libxml/tree.h>
 
 #define MODIFIER_OFFSET (SDLK_LAST + 1)
@@ -255,8 +258,26 @@ bool Keyboard::IsModifier(int raw_key_code)
   return raw_key_code>=SDLK_NUMLOCK && raw_key_code<=SDLK_COMPOSE;
 }
 
+// Set WARMUX_DEBUG_INPUT=1 to trace raw key events on stderr
+static bool DebugInput()
+{
+  static int enabled = -1;
+  if (enabled < 0) {
+    const char *env = getenv("WARMUX_DEBUG_INPUT");
+    enabled = (env && *env && *env != '0') ? 1 : 0;
+  }
+  return enabled;
+}
+
 bool Keyboard::HandleKeyEvent(const SDL_Event& evnt)
 {
+  if (DebugInput() && (evnt.type == SDL_KEYDOWN || evnt.type == SDL_KEYUP)) {
+    Uint8 *state = SDL_GetKeyState(NULL);
+    fprintf(stderr, "[input] %8u %-4s sym=%-4d (%s) scancode=%d held_now=%d\n",
+            SDL_GetTicks(), evnt.type == SDL_KEYDOWN ? "DOWN" : "UP",
+            (int)evnt.key.keysym.sym, SDL_GetKeyName(evnt.key.keysym.sym),
+            (int)evnt.key.keysym.scancode, (int)state[evnt.key.keysym.sym]);
+  }
   // Not a registred event
   if (!IsRegistredEvent(evnt.type))
     return false;
@@ -316,6 +337,26 @@ bool Keyboard::HandleKeyEvent(const SDL_Event& evnt)
     if (basic_key_code == SDLK_RIGHT) basic_key_code = SDLK_DOWN;
   }
 #endif
+
+  // Auto-repeat can arrive as KEYUP+KEYDOWN pairs while the key is still
+  // held (seen with sdl12-compat on Wayland). Gameplay tracks held keys
+  // itself, so drop both halves: a release for a key that is still
+  // physically down, and a repeated press with unchanged modifiers.
+  if (basic_key_code > SDLK_UNKNOWN && basic_key_code < SDLK_LAST) {
+    if (event_type == KEY_RELEASED) {
+      const Uint8 *key_state = SDL_GetKeyState(NULL);
+      if (key_state && key_state[basic_key_code]) {
+        if (DebugInput())
+          fprintf(stderr, "[input]          ignored synthetic UP\n");
+        return true;
+      }
+    } else if (pressed_keys.count(basic_key_code)
+               && GetModifierBitsFromSDL() == modifier_bits) {
+      if (DebugInput())
+        fprintf(stderr, "[input]          ignored repeated DOWN\n");
+      return true;
+    }
+  }
 
   int key_code;
   int previous_modifier_bits = modifier_bits;

@@ -697,6 +697,10 @@ bool Game::Run()
   bool game_finished = false;
   isGameLaunched = true;
 
+  // Menus enable key repeat; gameplay tracks held keys itself and must not
+  // receive synthetic repeats (they break charge-up weapons and the rope)
+  SDL_EnableKeyRepeat(0, 0);
+
   // Time to display the next frame
   time_of_next_frame = 0;
   // Time to display the compute next physic engine frame
