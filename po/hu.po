@@ -8,14 +8,14 @@ msgstr ""
 "Language-Team: Hungarian\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: src/map/maps_list.cpp:379
 #, c-format
 msgid "! Map %s not found :-("
-msgstr "A(z) %s p�lya nem tal�lhat�"
+msgstr "A(z) %s pálya nem található"
 
 #: src/graphic/fps.cpp:99
 #, c-format
@@ -26,25 +26,25 @@ msgstr "%.1f FPS"
 #, c-format
 msgid "%i player connected"
 msgid_plural "%i players connected"
-msgstr[0] "%i j�t�kos l�pett be"
-msgstr[1] "%i j�t�kos l�pett be"
+msgstr[0] "%i játékos lépett be"
+msgstr[1] "%i játékos lépett be"
 
 #: src/menu/network_menu.cpp:134 src/menu/network_menu.cpp:369
 #, c-format
 msgid "%i player ready"
 msgid_plural "%i players ready"
-msgstr[0] "%i j�t�kos �ll k�szen"
-msgstr[1] "%i j�t�kos �ll k�szen"
+msgstr[0] "%i játékos áll készen"
+msgstr[1] "%i játékos áll készen"
 
 #: src/map/maps_list.cpp:141
 #, c-format
 msgid "%s <%s> aka %s from %s"
-msgstr "%s <%s>, ismertebb nev�n %s a(z) %s csapatb�l"
+msgstr "%s <%s>, ismertebb nevén %s a(z) %s csapatból"
 
 #: src/map/maps_list.cpp:148
 #, c-format
 msgid "%s <%s> from %s"
-msgstr "%s <%s> a(z) %s csapatb�l"
+msgstr "%s <%s> a(z) %s csapatból"
 
 #: src/menu/team_box.cpp:254
 #, c-format
@@ -55,39 +55,39 @@ msgstr "%s Csapat"
 #: src/menu/team_box.cpp:246
 #, c-format
 msgid "%s Team - Remote"
-msgstr "%s Csapat - T�voli"
+msgstr "%s Csapat - Távoli"
 
 #: src/game/game.cpp:1172
 #, fuzzy, c-format
 msgid "%s from %s team committed suicide!"
-msgstr "%s a(z) %s csapatb�l �ngyilkos lett!"
+msgstr "%s a(z) %s csapatból öngyilkos lett!"
 
 #. Could be modified, but for now, save on translation
 #: src/game/game.cpp:1198 src/game/game.cpp:1217
 #, c-format
 msgid "%s from %s team has died."
-msgstr "%s a(z) %s csapatb�l meghalt."
+msgstr "%s a(z) %s csapatból meghalt."
 
 #: src/game/game.cpp:1164
 #, c-format
 msgid "%s from %s team has fallen into the water!"
-msgstr "%s a(z) %s csapatb�l v�zbe esett."
+msgstr "%s a(z) %s csapatból vízbe esett."
 
 #: src/game/game.cpp:1158
 #, c-format
 msgid "%s from %s team has fallen off the map!"
-msgstr "%s a(z) %s csapatb�l kiesett a p�ly�r�l!"
+msgstr "%s a(z) %s csapatból kiesett a pályáról!"
 
 #: src/game/game.cpp:1178
 #, c-format
 msgid "%s from %s team has hit the ground too hard!"
-msgstr "%s a(z) %s csapatb�l t�l kem�nyen �rkezett a f�ldre!"
+msgstr "%s a(z) %s csapatból túl keményen érkezett a földre!"
 
 #. The playing character killed himself
 #: src/game/game.cpp:1185
 #, c-format
 msgid "%s from %s team is dead because he is clumsy!"
-msgstr "%s a(z) %s csapatb�l meghalt, mert egy kicsit �gyefogyott volt!"
+msgstr "%s a(z) %s csapatból meghalt, mert egy kicsit ügyefogyott volt!"
 
 #: src/network/admin_commands.cpp:69
 #, c-format
@@ -104,29 +104,29 @@ msgstr ""
 #: src/object/medkit.cpp:73
 #, fuzzy, c-format
 msgid "%s has won %u points of energy!"
-msgstr "%s energi�ja %u egys�ggel n�tt!"
+msgstr "%s energiája %u egységgel nőtt!"
 
 #: src/game/game.cpp:1209
 #, c-format
 msgid "%s is a psychopath, he has killed a member of the %s team!"
-msgstr "%s egy pszichopata, meg�lte a(z) %s csapat egy tagj�t!"
+msgstr "%s egy pszichopata, megölte a(z) %s csapat egy tagját!"
 
 #: src/weapon/mine.cpp:121
 #, c-format
 msgid "%s is next to a mine!"
-msgstr "%s egy tapos�akna mellett m�szk�l!"
+msgstr "%s egy taposóakna mellett mászkál!"
 
 #. For translators: extended in "<nickname> (<host>) just connected
 #: src/include/action_handler.cpp:952
 #, fuzzy, c-format
 msgid "%s just connected"
-msgstr "%i j�t�kos l�pett be"
+msgstr "%i játékos lépett be"
 
 #. For translators: extended in "<nickname> (<host>) just disconnected
 #: src/include/action_handler.cpp:1064
 #, fuzzy, c-format
 msgid "%s just disconnected"
-msgstr "%i j�t�kos l�pett be"
+msgstr "%i játékos lépett be"
 
 #: src/network/admin_commands.cpp:66
 #, c-format
@@ -142,34 +142,34 @@ msgstr ""
 #: src/object/bonus_box.cpp:88
 #, c-format
 msgid "%s team already has infinite ammo for the %s!"
-msgstr "A(z) %s csapatnak v�gtelen l�szere van a(z) %s fegyverhez!"
+msgstr "A(z) %s csapatnak végtelen lőszere van a(z) %s fegyverhez!"
 
 #. Show message
 #: src/weapon/skip_turn.cpp:55
 #, c-format
 msgid "%s team has skipped its turn."
-msgstr "A(z) %s csapat kihagyta ezt a fordul�t."
+msgstr "A(z) %s csapat kihagyta ezt a fordulót."
 
 #: src/weapon/cluzooka.cpp:360
 #, c-format
 msgid "%s team has won %u Cluster bazookas!"
 msgid_plural "%s team has won %u Cluster bazookas!"
-msgstr[0] "%s csapat %u repesz-rak�tavet�t kapott!"
-msgstr[1] "%s csapat %u repesz-rak�tavet�t kapott!"
+msgstr[0] "%s csapat %u repesz-rakétavetőt kapott!"
+msgstr[1] "%s csapat %u repesz-rakétavetőt kapott!"
 
 #: src/weapon/gnu.cpp:239
 #, c-format
 msgid "%s team has won %u Gnu! Blow them all, cowboy!"
 msgid_plural "%s team has won %u Gnus! Blow them all, cowboy!"
-msgstr[0] "%s csapat %u gn�t kapott! Robbantsd fel mindet, cowboy!"
-msgstr[1] "%s csapat %u gn�t kapott! Robbantsd fel mindet, cowboy!"
+msgstr[0] "%s csapat %u gnút kapott! Robbantsd fel mindet, cowboy!"
+msgstr[1] "%s csapat %u gnút kapott! Robbantsd fel mindet, cowboy!"
 
 #: src/weapon/air_attack.cpp:256
 #, c-format
 msgid "%s team has won %u air attack!"
 msgid_plural "%s team has won %u air attacks!"
-msgstr[0] "%s csapat %u l�git�mad�st kapott!"
-msgstr[1] "%s csapat %u l�git�mad�st kapott!"
+msgstr[0] "%s csapat %u légitámadást kapott!"
+msgstr[1] "%s csapat %u légitámadást kapott!"
 
 #: src/weapon/airhammer.cpp:167
 #, c-format
@@ -180,39 +180,39 @@ msgid_plural ""
 "%s team has won %u airhammers! Don't make too much noise with them! Thanks, "
 "your neighbours."
 msgstr[0] ""
-"%s csapat %u l�gkalap�csot kapott! Ne csapj t�l nagy zajt vele! K�sz, a "
-"szomsz�dok."
+"%s csapat %u légkalapácsot kapott! Ne csapj túl nagy zajt vele! Kösz, a "
+"szomszédok."
 msgstr[1] ""
-"%s csapat %u l�gkalap�csot kapott! Ne csapj t�l nagy zajt vel�k! K�sz, a "
-"szomsz�dok."
+"%s csapat %u légkalapácsot kapott! Ne csapj túl nagy zajt velük! Kösz, a "
+"szomszédok."
 
 #: src/weapon/anvil.cpp:195
 #, c-format
 msgid "%s team has won %u anvil! Splat them all!"
 msgid_plural "%s team has won %u anvils! Splat them all!"
-msgstr[0] "%s csapat %u �ll�t kapott! Csapd agyon �ket!"
-msgstr[1] "%s csapat %u �ll�t kapott! Csapd agyon �ket!"
+msgstr[0] "%s csapat %u üllőt kapott! Csapd agyon őket!"
+msgstr[1] "%s csapat %u üllőt kapott! Csapd agyon őket!"
 
 #: src/weapon/auto_bazooka.cpp:325
 #, c-format
 msgid "%s team has won %u automatic bazooka!"
 msgid_plural "%s team has won %u automatic bazookas!"
-msgstr[0] "%s csapat %u automatikus rak�t�t kapott!"
-msgstr[1] "%s csapat %u automatikus rak�t�t kapott!"
+msgstr[0] "%s csapat %u automatikus rakétát kapott!"
+msgstr[1] "%s csapat %u automatikus rakétát kapott!"
 
 #: src/weapon/baseball.cpp:112
 #, c-format
 msgid "%s team has won %u baseball bat!"
 msgid_plural "%s team has won %u baseball bats!"
-msgstr[0] "%s csapat %u baseball-�t�t kapott!"
-msgstr[1] "%s csapat %u baseball-�t�t kapott!"
+msgstr[0] "%s csapat %u baseball-ütőt kapott!"
+msgstr[1] "%s csapat %u baseball-ütőt kapott!"
 
 #: src/weapon/bazooka.cpp:126
 #, c-format
 msgid "%s team has won %u bazooka!"
 msgid_plural "%s team has won %u bazookas!"
-msgstr[0] "%s csapat %u rak�tavet�t kapott!"
-msgstr[1] "%s csapat %u rak�tavet�t kapott!"
+msgstr[0] "%s csapat %u rakétavetőt kapott!"
+msgstr[1] "%s csapat %u rakétavetőt kapott!"
 
 #: src/weapon/blowtorch.cpp:154
 #, c-format
@@ -222,40 +222,40 @@ msgid_plural ""
 "%s team has won %u blowtorchs! If you're under 18, ask your parents to use "
 "it."
 msgstr[0] ""
-"%s csapat %u l�ngsz�r�t kapott! Ha kiskor� vagy, k�rd meg a sz�leidet, hogy "
-"haszn�lj�k helyetted."
+"%s csapat %u lángszórót kapott! Ha kiskorú vagy, kérd meg a szüleidet, hogy "
+"használják helyetted."
 msgstr[1] ""
-"%s csapat %u l�ngsz�r�t kapott! Ha kiskor� vagy, k�rd meg a sz�leidet, hogy "
-"haszn�lj�k helyetted."
+"%s csapat %u lángszórót kapott! Ha kiskorú vagy, kérd meg a szüleidet, hogy "
+"használják helyetted."
 
 #: src/weapon/bounce_ball.cpp:113
 #, c-format
 msgid "%s team has won %u bounce ball! Boing!"
 msgid_plural "%s team has won %u bounce balls! Boing!"
-msgstr[0] "%s csapat %u pattog� labd�t kapott! Boing!"
-msgstr[1] "%s csapat %u pattog� labd�t kapott! Boing!"
+msgstr[0] "%s csapat %u pattogó labdát kapott! Boing!"
+msgstr[1] "%s csapat %u pattogó labdát kapott! Boing!"
 
 #: src/weapon/cluster_bomb.cpp:204
 #, c-format
 msgid "%s team has won %u cluster bomb!"
 msgid_plural "%s team has won %u cluster bombs!"
-msgstr[0] "%s csapat %u repeszbomb�t kapott!"
-msgstr[1] "%s csapat %u repeszbomb�t kapott!"
+msgstr[0] "%s csapat %u repeszbombát kapott!"
+msgstr[1] "%s csapat %u repeszbombát kapott!"
 
 #: src/weapon/construct.cpp:82
 #, c-format
 msgid "%s team has won %u construct weapon! Don't forget your helmet."
 msgid_plural "%s team has won %u construct weapons! Don't forget your helmet."
-msgstr[0] "%s csapat %u �p�t�t kapott! Ne felejtsd a sisakodat."
-msgstr[1] "%s csapat %u �p�t�t kapott! Ne felejtsd a sisakodat."
+msgstr[0] "%s csapat %u építőt kapott! Ne felejtsd a sisakodat."
+msgstr[1] "%s csapat %u építőt kapott! Ne felejtsd a sisakodat."
 
 #: src/weapon/disco_grenade.cpp:168
 #, c-format
 msgid "%s team has won %u disco grenade! Shake your body when throwing it!"
 msgid_plural ""
 "%s team has won %u disco grenades! Shake your body when throwing them!"
-msgstr[0] "%s csapat %u diszk�bomb�t kapott! R�zd a tested, mik�zben eldobod!"
-msgstr[1] "%s csapat %u diszk�bomb�t kapott! R�zd a tested, mik�zben eldobod!"
+msgstr[0] "%s csapat %u diszkóbombát kapott! Rázd a tested, miközben eldobod!"
+msgstr[1] "%s csapat %u diszkóbombát kapott! Rázd a tested, miközben eldobod!"
 
 #: src/weapon/dynamite.cpp:150
 #, c-format
@@ -268,15 +268,15 @@ msgstr[1] "%s csapat %u dinamitot kapott!"
 #, c-format
 msgid "%s team has won %u flame-thrower!"
 msgid_plural "%s team has won %u flame-throwers!"
-msgstr[0] "%s csapat %u l�ngsz�r�t kapott!"
-msgstr[1] "%s csapat %u l�ngsz�r�t kapott!"
+msgstr[0] "%s csapat %u lángszórót kapott!"
+msgstr[1] "%s csapat %u lángszórót kapott!"
 
 #: src/weapon/footbomb.cpp:167
 #, c-format
 msgid "%s team has won %u football bomb!"
 msgid_plural "%s team has won %u football bombs!"
-msgstr[0] "%s csapat %u r�gbibomb�t kapott!"
-msgstr[1] "%s csapat %u r�gbibomb�t kapott!"
+msgstr[0] "%s csapat %u rögbibombát kapott!"
+msgstr[1] "%s csapat %u rögbibombát kapott!"
 
 #: src/weapon/grapple.cpp:713
 #, c-format
@@ -289,8 +289,8 @@ msgstr[1] "%s csapat %u szigonyt kapott!"
 #, c-format
 msgid "%s team has won %u grenade!"
 msgid_plural "%s team has won %u grenades!"
-msgstr[0] "%s csapat %u gr�n�tot kapott!"
-msgstr[1] "%s csapat %u gr�n�tot kapott!"
+msgstr[0] "%s csapat %u gránátot kapott!"
+msgstr[1] "%s csapat %u gránátot kapott!"
 
 #: src/weapon/gun.cpp:95
 #, c-format
@@ -303,8 +303,8 @@ msgstr[1] "%s csapat %u pisztolyt kapott!"
 #, c-format
 msgid "%s team has won %u jetpack! Groovy!"
 msgid_plural "%s team has won %u jetpacks! Groovy!"
-msgstr[0] "%s csapat %u jetpacket kapott! Pomp�s!"
-msgstr[1] "%s csapat %u jetpacket kapott! Pomp�s!"
+msgstr[0] "%s csapat %u jetpacket kapott! Pompás!"
+msgstr[1] "%s csapat %u jetpacket kapott! Pompás!"
 
 #: src/weapon/lowgrav.cpp:83
 #, fuzzy, c-format
@@ -313,50 +313,50 @@ msgid ""
 msgid_plural ""
 "%s team has won %u lowgravs! Small step for man, giant leap for free "
 "software!"
-msgstr[0] "%s csapat %u alacsony gravit�ci�t kapott! �n vagyok Neil Armstrong!"
-msgstr[1] "%s csapat %u alacsony gravit�ci�t kapott! �n vagyok Neil Armstrong!"
+msgstr[0] "%s csapat %u alacsony gravitációt kapott! Én vagyok Neil Armstrong!"
+msgstr[1] "%s csapat %u alacsony gravitációt kapott! Én vagyok Neil Armstrong!"
 
 #: src/weapon/mine.cpp:249
 #, c-format
 msgid "%s team has won %u mine!"
 msgid_plural "%s team has won %u mines!"
-msgstr[0] "%s csapat %u akn�t kapott!"
-msgstr[1] "%s csapat %u akn�t kapott!"
+msgstr[0] "%s csapat %u aknát kapott!"
+msgstr[1] "%s csapat %u aknát kapott!"
 
 #: src/weapon/parachute.cpp:174
 #, c-format
 msgid "%s team has won %u parachute!"
 msgid_plural "%s team has won %u parachutes!"
-msgstr[0] "%s csapat %u ejt�erny�t kapott!"
-msgstr[1] "%s csapat %u ejt�erny�t kapott!"
+msgstr[0] "%s csapat %u ejtőernyőt kapott!"
+msgstr[1] "%s csapat %u ejtőernyőt kapott!"
 
 #: src/weapon/polecat.cpp:273
 #, fuzzy, c-format
 msgid "%s team has won %u polecat! You have your gas mask, right?"
 msgid_plural "%s team has won %u polecats! You have your gas mask, right?"
-msgstr[0] "%s csapat %u borzot kapott! Ugye n�lad van a g�z�larcod?"
-msgstr[1] "%s csapat %u borzot kapott! Ugye n�lad van a g�z�larcod?"
+msgstr[0] "%s csapat %u borzot kapott! Ugye nálad van a gázálarcod?"
+msgstr[1] "%s csapat %u borzot kapott! Ugye nálad van a gázálarcod?"
 
 #: src/weapon/rail_gun.cpp:133
 #, fuzzy, c-format
 msgid "%s team has won %u rail gun! It's skewer time!"
 msgid_plural "%s team has won %u rail guns! It's skewer time!"
-msgstr[0] "%s csapat %u repeszbomb�t kapott!"
-msgstr[1] "%s csapat %u repeszbomb�t kapott!"
+msgstr[0] "%s csapat %u repeszbombát kapott!"
+msgstr[1] "%s csapat %u repeszbombát kapott!"
 
 #: src/weapon/riot_bomb.cpp:131
 #, c-format
 msgid "%s team has won %u riot bomb!"
 msgid_plural "%s team has won %u riot bombs!"
-msgstr[0] "%s csapat %u rohambomb�t kapott!"
-msgstr[1] "%s csapat %u rohambomb�t kapott!"
+msgstr[0] "%s csapat %u rohambombát kapott!"
+msgstr[1] "%s csapat %u rohambombát kapott!"
 
 #: src/weapon/shotgun.cpp:127
 #, c-format
 msgid "%s team has won %u shotgun!"
 msgid_plural "%s team has won %u shotguns!"
-msgstr[0] "%s csapat %u s�r�tespusk�t kapott!"
-msgstr[1] "%s csapat %u s�r�tespusk�t kapott!"
+msgstr[0] "%s csapat %u sörétespuskát kapott!"
+msgstr[1] "%s csapat %u sörétespuskát kapott!"
 
 #: src/weapon/slap.cpp:79
 #, c-format
@@ -371,31 +371,31 @@ msgid "%s team has won %u sniper rifle! Aim and shoot between the eyes!"
 msgid_plural ""
 "%s team has won %u sniper rifles! Aim and shoot between the eyes!"
 msgstr[0] ""
-"%s csapat %u mesterl�v�sz pusk�t kapott! C�lozz �s l�j a szemek k�z�!"
+"%s csapat %u mesterlövész puskát kapott! Célozz és lőj a szemek közé!"
 msgstr[1] ""
-"%s csapat %u mesterl�v�sz pusk�t kapott! C�lozz �s l�j a szemek k�z�!"
+"%s csapat %u mesterlövész puskát kapott! Célozz és lőj a szemek közé!"
 
 #: src/weapon/submachine_gun.cpp:147
 #, c-format
 msgid "%s team has won %u submachine gun!"
 msgid_plural "%s team has won %u submachine guns!"
-msgstr[0] "%s csapat %u g�ppisztolyt kapott!"
-msgstr[1] "%s csapat %u g�ppisztolyt kapott!"
+msgstr[0] "%s csapat %u géppisztolyt kapott!"
+msgstr[1] "%s csapat %u géppisztolyt kapott!"
 
 #: src/weapon/suicide.cpp:78
 #, c-format
 msgid "%s team has won %u suicide!"
 msgid_plural "%s team has won %u suicides! Use them all for an extra bonus!"
-msgstr[0] "%s csapat %u �ngyilkoss�got kapott!"
+msgstr[0] "%s csapat %u öngyilkosságot kapott!"
 msgstr[1] ""
-"%s csapat %u �ngyilkoss�got kapott! Haszn�ld el mindet egy extra b�nusz�rt!"
+"%s csapat %u öngyilkosságot kapott! Használd el mindet egy extra bónuszért!"
 
 #: src/weapon/syringe.cpp:120
 #, c-format
 msgid "%s team has won %u syringe!"
 msgid_plural "%s team has won %u syringes!"
-msgstr[0] "%s csapat %u fecskend�t kapott!"
-msgstr[1] "%s csapat %u fecskend�t kapott!"
+msgstr[0] "%s csapat %u fecskendőt kapott!"
+msgstr[1] "%s csapat %u fecskendőt kapott!"
 
 #: src/weapon/teleportation.cpp:126
 #, c-format
@@ -408,15 +408,15 @@ msgstr[1] "%s csapat plusz %u teleportot kapott!"
 #, c-format
 msgid "%s team has won %u turn skip! I know you'll love it."
 msgid_plural "%s team has won %u turn skips! I know you'll love them."
-msgstr[0] "%s csapat %u fordul� kihagy�st kapott! Tudom, hogy tetszeni fog."
-msgstr[1] "%s csapat %u fordul� kihagy�st kapott! Tudom, hogy tetszeni fog."
+msgstr[0] "%s csapat %u forduló kihagyást kapott! Tudom, hogy tetszeni fog."
+msgstr[1] "%s csapat %u forduló kihagyást kapott! Tudom, hogy tetszeni fog."
 
 #: src/weapon/supertux.cpp:291
 #, c-format
 msgid "%s team has won %u tux launcher! Never seen a flying penguin?"
 msgid_plural "%s team has won %u tux launchers! Never seen a flying penguin?"
-msgstr[0] "%s csapat %u pingvinkil�v�t kapott! Sosem l�tt�l rep�l� pingvint?"
-msgstr[1] "%s csapat %u pingvinkil�v�t kapott! Sosem l�tt�l rep�l� pingvint?"
+msgstr[0] "%s csapat %u pingvinkilövőt kapott! Sosem láttál repülő pingvint?"
+msgstr[1] "%s csapat %u pingvinkilövőt kapott! Sosem láttál repülő pingvint?"
 
 #: src/game/game_blitz.cpp:67
 #, c-format
@@ -426,7 +426,7 @@ msgstr "%s csapat elpusztult."
 #: src/game/game.cpp:1193 src/game/game.cpp:1205
 #, c-format
 msgid "%s took a member of the %s team to the grave with him!"
-msgstr "%s s�rba vitte mag�val a(z) %s csapat tagj�t!"
+msgstr "%s sírba vitte magával a(z) %s csapat tagját!"
 
 #: src/network/admin_commands.cpp:81
 #, c-format
@@ -436,37 +436,37 @@ msgstr ""
 #: src/interface/man_machine_interface.cpp:1149
 #, fuzzy
 msgid "'Duel' weapon category"
-msgstr "Fegyverkateg�ria v�lt�sa"
+msgstr "Fegyverkategória váltása"
 
 #: src/interface/man_machine_interface.cpp:1145
 #, fuzzy
 msgid "'Heavy' weapon category"
-msgstr "Fegyverkateg�ria v�lt�sa"
+msgstr "Fegyverkategória váltása"
 
 #: src/interface/man_machine_interface.cpp:1150
 #, fuzzy
 msgid "'Move' weapon category"
-msgstr "Fegyverkateg�ria v�lt�sa"
+msgstr "Fegyverkategória váltása"
 
 #: src/interface/man_machine_interface.cpp:1146
 #, fuzzy
 msgid "'Rifle' weapon category"
-msgstr "Fegyverkateg�ria v�lt�sa"
+msgstr "Fegyverkategória váltása"
 
 #: src/interface/man_machine_interface.cpp:1148
 #, fuzzy
 msgid "'Special' weapon category"
-msgstr "Fegyverkateg�ria v�lt�sa"
+msgstr "Fegyverkategória váltása"
 
 #: src/interface/man_machine_interface.cpp:1147
 #, fuzzy
 msgid "'Throwing' weapon category"
-msgstr "Fegyverkateg�ria v�lt�sa"
+msgstr "Fegyverkategória váltása"
 
 #: src/interface/man_machine_interface.cpp:1151
 #, fuzzy
 msgid "'Tool' weapon category"
-msgstr "Fegyverkateg�ria v�lt�sa"
+msgstr "Fegyverkategória váltása"
 
 #: src/interface/interface.cpp:291
 msgid "(dead)"
@@ -479,12 +479,12 @@ msgstr "(rendszernyelv)"
 
 #: src/network/chatlogger.cpp:28 src/network/chatlogger.cpp:67
 msgid "(unknown time)"
-msgstr "(ismeretlen id�)"
+msgstr "(ismeretlen idő)"
 
 #. Display number of ammo
 #: src/interface/interface.cpp:314
 msgid "(unlimited)"
-msgstr "(korl�tlan)"
+msgstr "(korlátlan)"
 
 #: src/menu/options_menu.cpp:536
 #, fuzzy, c-format
@@ -492,26 +492,26 @@ msgid ""
 "A new version %s is available, while your version is %s. You may want to "
 "check whether an update is available for your OS!"
 msgstr ""
-"Egy �j verzi� %s el�rhet�, a te verzi�d: %s. Megn�zhetn�d, hogy van-e az "
-"oper�ci�s rendszeredhez tartoz� friss�t�s!"
+"Egy új verzió %s elérhető, a te verziód: %s. Megnézhetnéd, hogy van-e az "
+"operációs rendszeredhez tartozó frissítés!"
 
 #. Action name
 #: src/gui/control_config.cpp:292
 #, fuzzy
 msgid "Action"
-msgstr "Be�ll�t�sok"
+msgstr "Beállítások"
 
 #: src/weapon/air_attack.cpp:213
 msgid "Air Attack"
-msgstr "L�git�mad�s"
+msgstr "Légitámadás"
 
 #: src/weapon/airhammer.cpp:76
 msgid "Airhammer"
-msgstr "L�gkalap�cs"
+msgstr "Légkalapács"
 
 #: src/menu/results_menu.cpp:313
 msgid "All teams"
-msgstr "�sszes csapat"
+msgstr "Összes csapat"
 
 #: src/menu/game_mode_editor.cpp:56
 msgid "Always"
@@ -519,7 +519,7 @@ msgstr "Mindig"
 
 #: src/game/game_blitz.cpp:48 src/game/game_classic.cpp:54
 msgid "And the winner is..."
-msgstr "A gy�ztes..."
+msgstr "A győztes..."
 
 #: src/weapon/baseball.cpp:56
 #, fuzzy
@@ -528,13 +528,13 @@ msgid ""
 "Fire: space key\n"
 "a hit per turn"
 msgstr ""
-"Ir�nyz�k : Fel/Le\n"
-"T�z : space\n"
-"egy �t�s k�r�nk�nt"
+"Irányzék : Fel/Le\n"
+"Tűz : space\n"
+"egy ütés körönként"
 
 #: src/weapon/anvil.cpp:141
 msgid "Anvil"
-msgstr "�ll�"
+msgstr "Üllő"
 
 #: src/menu/help_menu.cpp:115
 msgid "Area currently displayed"
@@ -542,11 +542,11 @@ msgstr ""
 
 #: src/main.cpp:358
 msgid "Authors:"
-msgstr "Szerz�k:"
+msgstr "Szerzők:"
 
 #: src/weapon/auto_bazooka.cpp:220
 msgid "Automatic Bazooka"
-msgstr "Automata rak�tavet�"
+msgstr "Automata rakétavető"
 
 #: src/interface/man_machine_interface.cpp:1174
 msgid "Back jump"
@@ -554,23 +554,23 @@ msgstr ""
 
 #: src/menu/pause_menu.cpp:48
 msgid "Back to battle"
-msgstr "Folytat�s"
+msgstr "Folytatás"
 
 #: src/network/net_error_msg.cpp:32
 msgid "Bad socket ..."
-msgstr "Hib�s socket..."
+msgstr "Hibás socket..."
 
 #: src/weapon/baseball.cpp:55
 msgid "Baseball Bat"
-msgstr "Baseball�t�"
+msgstr "Baseballütő"
 
 #: src/weapon/bazooka.cpp:119
 msgid "Bazooka"
-msgstr "Rak�tavet�"
+msgstr "Rakétavető"
 
 #: src/menu/game_mode_editor.cpp:57
 msgid "Before action"
-msgstr "L�p�s el�tt"
+msgstr "Lépés előtt"
 
 #: src/menu/main_menu.cpp:64
 msgid "Benchmark"
@@ -578,74 +578,74 @@ msgstr ""
 
 #: src/game/game_mode.cpp:336
 msgid "Blitz"
-msgstr "Vill�mh�bor�"
+msgstr "Villámháború"
 
 #: src/weapon/blowtorch.cpp:63
 msgid "Blowtorch"
-msgstr "L�ngv�g�"
+msgstr "Lángvágó"
 
 #: src/weapon/bounce_ball.cpp:90
 msgid "Bounce Ball"
-msgstr "Pattog� labda"
+msgstr "Pattogó labda"
 
 #: src/weapon/supertux.cpp:177
 #, fuzzy
 msgid "Bye bye Tux..."
-msgstr "Viszl�t, pingvin..."
+msgstr "Viszlát, pingvin..."
 
 #: src/team/teams_list.cpp:469 src/team/teams_list.cpp:504
 #: src/team/teams_list.cpp:513 src/team/teams_list.cpp:519
 #: src/team/teams_list.cpp:577
 #, c-format
 msgid "Can't find team %s!"
-msgstr "Nem tal�lom a(z) %s csapatot!"
+msgstr "Nem találom a(z) %s csapatot!"
 
 #: src/team/teams_list.cpp:158
 #, c-format
 msgid "Cannot open personal teams directory (%s)!"
-msgstr "Nem tudom megnyitni a szem�lyes csapatok k�nyvt�r�t (%s)!"
+msgstr "Nem tudom megnyitni a személyes csapatok könyvtárát (%s)!"
 
 #: src/team/teams_list.cpp:144
 #, c-format
 msgid "Cannot open teams directory (%s)!"
-msgstr "Nem tudom megnyitni a csapatok k�nyvt�r�t (%s)!"
+msgstr "Nem tudom megnyitni a csapatok könyvtárát (%s)!"
 
 #: src/team/custom_teams_list.cpp:66
 #, c-format
 msgid "Cannot open the custom teams directory (%s)!"
-msgstr "Nem tudom megnyitni az egy�ni csapatok k�nyvt�r�t (%s)!"
+msgstr "Nem tudom megnyitni az egyéni csapatok könyvtárát (%s)!"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:129 src/menu/help_menu.cpp:146
 #, fuzzy
 msgid "Center camera on character"
-msgstr "Kamera karakterre �ll�t�sa"
+msgstr "Kamera karakterre állítása"
 
 #: src/interface/man_machine_interface.cpp:1156
 #, fuzzy
 msgid "Center on active character"
-msgstr "Akt�v karakter megv�ltoztat�sa"
+msgstr "Aktív karakter megváltoztatása"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:145
 #, fuzzy
 msgid "Change active character"
-msgstr "Akt�v karakter megv�ltoztat�sa"
+msgstr "Aktív karakter megváltoztatása"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:136
 #, fuzzy
 msgid "Change aim angle"
-msgstr "C�lz�s sz�g�nek megv�ltoztat�sa"
+msgstr "Célzás szögének megváltoztatása"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:54
 #, fuzzy
 msgid "Change number of players per team"
 msgstr ""
-"JĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂtĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ kosok "
-"szĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂma "
-"csapatonkĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ nt:"
+"JÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂtÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ kosok "
+"szÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂma "
+"csapatonkÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ nt:"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:107
@@ -657,19 +657,19 @@ msgstr ""
 #: src/interface/man_machine_interface.cpp:1176
 #, fuzzy
 msgid "Change weapon"
-msgstr "Fegyverkateg�ria v�lt�sa"
+msgstr "Fegyverkategória váltása"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:134
 #, fuzzy
 msgid "Change weapon category"
-msgstr "Fegyverkateg�ria v�lt�sa"
+msgstr "Fegyverkategória váltása"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:135
 #, fuzzy
 msgid "Change weapon countdown"
-msgstr "Fegyver id�z�t�s�nek megv�ltoztat�sa"
+msgstr "Fegyver időzítésének megváltoztatása"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:86
@@ -686,7 +686,7 @@ msgstr "Karakter"
 
 #: src/menu/game_mode_editor.cpp:60
 msgid "Character switching"
-msgstr "Karakterv�lt�s lehet�s�ge"
+msgstr "Karakterváltás lehetősége"
 
 #: src/interface/man_machine_interface.cpp:1158
 msgid "Chat"
@@ -694,11 +694,11 @@ msgstr ""
 
 #: src/menu/options_menu.cpp:246
 msgid "Check updates online?"
-msgstr "Friss�t�sek keres�se?"
+msgstr "Frissítések keresése?"
 
 #: src/menu/map_selection_box.cpp:227
 msgid "Choose randomly between the different maps"
-msgstr "V�letlenszer�en v�laszt a p�ly�k k�z�l"
+msgstr "Véletlenszerűen választ a pályák közül"
 
 #: src/game/game_mode.cpp:334
 msgid "Classic"
@@ -738,11 +738,11 @@ msgstr ""
 #. Client Mode
 #: src/menu/network_menu.cpp:167 src/network/network.cpp:456
 msgid "Client mode"
-msgstr "Kliens m�d"
+msgstr "Kliens mód"
 
 #: src/menu/results_menu.cpp:181 src/menu/results_menu.cpp:183
 msgid "Clumsiest"
-msgstr "Leg�gyetlenebb"
+msgstr "Legügyetlenebb"
 
 #: src/weapon/cluster_bomb.cpp:187
 msgid "Cluster Bomb"
@@ -750,7 +750,7 @@ msgstr "Repeszbomba"
 
 #: src/weapon/cluzooka.cpp:354
 msgid "Cluzooka"
-msgstr "Repesz-rak�tavet�"
+msgstr "Repesz-rakétavető"
 
 #. Comment
 #: src/menu/replay_menu.cpp:89
@@ -763,47 +763,47 @@ msgstr ""
 
 #: src/weapon/suicide.cpp:46
 msgid "Commit Suicide"
-msgstr "�ngyilkoss�g"
+msgstr "Öngyilkosság"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:132
 msgid "Configuration menu"
-msgstr "Konfigur�ci�s men�"
+msgstr "Konfigurációs menü"
 
 #: src/menu/network_connection_menu.cpp:166
 msgid "Connect to game"
-msgstr "Kapcsol�d�s j�t�khoz"
+msgstr "Kapcsolódás játékhoz"
 
 #: src/network/net_error_msg.cpp:29
 msgid "Connected !"
-msgstr "Kapcsol�dva !"
+msgstr "Kapcsolódva !"
 
 #: src/network/admin_commands.cpp:96
 #, fuzzy
 msgid "Connected players: "
-msgstr "VĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ ge!"
+msgstr "VÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ ge!"
 
 #: src/weapon/construct.cpp:62 src/weapon/construct.cpp:71
 msgid "Construct"
-msgstr "�p�t�"
+msgstr "Építő"
 
 #: src/menu/results_menu.cpp:292
 msgid "Controlled by: "
-msgstr "Ir�ny�tja:"
+msgstr "Irányítja:"
 
 #: lib/warmux/net/download.cpp:199
 #, c-format
 msgid "Couldn't fetch last version from %s"
-msgstr "Nem tudom leszedni az utols� verzi�t: %s"
+msgstr "Nem tudom leszedni az utolsó verziót: %s"
 
 #: src/network/chatlogger.cpp:52
 #, c-format
 msgid "Couldn't open file %s"
-msgstr "Nem tudom megnyitni a k�vetkez� f�jlt: %s"
+msgstr "Nem tudom megnyitni a következő fájlt: %s"
 
 #: src/menu/main_menu.cpp:70
 msgid "Credits"
-msgstr "Szerz�k"
+msgstr "Szerzők"
 
 #: src/menu/help_menu.cpp:151
 msgid "Current controls"
@@ -825,7 +825,7 @@ msgstr ""
 
 #: src/menu/game_mode_editor.cpp:88
 msgid "Damage per turn during death mode"
-msgstr "S�r�l�s hal�l m�dban"
+msgstr "Sérülés halál módban"
 
 #. Date
 #: src/menu/replay_menu.cpp:79
@@ -847,11 +847,11 @@ msgstr ""
 
 #: src/weapon/disco_grenade.cpp:157
 msgid "Disco Grenade"
-msgstr "Diszk�gr�n�t"
+msgstr "Diszkógránát"
 
 #: src/network/admin_commands.cpp:33
 msgid "Displays this message"
-msgstr "Megjelen�ti ezt az �zenetet"
+msgstr "Megjeleníti ezt az üzenetet"
 
 #: src/menu/network_menu.cpp:169
 msgid "Don't forget to validate once you have selected your team(s)!"
@@ -869,22 +869,22 @@ msgstr ""
 #: src/menu/help_menu.cpp:128
 #, fuzzy
 msgid "Drag&drop: Move camera"
-msgstr "Drag&drop: kamera mozgat�sa"
+msgstr "Drag&drop: kamera mozgatása"
 
 #. Duration
 #: src/menu/replay_menu.cpp:84
 #, fuzzy
 msgid "Duration"
-msgstr "Egy fordul� ideje"
+msgstr "Egy forduló ideje"
 
 #. some death mode options
 #: src/menu/game_mode_editor.cpp:82
 msgid "Duration before death mode"
-msgstr "Hal�l m�d el�tti id�"
+msgstr "Halál mód előtti idő"
 
 #: src/menu/game_mode_editor.cpp:49
 msgid "Duration of a turn"
-msgstr "Egy fordul� ideje"
+msgstr "Egy forduló ideje"
 
 #: src/weapon/dynamite.cpp:118
 msgid "Dynamite"
@@ -892,11 +892,11 @@ msgstr "Dinamit"
 
 #: src/game/game.cpp:513
 msgid "END OF GAME"
-msgstr "J�T�K V�GE"
+msgstr "JÁTÉK VÉGE"
 
 #: src/menu/options_menu.cpp:291
 msgid "Effects volume"
-msgstr "Hanghat�sok hangereje"
+msgstr "Hanghatások hangereje"
 
 #: src/menu/results_menu.cpp:339
 msgid "Energy"
@@ -905,16 +905,16 @@ msgstr "Energia"
 #: src/include/action_handler.cpp:282
 #, c-format
 msgid "Error initializing network: Client %s does not agree with you!! - %s"
-msgstr "Hiba a h�l�zat inicializ�l�sakor: %s kliens nem �rt veled egyet!! - %s"
+msgstr "Hiba a hálózat inicializálásakor: %s kliens nem ért veled egyet!! - %s"
 
 #: src/map/ground.cpp:61
 #, fuzzy
 msgid "Error loading ground"
-msgstr "Hiba a csapat bet�lt�se k�zben:"
+msgstr "Hiba a csapat betöltése közben:"
 
 #: src/team/custom_teams_list.cpp:93 src/team/teams_list.cpp:119
 msgid "Error loading team :"
-msgstr "Hiba a csapat bet�lt�se k�zben:"
+msgstr "Hiba a csapat betöltése közben:"
 
 #: src/game/config.cpp:592 src/team/custom_team.cpp:155
 #: src/team/custom_team.cpp:166 src/team/custom_team.cpp:177
@@ -922,44 +922,44 @@ msgstr "Hiba a csapat bet�lt�se k�zben:"
 msgid ""
 "Error while creating directory \"%s\": unable to store configuration file."
 msgstr ""
-"Hiba a(z) \"%s\" k�nyvt�r l�trehoz�sa k�zben: nem lehet a konfigur�ci�s "
-"f�jlt menteni."
+"Hiba a(z) \"%s\" könyvtár létrehozása közben: nem lehet a konfigurációs "
+"fájlt menteni."
 
 #: src/team/custom_team.cpp:134
 #, c-format
 msgid ""
 "Error while deleting the directory \"%s\". Unable to delete the custom team."
 msgstr ""
-"Hiba a(z) \"%s\" k�nyvt�r t�rl�se k�zben: nem lehet az egy�ni csapatot "
-"t�r�lni."
+"Hiba a(z) \"%s\" könyvtár törlése közben: nem lehet az egyéni csapatot "
+"törölni."
 
 #: src/team/custom_team.cpp:125
 #, c-format
 msgid "Error while deleting the file \"%s\". Unable to delete the custom team."
 msgstr ""
-"Hiba a(z) \"%s\" f�jl t�rl�se k�zben: nem lehet az egy�ni csapatot t�r�lni."
+"Hiba a(z) \"%s\" fájl törlése közben: nem lehet az egyéni csapatot törölni."
 
 #. translators: %s:%s will expand to something like "example.org:9999"
 #: src/menu/network_connection_menu.cpp:524
 #, c-format
 msgid "Error: Unable to connect to %s:%s"
-msgstr "Hiba: Nem siker�lt csatlakozni (%s:%s)"
+msgstr "Hiba: Nem sikerült csatlakozni (%s:%s)"
 
 #: src/menu/network_connection_menu.cpp:474
 msgid "Error: Unable to contact the index server to host a game"
 msgstr ""
-"Hiba: Nem siker�lt kapcsol�dni a k�zponti szerverhez a j�t�k l�trehoz�s�hoz"
+"Hiba: Nem sikerült kapcsolódni a központi szerverhez a játék létrehozásához"
 
 #: src/menu/network_connection_menu.cpp:385
 msgid ""
 "Error: Unable to contact the index server to search for an internet game"
 msgstr ""
-"Hiba: Nem siker�lt a k�zponti szerverhez kapcsol�dni j�t�kok keres�s�hez"
+"Hiba: Nem sikerült a központi szerverhez kapcsolódni játékok kereséséhez"
 
 #: src/menu/network_connection_menu.cpp:502
 #, fuzzy
 msgid "Error: Unable to start the server"
-msgstr "Hiba: Nem siker�lt a szerver ind�t�sa"
+msgstr "Hiba: Nem sikerült a szerver indítása"
 
 #: src/menu/network_connection_menu.cpp:495
 #: tools/servers/game_server/server.cpp:389
@@ -970,15 +970,15 @@ msgid ""
 "are not directly connected to the internet, check your router configuration: "
 "TCP Port %s must be forwarded on your computer."
 msgstr ""
-"Hiba: A szervered nem �rhet� el az internetr�l. Ellen�rizd a t�zfalad "
-"be�ll�t�sait: a(z) %s-s TCP portot enged�lyezned kell a k�lvil�g fel�l. Ha "
-"nem k�zvetlen�l kapcsol�dsz az internetre, ellen�rizd a routered "
-"be�ll�t�s�t: a(z) %s-s TCP portot �t kell ir�ny�tanod a sz�m�t�g�pedre."
+"Hiba: A szervered nem érhető el az internetről. Ellenőrizd a tűzfalad "
+"beállításait: a(z) %s-s TCP portot engedélyezned kell a külvilág felől. Ha "
+"nem közvetlenül kapcsolódsz az internetre, ellenőrizd a routered "
+"beállítását: a(z) %s-s TCP portot át kell irányítanod a számítógépedre."
 
 #: src/team/team.cpp:161
 #, c-format
 msgid "Error: can't find the body \"%s\" for the team \"%s\"."
-msgstr "Hiba: nem tal�lom a(z) \"%s\" testet a(z) \"%s\" csapathoz."
+msgstr "Hiba: nem találom a(z) \"%s\" testet a(z) \"%s\" csapathoz."
 
 #: src/menu/help_menu.cpp:65
 msgid "Experiment new game rules"
@@ -1009,7 +1009,7 @@ msgstr ""
 #: lib/warmux/net/download.cpp:191
 #, fuzzy, c-format
 msgid "Fail to open temporary file: %s"
-msgstr "Nem siker�lt megnyitni a p�ly�k k�nyvt�r�t (%s)!"
+msgstr "Nem sikerült megnyitni a pályák könyvtárát (%s)!"
 
 #: src/menu/results_menu.cpp:434
 msgid "Failed to save replay"
@@ -1018,23 +1018,23 @@ msgstr ""
 #: src/menu/results_menu.cpp:354
 #, fuzzy
 msgid "Filename:"
-msgstr "J�t�k neve:"
+msgstr "Játék neve:"
 
 #: src/weapon/flamethrower.cpp:134
 msgid "Flame Thrower"
-msgstr "L�ngsz�r�"
+msgstr "Lángszóró"
 
 #: src/weapon/footbomb.cpp:151
 msgid "Football Bomb"
-msgstr "R�gbibomba"
+msgstr "Rögbibomba"
 
 #: src/menu/options_menu.cpp:112
 msgid "Fullscreen?"
-msgstr "Teljesk�perny�s"
+msgstr "Teljesképernyős"
 
 #: src/menu/game_menu.cpp:94 src/menu/network_menu.cpp:197
 msgid "Game"
-msgstr "J�t�k be�ll�t�sok"
+msgstr "Játék beállítások"
 
 #: src/include/action_handler.cpp:921
 msgid ""
@@ -1047,7 +1047,7 @@ msgstr ""
 #: src/menu/help_menu.cpp:59
 #, fuzzy
 msgid "Game menu"
-msgstr "J�t�km�d"
+msgstr "Játékmód"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #. Using the game mode editor but currently we are not able to send
@@ -1055,11 +1055,11 @@ msgstr "J�t�km�d"
 #: src/menu/game_mode_editor.cpp:45 src/menu/help_menu.cpp:73
 #: src/menu/network_menu.cpp:193
 msgid "Game mode"
-msgstr "J�t�km�d"
+msgstr "Játékmód"
 
 #: src/menu/network_connection_menu.cpp:263
 msgid "Game name:"
-msgstr "J�t�k neve:"
+msgstr "Játék neve:"
 
 #: src/include/action_handler.cpp:245
 msgid "Game out of sync!"
@@ -1067,7 +1067,7 @@ msgstr ""
 
 #: src/weapon/gnu.cpp:162
 msgid "Gnu Launcher"
-msgstr "Gn�-l�v�"
+msgstr "Gnú-lövő"
 
 #: src/weapon/syringe.cpp:70
 msgid ""
@@ -1087,15 +1087,15 @@ msgstr "Szigony"
 
 #: src/menu/game_mode_editor.cpp:95
 msgid "Gravity"
-msgstr "Gravit�ci�"
+msgstr "Gravitáció"
 
 #: src/weapon/grenade.cpp:76
 msgid "Grenade"
-msgstr "Gr�n�t"
+msgstr "Gránát"
 
 #: src/map/ground.cpp:39
 msgid "Ground initialization..."
-msgstr "Terep el�k�sz�t�se..."
+msgstr "Terep előkészítése..."
 
 #: src/weapon/gun.cpp:72
 msgid "Gun"
@@ -1103,7 +1103,7 @@ msgstr "Pisztoly"
 
 #: src/menu/network_connection_menu.cpp:311
 msgid "Have a good game!"
-msgstr "J� j�t�kot!"
+msgstr "Jó játékot!"
 
 #. *******    Names: "Head commander" + text/custom team    ******
 #: src/interface/interface.cpp:280 src/menu/options_menu.cpp:182
@@ -1114,25 +1114,25 @@ msgstr "Parancsnok"
 #: src/interface/man_machine_interface.cpp:1173 src/menu/main_menu.cpp:67
 #: src/menu/pause_menu.cpp:56
 msgid "Help"
-msgstr "S�g�"
+msgstr "Súgó"
 
 #: src/menu/options_menu.cpp:128
 #, fuzzy
 msgid "High"
-msgstr "Magasugr�s"
+msgstr "Magasugrás"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/interface/man_machine_interface.cpp:1172 src/menu/help_menu.cpp:125
 msgid "High jump"
-msgstr "Magasugr�s"
+msgstr "Magasugrás"
 
 #: src/menu/network_connection_menu.cpp:287
 msgid "Host a game"
-msgstr "J�t�k l�trehoz�sa"
+msgstr "Játék létrehozása"
 
 #: src/game/game_classic.cpp:196
 msgid "Hurry up, you are too slow !!"
-msgstr "Siess, t�l lass� vagy!!"
+msgstr "Siess, túl lassú vagy!!"
 
 #: src/menu/results_menu.cpp:367
 msgid "I like WarMUX :)"
@@ -1144,7 +1144,7 @@ msgid ""
 "If you found a bug or have a feature request send us an email (in english, "
 "please):"
 msgstr ""
-"Ha hib�t tal�lt�l vagy hasznos �tleted van, �rd meg e-mailben (angolul):"
+"Ha hibát találtál vagy hasznos ötleted van, írd meg e-mailben (angolul):"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:69
@@ -1169,7 +1169,7 @@ msgstr ""
 #: src/menu/help_menu.cpp:71
 #, fuzzy
 msgid "Increase this for faster death mode end"
-msgstr "Hal�l m�d el�tti id�"
+msgstr "Halál mód előtti idő"
 
 #. Select between "classic", "blitz" and "unlimited" rules
 #: src/menu/help_menu.cpp:66
@@ -1199,32 +1199,32 @@ msgid ""
 "Fire: Press space until desired strength is reached\n"
 "One ammo per turn"
 msgstr ""
-"Kiindul�si ir�nyz�k : Fel/Le\n"
-"T�z : tartsd a space-t lenyomva a k�v�nt er�ss�g el�r�s�ig\n"
-"egy l�v�s k�r�nk�nt"
+"Kiindulási irányzék : Fel/Le\n"
+"Tűz : tartsd a space-t lenyomva a kívánt erősség eléréséig\n"
+"egy lövés körönként"
 
 #: src/game/game.cpp:124
 msgid "Initialisation"
-msgstr "El�k�sz�t�s"
+msgstr "Előkészítés"
 
 #. Load the map
 #: src/game/game.cpp:161
 msgid "Initialise map"
-msgstr "P�lya el�k�sz�t�se"
+msgstr "Pálya előkészítése"
 
 #: src/game/game.cpp:172
 msgid "Initialise sounds"
-msgstr "Hangok el�k�sz�t�se"
+msgstr "Hangok előkészítése"
 
 #: src/game/game.cpp:168
 msgid "Initialise teams"
-msgstr "Csapatok el�k�sz�t�se"
+msgstr "Csapatok előkészítése"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:90
 #, fuzzy
 msgid "Interface"
-msgstr "Kezel�fel�let megjelen�t�se/elrejt�se"
+msgstr "Kezelőfelület megjelenítése/elrejtése"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:79
@@ -1237,7 +1237,7 @@ msgstr ""
 
 #: src/game/game.cpp:1042
 msgid "It's a present!"
-msgstr "Ez egy aj�nd�k!"
+msgstr "Ez egy ajándék!"
 
 #: src/weapon/jetpack.cpp:57
 msgid "Jetpack"
@@ -1245,12 +1245,12 @@ msgstr "Jetpack"
 
 #: src/interface/man_machine_interface.cpp:1171
 msgid "Jump"
-msgstr "Ugr�s"
+msgstr "Ugrás"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:126 src/menu/help_menu.cpp:127
 msgid "Jump backwards"
-msgstr "H�traugr�s"
+msgstr "Hátraugrás"
 
 #: src/weapon/blowtorch.cpp:64
 #, fuzzy
@@ -1259,9 +1259,9 @@ msgid ""
 "Angle: Up/Down\n"
 "One ammo per turn"
 msgstr ""
-"�gy haszn�ld : tartsd lenyomva a space-t\n"
-"Ir�nyz�k : Fel/Le\n"
-"egy l�v�s k�r�nk�nt"
+"Így használd : tartsd lenyomva a space-t\n"
+"Irányzék : Fel/Le\n"
+"egy lövés körönként"
 
 #. Actual key
 #: src/gui/control_config.cpp:304
@@ -1280,7 +1280,7 @@ msgstr ""
 #: src/network/admin_commands.cpp:35
 #, fuzzy
 msgid "Kicks the player designated by <nickname> out of the game"
-msgstr "Kidobja a <nickname> nev� j�t�kost a j�t�kb�l"
+msgstr "Kidobja a <nickname> nevű játékost a játékból"
 
 #: src/menu/options_menu.cpp:162
 msgid "Language"
@@ -1293,15 +1293,15 @@ msgstr ""
 #: src/network/admin_commands.cpp:37
 #, fuzzy
 msgid "Lists the connected players"
-msgstr "VĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ ge!"
+msgstr "VÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ ge!"
 
 #: src/map/maps_list.cpp:276
 msgid "Load maps:"
-msgstr "T�rk�pek bet�lt�se:"
+msgstr "Térképek betöltése:"
 
 #: src/team/teams_list.cpp:130
 msgid "Load teams:"
-msgstr "Csapatok bet�lt�se:"
+msgstr "Csapatok betöltése:"
 
 #: src/menu/teams_selection_box.cpp:95
 msgid "Local teams:"
@@ -1313,17 +1313,17 @@ msgstr ""
 
 #: src/weapon/lowgrav.cpp:49
 msgid "LowGrav"
-msgstr "Alacsony gravit�ci�"
+msgstr "Alacsony gravitáció"
 
 #: src/menu/network_connection_menu.cpp:201
 #: src/menu/network_connection_menu.cpp:203
 msgid "Manual connection"
-msgstr "K�zi kapcsolat"
+msgstr "Kézi kapcsolat"
 
 #: src/menu/game_menu.cpp:77 src/menu/game_menu.cpp:81
 #: src/menu/network_menu.cpp:99 src/menu/network_menu.cpp:103
 msgid "Map"
-msgstr "P�lya"
+msgstr "Pálya"
 
 #: src/map/maps_list.cpp:105
 #, c-format
@@ -1333,7 +1333,7 @@ msgstr ""
 #: src/map/map.cpp:425
 #, c-format
 msgid "Map %s, a creation of: "
-msgstr "A(z) %s p�lya k�sz�t�je: "
+msgstr "A(z) %s pálya készítője: "
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:57
@@ -1342,16 +1342,16 @@ msgstr ""
 
 #: src/game/game.cpp:162
 msgid "Maps"
-msgstr "P�ly�k"
+msgstr "Pályák"
 
 #: src/menu/network_menu.cpp:429 src/menu/network_menu.cpp:431
 #, fuzzy
 msgid "Master mode"
-msgstr "J�t�km�d"
+msgstr "Játékmód"
 
 #: src/menu/game_mode_editor.cpp:73
 msgid "Max energy"
-msgstr "Maxim�lis energia"
+msgstr "Maximális energia"
 
 #: src/menu/options_menu.cpp:117
 msgid "Maximum FPS"
@@ -1367,13 +1367,13 @@ msgstr ""
 
 #: src/weapon/mine.cpp:208
 msgid "Mine"
-msgstr "Tapos�akna"
+msgstr "Taposóakna"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:118
 #, fuzzy
 msgid "Minimap"
-msgstr "P�lya"
+msgstr "Pálya"
 
 #: src/menu/help_menu.cpp:78
 msgid "Minimap, more details in another tab"
@@ -1381,7 +1381,7 @@ msgstr ""
 
 #: src/menu/options_menu.cpp:267
 msgid "Misc"
-msgstr "Egy�b"
+msgstr "Egyéb"
 
 #. Modifiers
 #: src/gui/control_config.cpp:298
@@ -1395,11 +1395,11 @@ msgstr ""
 
 #: src/menu/results_menu.cpp:189 src/menu/results_menu.cpp:191
 msgid "Most accurate"
-msgstr "Leghat�konyabb"
+msgstr "Leghatékonyabb"
 
 #: src/menu/results_menu.cpp:173 src/menu/results_menu.cpp:175
 msgid "Most sold-out"
-msgstr "Legm�v�szibb"
+msgstr "Legművészibb"
 
 #: src/menu/results_menu.cpp:157 src/menu/results_menu.cpp:159
 msgid "Most useful"
@@ -1411,39 +1411,39 @@ msgstr "Leghaszontalanabb"
 
 #: src/menu/results_menu.cpp:149 src/menu/results_menu.cpp:151
 msgid "Most violent"
-msgstr "Leger�szakosabb"
+msgstr "Legerőszakosabb"
 
 #: src/interface/man_machine_interface.cpp:1170
 #, fuzzy
 msgid "Move camera down"
-msgstr "Karakter mozgat�sa"
+msgstr "Karakter mozgatása"
 
 #: src/interface/man_machine_interface.cpp:1167
 #, fuzzy
 msgid "Move camera left"
-msgstr "Karakter mozgat�sa"
+msgstr "Karakter mozgatása"
 
 #: src/interface/man_machine_interface.cpp:1168
 #, fuzzy
 msgid "Move camera right"
-msgstr "Karakter mozgat�sa"
+msgstr "Karakter mozgatása"
 
 #: src/interface/man_machine_interface.cpp:1169
 #, fuzzy
 msgid "Move camera up"
-msgstr "Karakter mozgat�sa"
+msgstr "Karakter mozgatása"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:142
 #, fuzzy
 msgid "Move camera with mouse or arrows"
-msgstr "Kamera mozgat�sa eg�rrel vagy nyilakkal"
+msgstr "Kamera mozgatása egérrel vagy nyilakkal"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:137
 #, fuzzy
 msgid "Move character"
-msgstr "Karakter mozgat�sa"
+msgstr "Karakter mozgatása"
 
 #: src/interface/man_machine_interface.cpp:1159
 msgid "Move left"
@@ -1476,11 +1476,11 @@ msgstr "Zene"
 #: src/game/game.cpp:185
 #, fuzzy
 msgid "Network"
-msgstr "H�l�zati J�t�k"
+msgstr "Hálózati Játék"
 
 #: src/menu/main_menu.cpp:58
 msgid "Network Game"
-msgstr "H�l�zati J�t�k"
+msgstr "Hálózati Játék"
 
 #: src/menu/game_mode_editor.cpp:58
 msgid "Never"
@@ -1489,26 +1489,26 @@ msgstr "Soha"
 #. TRANSLATORS: after this string there will be a time stamp or the string '(unknown time)'
 #: src/network/chatlogger.cpp:46
 msgid "New network game at "
-msgstr "�j h�l�zati j�t�k"
+msgstr "Új hálózati játék"
 
 #: src/menu/options_menu.cpp:316
 msgid "New player warning?"
-msgstr "Figyelmeztet�s �j j�t�kosn�l?"
+msgstr "Figyelmeztetés új játékosnál?"
 
 #: src/interface/man_machine_interface.cpp:1188
 #, fuzzy
 msgid "Next character"
-msgstr "Karakter mozgat�sa"
+msgstr "Karakter mozgatása"
 
 #: src/weapon/weapon.cpp:640
 #, c-format
 msgid "No element <%s> found in the xml config file!"
-msgstr "A(z) <%s> elem nem tal�lhat� a konfigur�ci�s XML f�jlban!"
+msgstr "A(z) <%s> elem nem található a konfigurációs XML fájlban!"
 
 #: src/network/admin_commands.cpp:92
 #, fuzzy
 msgid "No player connected"
-msgstr "%i j�t�kos l�pett be"
+msgstr "%i játékos lépett be"
 
 #: lib/warmux/net/download.cpp:140
 msgid "No pointer"
@@ -1522,45 +1522,45 @@ msgstr "Senki!"
 #: src/interface/man_machine_interface.cpp:1197
 #, fuzzy
 msgid "None"
-msgstr "k�sz"
+msgstr "kész"
 
 #. *********     Number of characters        *********
 #: src/menu/team_box.cpp:115
 msgid "Number of characters"
-msgstr "Karakterek sz�ma"
+msgstr "Karakterek száma"
 
 #: src/menu/teams_selection_box.cpp:99
 msgid "Number of teams:"
-msgstr "Csapatok sz�ma:"
+msgstr "Csapatok száma:"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:139
 #, fuzzy
 msgid "On a character: select it"
-msgstr "Egy karakteren: Kiv�lasztja az akt�vat"
+msgstr "Egy karakteren: Kiválasztja az aktívat"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:138
 #, fuzzy
 msgid "On map: select a target"
-msgstr "A t�rk�pen: c�lpont kijel�l�se"
+msgstr "A térképen: célpont kijelölése"
 
 #: src/interface/man_machine_interface.cpp:1189
 #, fuzzy
 msgid "Open options menu"
-msgstr "Be�ll�t�sok"
+msgstr "Beállítások"
 
 #: src/menu/main_menu.cpp:61
 msgid "Options"
-msgstr "Be�ll�t�sok"
+msgstr "Beállítások"
 
 #: src/menu/pause_menu.cpp:52
 msgid "Options menu"
-msgstr "Be�ll�t�sok"
+msgstr "Beállítások"
 
 #: src/weapon/parachute.cpp:64
 msgid "Parachute"
-msgstr "Ejt�erny�"
+msgstr "Ejtőernyő"
 
 #: src/weapon/parachute.cpp:65
 msgid ""
@@ -1573,11 +1573,11 @@ msgstr ""
 #: src/menu/network_connection_menu.cpp:236
 #: src/menu/network_connection_menu.cpp:275
 msgid "Password:"
-msgstr "Jelsz�:"
+msgstr "Jelszó:"
 
 #: src/interface/man_machine_interface.cpp:1153
 msgid "Pause"
-msgstr "Sz�net"
+msgstr "Szünet"
 
 #: src/weapon/mine.cpp:209
 msgid ""
@@ -1588,23 +1588,23 @@ msgstr ""
 
 #: src/menu/main_menu.cpp:55
 msgid "Play"
-msgstr "Ir�ny a j�t�k!"
+msgstr "Irány a játék!"
 
 #: src/menu/network_menu.cpp:127
 msgid "Play several times"
-msgstr "T�bb j�t�k enged�lyez�se"
+msgstr "Több játék engedélyezése"
 
 #: src/menu/teams_selection_box.cpp:120
 msgid "Player"
-msgstr "J�t�kos"
+msgstr "Játékos"
 
 #: src/menu/options_menu.cpp:103
 msgid "Player energy?"
-msgstr "J�t�kos energi�ja"
+msgstr "Játékos energiája"
 
 #: src/menu/options_menu.cpp:107
 msgid "Player's name?"
-msgstr "J�t�kos neve"
+msgstr "Játékos neve"
 
 #: src/menu/results_menu.cpp:305
 msgid "Podium"
@@ -1612,7 +1612,7 @@ msgstr ""
 
 #: src/weapon/polecat.cpp:194
 msgid "Polecat Launcher"
-msgstr "Borz-l�v�"
+msgstr "Borz-lövő"
 
 #: src/menu/network_connection_menu.cpp:225
 #: src/menu/network_connection_menu.cpp:252
@@ -1630,12 +1630,12 @@ msgstr ""
 msgid ""
 "Position of the characters.\n"
 "A circle surrounds the active character."
-msgstr "Akt�v karakter megv�ltoztat�sa"
+msgstr "Aktív karakter megváltoztatása"
 
 #: src/weapon/suicide.cpp:47
 #, fuzzy
 msgid "Press space to commit suicide"
-msgstr "%s a(z) %s csapatb�l �ngyilkos lett!"
+msgstr "%s a(z) %s csapatból öngyilkos lett!"
 
 #: src/weapon/airhammer.cpp:77
 msgid ""
@@ -1686,7 +1686,7 @@ msgstr ""
 
 #: src/menu/network_connection_menu.cpp:175
 msgid "Public battles"
-msgstr "Nyilv�nos j�t�kok"
+msgstr "Nyilvános játékok"
 
 #: src/menu/options_menu.cpp:130
 msgid "Quality"
@@ -1699,16 +1699,16 @@ msgstr ""
 
 #: src/interface/man_machine_interface.cpp:1144 src/menu/main_menu.cpp:76
 msgid "Quit"
-msgstr "Kil�p�s"
+msgstr "Kilépés"
 
 #: src/main.cpp:279
 #, fuzzy
 msgid "Quit Warmux"
-msgstr "Kil�p�s a Warmuxb�l"
+msgstr "Kilépés a Warmuxból"
 
 #: src/menu/help_menu.cpp:124 src/menu/pause_menu.cpp:59
 msgid "Quit game"
-msgstr "Kil�p�s a j�t�kb�l"
+msgstr "Kilépés a játékból"
 
 #: src/weapon/rail_gun.cpp:97
 msgid "Rail Gun"
@@ -1716,7 +1716,7 @@ msgstr ""
 
 #: src/menu/map_selection_box.cpp:226
 msgid "Random map"
-msgstr "V�letlen p�lya"
+msgstr "Véletlen pálya"
 
 #: lib/warmux/net/download.cpp:134
 #, fuzzy, c-format
@@ -1726,12 +1726,12 @@ msgstr "Csak %i csapat van."
 #: src/game/config.cpp:401
 #, fuzzy
 msgid "Reading the default config file"
-msgstr "Alap�rtelmezett konfigur�ci�s f�jl beolvas�sa"
+msgstr "Alapértelmezett konfigurációs fájl beolvasása"
 
 #: src/game/config.cpp:458
 #, fuzzy
 msgid "Reading the personal config file"
-msgstr "Szem�lyes konfigur�ci�s f�jl olvas�sa"
+msgstr "Személyes konfigurációs fájl olvasása"
 
 #: src/menu/main_menu.cpp:73
 msgid "Replay"
@@ -1745,12 +1745,12 @@ msgstr ""
 #: src/menu/replay_menu.cpp:69
 #, fuzzy
 msgid "Replay info"
-msgstr "J�t�km�d"
+msgstr "Játékmód"
 
 #: src/game/game.cpp:212
 #, fuzzy
 msgid "Replay mode"
-msgstr "J�t�km�d"
+msgstr "Játékmód"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:108
@@ -1765,7 +1765,7 @@ msgstr ""
 
 #: src/menu/options_menu.cpp:152
 msgid "Resolution"
-msgstr "Felbont�s"
+msgstr "Felbontás"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:106
@@ -1780,7 +1780,7 @@ msgstr "Rohambomba"
 
 #: src/main.cpp:89
 msgid "Run game"
-msgstr "J�t�k futtat�sa"
+msgstr "Játék futtatása"
 
 #: src/menu/results_menu.cpp:379
 msgid "Save replay?"
@@ -1788,15 +1788,15 @@ msgstr ""
 
 #: src/network/chat.cpp:83
 msgid "Say: "
-msgstr "�zenet: "
+msgstr "Üzenet: "
 
 #: src/menu/options_menu.cpp:262
 msgid "Scroll border size"
-msgstr "G�rget� keret m�rete"
+msgstr "Görgető keret mérete"
 
 #: src/menu/options_menu.cpp:257
 msgid "Scroll on border"
-msgstr "G�rget�s a sz�lekn�l"
+msgstr "Görgetés a széleknél"
 
 #: src/menu/replay_menu.cpp:55
 msgid "Select a replay:"
@@ -1805,20 +1805,20 @@ msgstr ""
 #: src/menu/help_menu.cpp:53
 #, fuzzy
 msgid "Select number of playing teams"
-msgstr "J�t�kosok maxim�lis sz�ma:"
+msgstr "Játékosok maximális száma:"
 
 #: src/menu/network_connection_menu.cpp:214
 msgid "Server address:"
-msgstr "Szerver c�me:"
+msgstr "Szerver címe:"
 
 #. Available on internet ?
 #: src/menu/network_connection_menu.cpp:283
 msgid "Server available on Internet"
-msgstr "Interneten el�rhet� szerver"
+msgstr "Interneten elérhető szerver"
 
 #: src/menu/network_menu.cpp:174 src/network/network.cpp:486
 msgid "Server mode"
-msgstr "Szerver m�d"
+msgstr "Szerver mód"
 
 #: src/weapon/supertux.cpp:225
 msgid ""
@@ -1843,7 +1843,7 @@ msgstr ""
 #: src/interface/man_machine_interface.cpp:1175
 #, fuzzy
 msgid "Shoot"
-msgstr "S�r�tespuska"
+msgstr "Sörétespuska"
 
 #: src/weapon/rail_gun.cpp:98
 msgid "Shoots all players in a straight line!"
@@ -1851,19 +1851,19 @@ msgstr ""
 
 #: src/weapon/shotgun.cpp:86
 msgid "Shotgun"
-msgstr "S�r�tespuska"
+msgstr "Sörétespuska"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:140
 #, fuzzy
 msgid "Show weapons menu"
-msgstr "Fegyverek megjelen�t�se"
+msgstr "Fegyverek megjelenítése"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:130
 #, fuzzy
 msgid "Show/hide the interface"
-msgstr "Kezel�fel�let megjelen�t�se/elrejt�se"
+msgstr "Kezelőfelület megjelenítése/elrejtése"
 
 #: src/network/admin_commands.cpp:39
 msgid "Shows the designated player address"
@@ -1871,7 +1871,7 @@ msgstr ""
 
 #: src/weapon/skip_turn.cpp:46
 msgid "Skip turn"
-msgstr "Fordul� kihagy�sa"
+msgstr "Forduló kihagyása"
 
 #: src/weapon/slap.cpp:72
 msgid "Slap"
@@ -1879,24 +1879,24 @@ msgstr "Pofon"
 
 #: src/weapon/slap.cpp:73
 msgid "Slap the enemy to make him jump a bit."
-msgstr "V�gd pofon az ellens�get, hogy ugorjon egy kicsit."
+msgstr "Vágd pofon az ellenséget, hogy ugorjon egy kicsit."
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:141
 msgid "Smaller aim angle and walk step"
-msgstr "Kisebb ir�nysz�g �s l�p�s"
+msgstr "Kisebb irányszög és lépés"
 
 #: src/weapon/snipe_rifle.cpp:247
 msgid "Sniper Rifle"
-msgstr "Mesterl�v�sz puska"
+msgstr "Mesterlövész puska"
 
 #: src/object/bonus_box.cpp:75
 msgid "Someone put a booby trap into the crate!"
-msgstr "Valaki bomb�t rejtett a l�d�ba!"
+msgstr "Valaki bombát rejtett a ládába!"
 
 #: src/menu/network_connection_menu.cpp:390
 msgid "Sorry, currently, no game is waiting for players"
-msgstr "Sajn�lom, most egy j�t�k sem v�r j�t�kosokat!"
+msgstr "Sajnálom, most egy játék sem vár játékosokat!"
 
 #: src/menu/network_connection_menu.cpp:444
 #: tools/servers/game_server/server.cpp:374
@@ -1905,9 +1905,9 @@ msgid ""
 "Sorry, your version is not supported anymore. Supported versions are %s. You "
 "can download an updated version from http://www.warmux.org/wiki/download.php"
 msgstr ""
-"Sajn�ljuk, a te verzi�d t�bb� nem t�mogatott. A t�mogatott verzi�: %s. A "
-"http://www.warmux.org/wiki/download.php c�men tal�lod a friss�tett verzi�t. "
-"c�"
+"Sajnáljuk, a te verziód többé nem támogatott. A támogatott verzió: %s. A "
+"http://www.warmux.org/wiki/download.php címen találod a frissített verziót. "
+"cí"
 
 #: src/menu/options_menu.cpp:320
 msgid "Sound"
@@ -1915,7 +1915,7 @@ msgstr "Hangok"
 
 #: src/menu/options_menu.cpp:285
 msgid "Sound effects?"
-msgstr "Hanghat�sok?"
+msgstr "Hanghatások?"
 
 #: src/menu/options_menu.cpp:311
 msgid "Sound frequency"
@@ -1928,15 +1928,15 @@ msgstr "Hangok"
 
 #: src/game/game.cpp:206
 msgid "Starting a new game"
-msgstr "�j j�t�k ind�t�sa"
+msgstr "Új játék indítása"
 
 #: src/interface/interface.cpp:315
 msgid "Stock:"
-msgstr "K�szlet:"
+msgstr "Készlet:"
 
 #: src/weapon/submachine_gun.cpp:96
 msgid "Submachine Gun"
-msgstr "G�ppisztoly"
+msgstr "Géppisztoly"
 
 #: src/weapon/supertux.cpp:224
 msgid "SuperTux"
@@ -1948,7 +1948,7 @@ msgstr ""
 
 #: src/weapon/syringe.cpp:69
 msgid "Syringe"
-msgstr "Fecskend�"
+msgstr "Fecskendő"
 
 #: src/interface/man_machine_interface.cpp:1195
 msgid "Take screenshot"
@@ -1958,7 +1958,7 @@ msgstr ""
 #: src/menu/help_menu.cpp:133
 #, fuzzy
 msgid "Talk in network battles"
-msgstr "Besz�lget�s h�l�zati j�t�k k�zben"
+msgstr "Beszélgetés hálózati játék közben"
 
 #: src/menu/options_menu.cpp:614
 msgid "Team deleted"
@@ -1971,11 +1971,11 @@ msgstr "Csapat grafikonok"
 #: src/menu/options_menu.cpp:594
 #, fuzzy
 msgid "Team saved"
-msgstr "Csapat statisztik�k"
+msgstr "Csapat statisztikák"
 
 #: src/menu/results_menu.cpp:316
 msgid "Team stats"
-msgstr "Csapat statisztik�k"
+msgstr "Csapat statisztikák"
 
 #. Teams
 #: src/game/game.cpp:169 src/menu/game_menu.cpp:76 src/menu/game_menu.cpp:80
@@ -1986,7 +1986,7 @@ msgstr "Csapatok"
 
 #: src/menu/options_menu.cpp:229
 msgid "Teams editor"
-msgstr "Csapatszerkeszt�"
+msgstr "Csapatszerkesztő"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:87
@@ -1999,30 +1999,30 @@ msgstr "Teleport"
 
 #: src/weapon/cluster_bomb.cpp:145
 msgid "The Cluster Bomb has left the battlefield before it could explode."
-msgstr "A repeszbomba elhagyta a csatateret robban�s el�tt."
+msgstr "A repeszbomba elhagyta a csatateret robbanás előtt."
 
 #: src/weapon/footbomb.cpp:107
 msgid "The Football Bomb has left the battlefield before it could explode."
-msgstr "A r�gbibomba elhagyta a csatateret robban�s el�tt."
+msgstr "A rögbibomba elhagyta a csatateret robbanás előtt."
 
 #: src/weapon/gnu.cpp:137
 #, fuzzy
 msgid "The Gnu left the battlefield before exploding!"
-msgstr "A gn� elhagyta a csatateret robban�s el�tt"
+msgstr "A gnú elhagyta a csatateret robbanás előtt"
 
 #: src/weapon/polecat.cpp:172
 #, fuzzy
 msgid "The Polecat left the battlefield before exploding!"
-msgstr "A borz elhagyta a csatateret robban�s el�tt"
+msgstr "A borz elhagyta a csatateret robbanás előtt"
 
 #: src/weapon/auto_bazooka.cpp:175
 msgid "The automatic rocket has left the battlefield..."
-msgstr "Az automatikus rak�ta elhagyta a csatamez�t..."
+msgstr "Az automatikus rakéta elhagyta a csatamezőt..."
 
 #: src/weapon/bounce_ball.cpp:73
 #, fuzzy
 msgid "The ball left the battlefield before exploding!"
-msgstr "A labda elhagyta a csatateret robban�s el�tt"
+msgstr "A labda elhagyta a csatateret robbanás előtt"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:72
@@ -2041,50 +2041,50 @@ msgid ""
 "The client and server versions are incompatible (local=%s, server=%s). "
 "Please try another server."
 msgstr ""
-"A kliens �s szerver verzi�k nem kompatibilisek (helyi=%s, szerver=%s). "
-"K�rlek, v�lassz egy m�sik szervert."
+"A kliens és szerver verziók nem kompatibilisek (helyi=%s, szerver=%s). "
+"Kérlek, válassz egy másik szervert."
 
 #: src/network/net_error_msg.cpp:34
 msgid "The connection timed out. Check there is no firewall in the way!"
 msgstr ""
-"A kapcsolat nem j�tt l�tre. Ellen�rizd, hogy nincs-e t�zfal a h�l�zaton!"
+"A kapcsolat nem jött létre. Ellenőrizd, hogy nincs-e tűzfal a hálózaton!"
 
 #: src/weapon/disco_grenade.cpp:127
 #, fuzzy
 msgid "The disco grenade has left the dance floor before exploding!"
-msgstr "A diszk�-gr�n�t elhagyta a t�ncparkettet robban�s el�tt"
+msgstr "A diszkó-gránát elhagyta a táncparkettet robbanás előtt"
 
 #: src/game/game.cpp:769
 msgid "The game was interrupted because you got disconnected."
-msgstr "Megszakadt a j�t�k, mert kijelentkezt�l."
+msgstr "Megszakadt a játék, mert kijelentkeztél."
 
 #: src/weapon/grenade.cpp:58
 #, fuzzy
 msgid "The grenade left the battlefield before exploding!"
-msgstr "A gr�n�t elhagyta a csatateret robban�s el�tt"
+msgstr "A gránát elhagyta a csatateret robbanás előtt"
 
 #: src/menu/network_menu.cpp:375
 #, fuzzy
 msgid "The others are waiting for you! Wake up! :-)"
-msgstr "A t�bbiek v�rnak r�d! �breszt� :-)"
+msgstr "A többiek várnak rád! Ébresztő :-)"
 
 #: src/weapon/parachute.cpp:92
 #, fuzzy
 msgid "The parachute is activated automatically."
-msgstr "Az ejt�erny� mag�t�l aktiv�l�dik."
+msgstr "Az ejtőernyő magától aktiválódik."
 
 #: src/weapon/bazooka.cpp:80 src/weapon/cluzooka.cpp:304
 #: src/weapon/riot_bomb.cpp:85
 msgid "The rocket has left the battlefield..."
-msgstr "A rak�ta elhagyta a csatateret..."
+msgstr "A rakéta elhagyta a csatateret..."
 
 #: src/network/net_error_msg.cpp:33
 msgid "The server rejected the connection."
-msgstr "A szerver elutas�totta a kapcsolatot."
+msgstr "A szerver elutasította a kapcsolatot."
 
 #: src/network/net_error_msg.cpp:35
 msgid "The server rejected the connection: wrong password!"
-msgstr "A szerver elutas�totta a kapcsolatot: hib�s jelsz�!"
+msgstr "A szerver elutasította a kapcsolatot: hibás jelszó!"
 
 #: src/weapon/weapon.cpp:652
 #, c-format
@@ -2106,7 +2106,7 @@ msgstr ""
 
 #: src/menu/benchmark_menu.cpp:113 src/menu/results_menu.cpp:339
 msgid "Time"
-msgstr "Id�"
+msgstr "Idő"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:89
@@ -2123,10 +2123,10 @@ msgid ""
 "Fire: Press space until desired strength is reached\n"
 "One ammo per turn"
 msgstr ""
-"Id�z�t�s : G�rgesd az egeret vagy Page Up/Down\n"
-"Ir�nyz�k : Fel/Le\n"
-"T�z : tartsd a space-t lenyomva a k�v�nt er�ss�g el�r�s�ig\n"
-"egy l�v�s k�r�nk�nt"
+"Időzítés : Görgesd az egeret vagy Page Up/Down\n"
+"Irányzék : Fel/Le\n"
+"Tűz : tartsd a space-t lenyomva a kívánt erősség eléréséig\n"
+"egy lövés körönként"
 
 #: src/weapon/bounce_ball.cpp:91
 #, fuzzy
@@ -2136,32 +2136,32 @@ msgid ""
 "Fire: space key\n"
 "One ammo per turn"
 msgstr ""
-"Id�z�t�s : G�rgesd az egeret vagy Page Up/Down\n"
-"Ir�nyz�k : Fel/Le\n"
-"T�z : space\n"
-"egy l�v�s k�r�nk�nt"
+"Időzítés : Görgesd az egeret vagy Page Up/Down\n"
+"Irányzék : Fel/Le\n"
+"Tűz : space\n"
+"egy lövés körönként"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/interface/man_machine_interface.cpp:1154 src/menu/help_menu.cpp:131
 #, fuzzy
 msgid "Toggle fullscreen"
-msgstr "Teljesk�perny�s"
+msgstr "Teljesképernyős"
 
 #: src/interface/man_machine_interface.cpp:1155
 #, fuzzy
 msgid "Toggle interface"
-msgstr "Kezel�fel�let megjelen�t�se/elrejt�se"
+msgstr "Kezelőfelület megjelenítése/elrejtése"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/interface/man_machine_interface.cpp:1190 src/menu/help_menu.cpp:144
 #, fuzzy
 msgid "Toggle minimap"
-msgstr "Minit�rk�p megjelen�t�se/elrejt�se"
+msgstr "Minitérkép megjelenítése/elrejtése"
 
 #: src/interface/man_machine_interface.cpp:1157
 #, fuzzy
 msgid "Toggle weapons menu"
-msgstr "Fegyverek megjelen�t�se"
+msgstr "Fegyverek megjelenítése"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:100
@@ -2196,21 +2196,21 @@ msgstr ""
 #: src/network/net_error_msg.cpp:30
 #, fuzzy
 msgid "Unable to contact the host."
-msgstr "Nem siker�lt csatlakozni a kiszolg�l�hoz."
+msgstr "Nem sikerült csatlakozni a kiszolgálóhoz."
 
 #: src/map/maps_list.cpp:288
 #, fuzzy, c-format
 msgid "Unable to open the maps directory (%s)!"
-msgstr "Nem siker�lt megnyitni a p�ly�k k�nyvt�r�t (%s)!"
+msgstr "Nem sikerült megnyitni a pályák könyvtárát (%s)!"
 
 #: src/map/maps_list.cpp:302
 #, fuzzy, c-format
 msgid "Unable to open the personal maps directory (%s)!"
-msgstr "Nem siker�lt megnyitni a szem�lyes p�ly�k k�nyvt�r�t (%s)!"
+msgstr "Nem sikerült megnyitni a személyes pályák könyvtárát (%s)!"
 
 #: src/network/net_error_msg.cpp:31
 msgid "Unable to use this port!"
-msgstr "Nem siker�lt megnyitni a portot!"
+msgstr "Nem sikerült megnyitni a portot!"
 
 #: src/network/admin_commands.cpp:122
 msgid "Unknown command"
@@ -2223,7 +2223,7 @@ msgstr "Ismeretlen parancs"
 
 #: src/game/game_mode.cpp:335
 msgid "Unlimited"
-msgstr "Korl�tlan"
+msgstr "Korlátlan"
 
 #: src/interface/man_machine_interface.cpp:1163
 msgid "Up"
@@ -2247,8 +2247,8 @@ msgid ""
 "Anvil kill all characters beneath.\n"
 "One ammo per turn"
 msgstr ""
-"�gy haszn�ld : bal klikk a c�lponton\n"
-"egy l�v�s k�r�nk�nt"
+"Így használd : bal klikk a célponton\n"
+"egy lövés körönként"
 
 #: src/weapon/auto_bazooka.cpp:221
 #, fuzzy
@@ -2258,20 +2258,20 @@ msgid ""
 "Firing: keep the space key pressed until the desired strength\n"
 "One ammo per turn"
 msgstr ""
-"�gy haszn�ld : bal klikk a c�lponton\n"
-"Kiindul�si ir�nyz�k : Fel/Le\n"
-"T�z : tartsd lenyomva a space-t a k�v�n er�ss�g el�r�s�ig\n"
-"egy l�v�s k�r�nk�nt"
+"Így használd : bal klikk a célponton\n"
+"Kiindulási irányzék : Fel/Le\n"
+"Tűz : tartsd lenyomva a space-t a kíván erősség eléréséig\n"
+"egy lövés körönként"
 
 #. Version
 #: src/main.cpp:206 src/menu/main_menu.cpp:90 src/menu/replay_menu.cpp:74
 msgid "Version"
-msgstr "Verzi�"
+msgstr "Verzió"
 
 #: src/menu/options_menu.cpp:543
 #, fuzzy, c-format
 msgid "Version verification failed because: %s"
-msgstr "Verzi�-ellen�rz�s sikertelen: %s\n"
+msgstr "Verzió-ellenőrzés sikertelen: %s\n"
 
 #: src/menu/network_menu.cpp:443
 msgid "Wait until some opponent(s) connect!"
@@ -2281,8 +2281,8 @@ msgstr ""
 #, c-format
 msgid "Wait! %i player is not ready yet!"
 msgid_plural "Wait! %i players are not ready yet!"
-msgstr[0] "V�rj! %i j�t�kos m�g nem �ll k�szen!"
-msgstr[1] "V�rj! %i j�t�kos m�g nem �ll k�szen!"
+msgstr[0] "Várj! %i játékos még nem áll készen!"
+msgstr[1] "Várj! %i játékos még nem áll készen!"
 
 #: src/game/game.cpp:664
 #, c-format
@@ -2296,28 +2296,28 @@ msgstr ""
 #: src/menu/network_menu.cpp:514
 #, fuzzy
 msgid "Waiting for the server. All you can do is cancel or chat!"
-msgstr "V�rakoz�s a szerverre, visszal�phetsz vagy csetelhetsz!"
+msgstr "Várakozás a szerverre, visszaléphetsz vagy csetelhetsz!"
 
 #: src/main.cpp:217
 #, fuzzy
 msgid "Warmux launching..."
-msgstr "Warmux ind�t�sa..."
+msgstr "Warmux indítása..."
 
 #: src/main.cpp:357
 #, fuzzy
 msgid "Warmux version "
-msgstr "Warmux verzi� "
+msgstr "Warmux verzió "
 
 #: src/interface/man_machine_interface.cpp:1152
 #, fuzzy
 msgid "Weapon category 8"
-msgstr "Fegyverkateg�ria v�lt�sa"
+msgstr "Fegyverkategória váltása"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:143
 #, fuzzy
 msgid "Weapon: Fire / Bonus box: drop"
-msgstr "L�v�s / Aj�nd�k gyorsabban esik"
+msgstr "Lövés / Ajándék gyorsabban esik"
 
 #: src/game/game.cpp:165
 msgid "Weapons"
@@ -2342,17 +2342,17 @@ msgstr ""
 #: src/game/game.cpp:1214
 #, c-format
 msgid "What a shame for %s - he was killed by a simple gun!"
-msgstr "Mekkora vesztes ez a %s - egy sima pisztoly kiny�rta!"
+msgstr "Mekkora vesztes ez a %s - egy sima pisztoly kinyírta!"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:67
 #, fuzzy
 msgid "When a character can be switched"
-msgstr "Egy karakteren: Kiv�lasztja az akt�vat"
+msgstr "Egy karakteren: Kiválasztja az aktívat"
 
 #: src/menu/options_menu.cpp:92
 msgid "Wind particles?"
-msgstr "Hull� d�szt�rgyak"
+msgstr "Hulló dísztárgyak"
 
 #: src/menu/help_menu.cpp:85
 msgid ""
@@ -2362,7 +2362,7 @@ msgstr ""
 
 #: src/menu/results_menu.cpp:284
 msgid "Winner"
-msgstr "Gy�ztes"
+msgstr "Győztes"
 
 #. The shot efficiency was improved by having more than one target hit
 #: src/weapon/rail_gun.cpp:124
@@ -2372,15 +2372,15 @@ msgstr ""
 
 #: src/include/action_handler.cpp:241
 msgid "Wrong map CRC!"
-msgstr "Hib�s p�lya ellen�rz�k�d (CRC)!"
+msgstr "Hibás pálya ellenőrzőkód (CRC)!"
 
 #: src/include/action_handler.cpp:239
 msgid "Wrong map name!"
-msgstr "Hib�s p�lyan�v!"
+msgstr "Hibás pályanév!"
 
 #: src/include/action_handler.cpp:243
 msgid "Wrong team!"
-msgstr "Hib�s csapat!"
+msgstr "Hibás csapat!"
 
 #: lib/warmux/net/download.cpp:150
 #, c-format
@@ -2390,7 +2390,7 @@ msgstr ""
 #: src/menu/network_menu.cpp:287 src/menu/network_menu.cpp:379
 #, fuzzy
 msgid "You are alone. :-/"
-msgstr "Egyed�l vagy :-/"
+msgstr "Egyedül vagy :-/"
 
 #: src/menu/network_menu.cpp:442
 msgid ""
@@ -2404,21 +2404,21 @@ msgstr ""
 #: src/map/maps_list.cpp:311
 #, fuzzy
 msgid "You need at least one valid map!"
-msgstr "V�lasztanod kell legal�bb egy p�ly�t!"
+msgstr "Választanod kell legalább egy pályát!"
 
 #: src/game/game.cpp:305 src/team/teams_list.cpp:166
 #, fuzzy
 msgid "You need at least two valid teams!"
-msgstr "V�lasztanod kell legal�bb k�t csapatot!"
+msgstr "Választanod kell legalább két csapatot!"
 
 #: src/menu/network_menu.cpp:267
 #, fuzzy
 msgid "You won't be able to play before selecting a team!"
-msgstr "Nem tudsz j�tszani csapatv�laszt�s n�lk�l!"
+msgstr "Nem tudsz játszani csapatválasztás nélkül!"
 
 #: src/weapon/weapon_launcher.cpp:552
 msgid "Your shot has missed!"
-msgstr "Ez mell� ment!"
+msgstr "Ez mellé ment!"
 
 #: src/menu/credits_menu.cpp:72
 msgid "aka"
@@ -2431,30 +2431,30 @@ msgid ""
 "Bombing: Left click on the target\n"
 "One bombing per turn"
 msgstr ""
-"t�mad�s ir�nya : Balra/Jobbra\n"
-"Bomb�z�s : bal klikk a c�lponton\n"
-"egy bomb�z�s k�r�nk�nt"
+"támadás iránya : Balra/Jobbra\n"
+"Bombázás : bal klikk a célponton\n"
+"egy bombázás körönként"
 
 #: src/map/maps_list.cpp:83
 msgid "couldn't load config"
-msgstr "nem tudom bet�lteni a konfigur�ci�t"
+msgstr "nem tudom betölteni a konfigurációt"
 
 #. the default player name for custom teams
 #: src/team/custom_team.cpp:47
 msgid "custom player"
-msgstr "egy�ni j�t�kos"
+msgstr "egyéni játékos"
 
 #: src/map/ground.cpp:67
 msgid "done"
-msgstr "k�sz"
+msgstr "kész"
 
 #: src/map/maps_list.cpp:90
 msgid "error parsing the config file"
-msgstr "hiba a konfigur�ci�s f�jl olvas�sa k�zben"
+msgstr "hiba a konfigurációs fájl olvasása közben"
 
 #: src/menu/credits_menu.cpp:75
 msgid "from"
-msgstr "a k�vetkez�t�l:"
+msgstr "a következőtől:"
 
 #: src/interface/loading_screen.cpp:43
 msgid "loading..."
@@ -2462,63 +2462,63 @@ msgstr ""
 
 #: src/map/maps_list.cpp:76
 msgid "no configuration file!"
-msgstr "nincs konfigur�ci�s f�jl!"
+msgstr "nincs konfigurációs fájl!"
 
 #: src/sound/jukebox.cpp:192
 msgid "o Loading music"
-msgstr "Zene bet�lt�se"
+msgstr "Zene betöltése"
 
 #: src/sound/jukebox.cpp:374
 #, c-format
 msgid "o Loading sound profile: %s"
-msgstr "Hangprofil bet�lt�se: %s"
+msgstr "Hangprofil betöltése: %s"
 
 #: src/sound/jukebox.cpp:134
 #, c-format
 msgid "o Opened audio at %d Hz %d bit"
-msgstr "Hangmin�s�g: %d Hz, %d bit"
+msgstr "Hangminőség: %d Hz, %d bit"
 
 #, fuzzy
 #~ msgid "Position of the other characters"
 #~ msgstr ""
 #~ "A kukacok "
-#~ "vĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ letlenszerĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ elhelyezĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ se"
+#~ "vÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ letlenszerÄÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ elhelyezÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ se"
 
 #, fuzzy
 #~ msgid "Selected weapon and ammo left"
-#~ msgstr "Fegyverkateg�ria v�lt�sa"
+#~ msgstr "Fegyverkategória váltása"
 
 #, fuzzy
 #~ msgid "Change per team number of players"
-#~ msgstr "J�t�kosok maxim�lis sz�ma:"
+#~ msgstr "Játékosok maximális száma:"
 
 #, fuzzy
 #~ msgid "Edit player name"
-#~ msgstr "J�t�kos neve"
+#~ msgstr "Játékos neve"
 
 #~ msgid "Fullscreen / window"
-#~ msgstr "Teljesk�perny�s / ablakban"
+#~ msgstr "Teljesképernyős / ablakban"
 
 #~ msgid "Quit battle"
-#~ msgstr "Kil�p�s"
+#~ msgstr "Kilépés"
 
 #~ msgid "You are alone..."
-#~ msgstr "Egyed�l vagy..."
+#~ msgstr "Egyedül vagy..."
 
 #, fuzzy
 #~ msgid ""
 #~ "How to use it : keep the space key pressed\n"
 #~ "an ammo per turn"
 #~ msgstr ""
-#~ "�gy haszn�ld : tartsd lenyomva a space-t\n"
-#~ "egy l�v�s k�r�nk�nt"
+#~ "Így használd : tartsd lenyomva a space-t\n"
+#~ "egy lövés körönként"
 
 #~ msgid "Head commander: "
 #~ msgstr "Parancsnok: "
 
 #, fuzzy
 #~ msgid "Click: Center the camera on the character"
-#~ msgstr "Kattint�s: Kamera karakterre �ll�t�sa"
+#~ msgstr "Kattintás: Kamera karakterre állítása"
 
 #~ msgid ""
 #~ "Error:\n"
@@ -2529,30 +2529,30 @@ msgstr "Hangmin�s�g: %d Hz, %d bit"
 
 #~ msgid "Join #warmux on irc.freenode.net to find some opponents."
 #~ msgstr ""
-#~ "L�pj be a #warmux szob�ba az irc.freenode.net-en, hogy ellenfeleket "
-#~ "tal�lj."
+#~ "Lépj be a #warmux szobába az irc.freenode.net-en, hogy ellenfeleket "
+#~ "találj."
 
 #, fuzzy
 #~ msgid " has joined the party"
 #~ msgstr ""
 #~ "%s kiesett a "
-#~ "pĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂlyĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂrĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂl!"
+#~ "pÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂlyÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂrÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂl!"
 
 #, fuzzy
 #~ msgid " has left the party"
 #~ msgstr ""
 #~ "%s kiesett a "
-#~ "pĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂlyĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂrĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂl!"
+#~ "pÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂlyÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂrÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂl!"
 
 #, fuzzy
 #~ msgid "%s has lost %u point of energy."
 #~ msgid_plural "%s has lost %u points of energy."
 #~ msgstr[0] ""
-#~ "%s energiaszintje %u egysĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ ggel "
-#~ "csĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂkkent."
+#~ "%s energiaszintje %u egysÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ ggel "
+#~ "csÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂkkent."
 #~ msgstr[1] ""
-#~ "%s energiaszintje %u egysĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ ggel "
-#~ "csĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂkkent."
+#~ "%s energiaszintje %u egysÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ ggel "
+#~ "csÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂkkent."
 
 #, fuzzy
 #~ msgid "%s team has won %u Gnu!"
@@ -2585,20 +2585,20 @@ msgstr "Hangmin�s�g: %d Hz, %d bit"
 #~ msgstr[1] "A(z) %s csapat nyert %u %st!"
 
 #~ msgid "%s tries to connect with a different version : client=%s, me=%s."
-#~ msgstr "%s elt�r� verzi�val pr�b�l csatlakozni: kliens=%s, helyi=%s."
+#~ msgstr "%s eltérő verzióval próbál csatlakozni: kliens=%s, helyi=%s."
 
 #, fuzzy
 #~ msgid "'%s has won %u Anvil"
 #~ msgid_plural "'%s has won %u Anvil"
 #~ msgstr[0] ""
 #~ "%s %u "
-#~ "rĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂadĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
-#~ "lĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ gitĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
+#~ "rÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂadÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
+#~ "lÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ gitÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
 #~ "nyert!"
 #~ msgstr[1] ""
 #~ "%s %u "
-#~ "rĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂadĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
-#~ "lĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ gitĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
+#~ "rÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂadÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
+#~ "lÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ gitÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
 #~ "nyert!"
 
 #, fuzzy
@@ -2606,13 +2606,13 @@ msgstr "Hangmin�s�g: %d Hz, %d bit"
 #~ msgid_plural "'%s has won %u Holy grenades"
 #~ msgstr[0] ""
 #~ "%s %u "
-#~ "rĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂadĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
-#~ "lĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ gitĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
+#~ "rÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂadÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
+#~ "lÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ gitÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
 #~ "nyert!"
 #~ msgstr[1] ""
 #~ "%s %u "
-#~ "rĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂadĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
-#~ "lĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ gitĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
+#~ "rÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂadÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
+#~ "lÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ gitÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
 #~ "nyert!"
 
 #, fuzzy
@@ -2620,111 +2620,111 @@ msgstr "Hangmin�s�g: %d Hz, %d bit"
 #~ msgid_plural "'%s has won %u Low gravity"
 #~ msgstr[0] ""
 #~ "%s %u "
-#~ "rĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂadĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
-#~ "lĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ gitĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
+#~ "rÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂadÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
+#~ "lÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ gitÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
 #~ "nyert!"
 #~ msgstr[1] ""
 #~ "%s %u "
-#~ "rĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂadĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
-#~ "lĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ gitĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
+#~ "rÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂadÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
+#~ "lÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ gitÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs "
 #~ "nyert!"
 
 #~ msgid "(current)"
 #~ msgstr "(jelenlegi)"
 
 #~ msgid "Add custom team"
-#~ msgstr "Egy�ni csapat hozz�ad�sa"
+#~ msgstr "Egyéni csapat hozzáadása"
 
 #~ msgid "Air attack"
-#~ msgstr "LĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ gitĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs"
+#~ msgstr "LÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ gitÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂmadÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂs"
 
 #, fuzzy
 #~ msgid "All teams results:\n"
 #~ msgstr ""
 #~ "%s csapat "
-#~ "betĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂltĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ se."
+#~ "betÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂltÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ se."
 
 #, fuzzy
 #~ msgid "Authors"
-#~ msgstr "SzerzĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂk:"
+#~ msgstr "SzerzÄÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂk:"
 
 #~ msgid "Automatic bazooka"
-#~ msgstr "Automatikus tĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂzelĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ sĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ rakĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ tavetĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ"
+#~ msgstr "Automatikus tÄÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂzelÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ sÄÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ rakÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ tavetÄÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ"
 
 #~ msgid "Baseball"
 #~ msgstr "Baseball"
 
 #~ msgid "C++ exception caught:"
-#~ msgstr "Elfogtam egy C++ kivĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ telt:"
+#~ msgstr "Elfogtam egy C++ kivÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ telt:"
 
 #~ msgid "ClanLib error :"
 #~ msgstr "ClanLib hiba:"
 
 #~ msgid "ClanLib error during loading map '%s' :"
 #~ msgstr ""
-#~ "ClanLib hiba lĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ pett fel a "
-#~ "pĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂlya (%s) "
-#~ "betĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂltĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ se "
-#~ "kĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂzben:"
+#~ "ClanLib hiba lÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ pett fel a "
+#~ "pÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂlya (%s) "
+#~ "betÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂltÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ se "
+#~ "kÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂzben:"
 
 #~ msgid "Connect !"
-#~ msgstr "Kapcsol�d�s!"
+#~ msgstr "Kapcsolódás!"
 
 #~ msgid "Connect to an internet game"
-#~ msgstr "Kapcsol�d�s internetes j�t�khoz"
+#~ msgstr "Kapcsolódás internetes játékhoz"
 
 #~ msgid "Delete custom team"
-#~ msgstr "Egy�ni csapat t�rl�se"
+#~ msgstr "Egyéni csapat törlése"
 
 #~ msgid "Do you really want to quit? (Y/N)"
-#~ msgstr "Biztosan ki szeretn�l l�pni? (Y/N)"
+#~ msgstr "Biztosan ki szeretnél lépni? (Y/N)"
 
 #~ msgid "Duration of the end of a turn:"
-#~ msgstr "Egy fordulĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ ideje:"
+#~ msgstr "Egy fordulÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ ideje:"
 
 #, fuzzy
 #~ msgid "End of the game!\n"
 #~ msgstr ""
-#~ "VĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ ge a "
-#~ "jĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂtĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ knak!\n"
+#~ "VÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ ge a "
+#~ "jÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂtÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ knak!\n"
 
 #, fuzzy
 #~ msgid "Error during loading skin %s:"
 #~ msgstr ""
-#~ "Hiba lĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ pett fel a smink (%s) "
-#~ "betĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂltĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ se "
-#~ "kĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂzben:"
+#~ "Hiba lÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ pett fel a smink (%s) "
+#~ "betÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂltÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ se "
+#~ "kÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂzben:"
 
 #, fuzzy
 #~ msgid "Error in %s:%lu (Warmux %s) : %s"
-#~ msgstr "Hiba a k�vetkez�ben: %s, %lu"
+#~ msgstr "Hiba a következőben: %s, %lu"
 
 #~ msgid "Error loading team's data %s:"
-#~ msgstr "Hiba a csapat adatainak bet�lt�se k�zben (%s):"
+#~ msgstr "Hiba a csapat adatainak betöltése közben (%s):"
 
 #, fuzzy
 #~ msgid "Error while exporting file %s:"
 #~ msgstr ""
-#~ "Hiba lĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ pett fel a csapat "
-#~ "betĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂltĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ se "
-#~ "kĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂzben (%s):"
+#~ "Hiba lÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ pett fel a csapat "
+#~ "betÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂltÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ se "
+#~ "kÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂzben (%s):"
 
 #~ msgid "Error while loading configuration file: %s"
-#~ msgstr "Hiba a konfigur�ci�s f�jl bet�lt�se k�zben: %s"
+#~ msgstr "Hiba a konfigurációs fájl betöltése közben: %s"
 
 #, fuzzy
 #~ msgid "Error while loading default configuration file: %s"
-#~ msgstr "Hiba a konfigur�ci�s f�jl bet�lt�se k�zben: %s"
+#~ msgstr "Hiba a konfigurációs fájl betöltése közben: %s"
 
 #~ msgid "Error while loading game mode %s (file %s):"
-#~ msgstr "Hiba a(z) %s j�t�km�d bet�lt�se k�zben (%s f�jl):"
+#~ msgstr "Hiba a(z) %s játékmód betöltése közben (%s fájl):"
 
 #, fuzzy
 #~ msgid "Error while loading game mode %s from memory:"
 #~ msgstr ""
-#~ "Hiba lĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ pett fel a csapat "
-#~ "betĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂltĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ se "
-#~ "kĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂzben (%s):"
+#~ "Hiba lÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ pett fel a csapat "
+#~ "betÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂltÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ se "
+#~ "kÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂzben (%s):"
 
 #, fuzzy
 #~ msgid ""
@@ -2733,80 +2733,80 @@ msgstr "Hangmin�s�g: %d Hz, %d bit"
 #~ "outside. If you are not directly connected to the internet, check your "
 #~ "router configuration: TCP Port %u must be forwarded on your computer."
 #~ msgstr ""
-#~ "Hiba: A szervered nem �rhet� el az internetr�l. Ellen�rizd a t�zfalad "
-#~ "be�ll�t�sait: a(z) %s-s TCP portot enged�lyezned kell a k�lvil�g fel�l. "
-#~ "Ha nem k�zvetlen�l kapcsol�dsz az internetre, ellen�rizd a routered "
-#~ "be�ll�t�s�t: a(z) %s-s TCP portot �t kell ir�ny�tanod a sz�m�t�g�pedre."
+#~ "Hiba: A szervered nem érhető el az internetről. Ellenőrizd a tűzfalad "
+#~ "beállításait: a(z) %s-s TCP portot engedélyezned kell a külvilág felől. "
+#~ "Ha nem közvetlenül kapcsolódsz az internetre, ellenőrizd a routered "
+#~ "beállítását: a(z) %s-s TCP portot át kell irányítanod a számítógépedre."
 
 #~ msgid "HOME directory (environment variable $HOME) could not be found!"
-#~ msgstr "Nem tal�lhat� a felhaszn�l� k�nyvt�ra!"
+#~ msgstr "Nem található a felhasználó könyvtára!"
 
 #, fuzzy
 #~ msgid "Head commander:"
 #~ msgstr "Parancsnok: "
 
 #~ msgid "Info"
-#~ msgstr "InformĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂciĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ"
+#~ msgstr "InformÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂciÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ"
 
 #~ msgid "Load game data..."
 #~ msgstr ""
 #~ "Adatok "
-#~ "betĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂltĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ se..."
+#~ "betÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂltÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ se..."
 
 #, fuzzy
 #~ msgid "Load skins:"
 #~ msgstr ""
 #~ "%s smink "
-#~ "betĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂltĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ se"
+#~ "betÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂltÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ se"
 
 #~ msgid "Load weapon %s"
 #~ msgstr ""
 #~ "%s fegyver "
-#~ "betĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂltĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ se"
+#~ "betÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂltÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ se"
 
 #, fuzzy
 #~ msgid "Network deinitialization"
-#~ msgstr "H�l�zat el�k�sz�t�se"
+#~ msgstr "Hálózat előkészítése"
 
 #~ msgid "Network initialization"
-#~ msgstr "H�l�zat el�k�sz�t�se"
+#~ msgstr "Hálózat előkészítése"
 
 #~ msgid "Ninjarope"
-#~ msgstr "Ninja-k�t�l"
+#~ msgstr "Ninja-kötél"
 
 #~ msgid "Please tell us your opinion of Warmux via email:"
 #~ msgstr ""
-#~ "KĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ rjĂÂĂÂÄÂĂÂÄÂÄšÄĂĹĄĂÂk, "
+#~ "KÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ rjÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂÄÂÄšÄÄÂĂÂk, "
 #~ "mondd el a "
-#~ "vĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ lemĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ nyed "
-#~ "a WarmuxrĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂl: "
+#~ "vÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ lemÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ nyed "
+#~ "a WarmuxrÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂl: "
 
 #~ msgid "Refresh"
-#~ msgstr "Friss�t�s"
+#~ msgstr "Frissítés"
 
 #~ msgid "Remote"
-#~ msgstr "T�voli"
+#~ msgstr "Távoli"
 
 #, fuzzy
 #~ msgid "So you have to restart Warmux after each"
 #~ msgstr ""
-#~ "MegvĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂltoztak az SDL "
-#~ "beĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂllĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ­"
-#~ "tĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂsok:\n"
-#~ "ĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂjra kell "
-#~ "indĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ­tanod a Warmuxot a "
-#~ "beĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂllĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ­"
-#~ "tĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂsok "
-#~ "ĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ rvĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ nyesĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ­"
-#~ "tĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ sĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ hez!"
+#~ "MegvÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂltoztak az SDL "
+#~ "beÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂllÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ­"
+#~ "tÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂsok:\n"
+#~ "ÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂjra kell "
+#~ "indÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ­tanod a Warmuxot a "
+#~ "beÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂllÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ­"
+#~ "tÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂsok "
+#~ "ÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ rvÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ nyesÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ­"
+#~ "tÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ sÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ hez!"
 
 #, fuzzy
 #~ msgid ""
 #~ "Some weapons are disabled, because of known bugs (grapple, airhammer, "
 #~ "blowtorch, submachine gun) and surely many other things don't work either!"
 #~ msgstr ""
-#~ "N�h�ny fegyver le lett tiltva ismert hib�k miatt (ninja-k�t�l, "
-#~ "l�gkalap�cs, l�ngv�g�, g�ppisztoly) �s sok m�s dolog nem m�k�dik m�g!"
+#~ "Néhány fegyver le lett tiltva ismert hibák miatt (ninja-kötél, "
+#~ "légkalapács, lángvágó, géppisztoly) és sok más dolog nem működik még!"
 
 #, fuzzy
 #~ msgid ""
@@ -2814,9 +2814,9 @@ msgstr "Hangmin�s�g: %d Hz, %d bit"
 #~ "You can download a updated version on http://www.warmux.org/wiki/download."
 #~ "php"
 #~ msgstr ""
-#~ "Sajn�ljuk, a te verzi�d t�bb� nem t�mogatott. A t�mogatott verzi�: %s. A "
-#~ "http://www.warmux.org/wiki/download.php c�men tal�lod a friss�tett "
-#~ "verzi�t. c�"
+#~ "Sajnáljuk, a te verziód többé nem támogatott. A támogatott verzió: %s. A "
+#~ "http://www.warmux.org/wiki/download.php címen találod a frissített "
+#~ "verziót. cí"
 
 #~ msgid "Sound error :"
 #~ msgstr "Hanghiba:"
@@ -2824,61 +2824,61 @@ msgstr "Hangmin�s�g: %d Hz, %d bit"
 #, fuzzy
 #~ msgid "Sound options"
 #~ msgstr ""
-#~ "BeĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂllĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ­"
-#~ "tĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂsok"
+#~ "BeÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂllÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ­"
+#~ "tÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂsok"
 
 #~ msgid "Tools"
-#~ msgstr "Eszk�z�k"
+#~ msgstr "Eszközök"
 
 #, fuzzy
 #~ msgid "Unable to contact an index server!"
 #~ msgstr ""
-#~ "Nem sikerĂÂĂÂÄÂĂÂÄÂÄšÄĂĹĄĂÂlt megnyitni a "
-#~ "tĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ rkĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ pek "
-#~ "kĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂnyvtĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂrĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂt "
+#~ "Nem sikerÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂÄÂÄšÄÄÂĂÂlt megnyitni a "
+#~ "tÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ rkÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ pek "
+#~ "kÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂnyvtÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂrÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂt "
 #~ "(%s)!"
 
 #, fuzzy
 #~ msgid "Unable to contact top server!"
 #~ msgstr ""
-#~ "Nem sikerĂÂĂÂÄÂĂÂÄÂÄšÄĂĹĄĂÂlt megnyitni a "
-#~ "tĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ rkĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ pek "
-#~ "kĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂnyvtĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂrĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂt "
+#~ "Nem sikerÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂÄÂÄšÄÄÂĂÂlt megnyitni a "
+#~ "tÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ rkÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ pek "
+#~ "kÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂnyvtÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂrÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂt "
 #~ "(%s)!"
 
 #, fuzzy
 #~ msgid "Unable to join the game..."
 #~ msgstr ""
-#~ "Nem sikerĂÂĂÂÄÂĂÂÄÂÄšÄĂĹĄĂÂlt megnyitni a sminkek "
-#~ "kĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂnytĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂrĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂt "
+#~ "Nem sikerÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂÄÂÄšÄÄÂĂÂlt megnyitni a sminkek "
+#~ "kÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂnytÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂrÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂt "
 #~ "(%s)!"
 
 #, fuzzy
 #~ msgid "Unexpected exception caught..."
 #~ msgstr ""
-#~ "Elkaptam egy vĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂratlanul "
-#~ "fellĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ pett "
-#~ "kivĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ telt..."
+#~ "Elkaptam egy vÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂratlanul "
+#~ "fellÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ pett "
+#~ "kivÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ telt..."
 
 #~ msgid "Unnamed"
-#~ msgstr "N�vtelen"
+#~ msgstr "Névtelen"
 
 #~ msgid "Use sound?"
-#~ msgstr "Hang bekapcsolĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂsa"
+#~ msgstr "Hang bekapcsolÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂsa"
 
 #~ msgid ""
 #~ "WARNING! Disconnections are not yet handled. So you have to restart "
 #~ "Warmux after each disconnection!"
 #~ msgstr ""
-#~ "FIGYELEM! A lekapcsol�d�sok m�g nem t�mogatottak. Minden lekapcsol�d�s "
-#~ "ut�n �jra kell ind�tanod a Warmuxot!"
+#~ "FIGYELEM! A lekapcsolódások még nem támogatottak. Minden lekapcsolódás "
+#~ "után újra kell indítanod a Warmuxot!"
 
 #~ msgid ""
 #~ "WARNING!! Network is still under developement and therefore a little "
 #~ "experimental."
 #~ msgstr ""
-#~ "FIGYELEM!! A h�l�zat fejleszt�s alatt �ll, ez�rt m�g csak k�s�rleti "
-#~ "jelleg�."
+#~ "FIGYELEM!! A hálózat fejlesztés alatt áll, ezért még csak kísérleti "
+#~ "jellegű."
 
 #, fuzzy
 #~ msgid "Weapon:"
@@ -2886,26 +2886,26 @@ msgstr "Hangmin�s�g: %d Hz, %d bit"
 
 #, fuzzy
 #~ msgid "XML error during loading map '%s': "
-#~ msgstr "XML hiba a(z) '%s' p�lya bet�lt�se k�zben:"
+#~ msgstr "XML hiba a(z) '%s' pálya betöltése közben:"
 
 #~ msgid "You need at least two teams to play: change this in 'Options menu' !"
 #~ msgstr ""
-#~ "LegalalĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂbb "
-#~ "kĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ t csapatot kell "
-#~ "verbuvĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂlnod a "
-#~ "jĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂtĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ khoz! "
-#~ "Ezt a BeĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂllĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ­"
-#~ "tĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂsok "
-#~ "menĂÂĂÂÄÂĂÂÄÂÄšÄĂĹĄĂÂpont alatt teheted meg!"
+#~ "LegalalÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂbb "
+#~ "kÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ t csapatot kell "
+#~ "verbuvÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂlnod a "
+#~ "jÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂtÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ khoz! "
+#~ "Ezt a BeÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂllÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂ­"
+#~ "tÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂsok "
+#~ "menÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂÄÂÄšÄÄÂĂÂpont alatt teheted meg!"
 
 #, fuzzy
 #~ msgid "[Music] Error : file %s does not exist"
 #~ msgstr ""
-#~ "%s fĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂjl nem "
-#~ "lĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ tezik!"
+#~ "%s fÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂjl nem "
+#~ "lÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ tezik!"
 
 #, fuzzy
 #~ msgid "[Sound] Error: File %s does not exist"
 #~ msgstr ""
-#~ "%s fĂÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂjl nem "
-#~ "lĂÂĂÂÄÂĂÂÄÂÄšÄÄÂĂÂ tezik!"
+#~ "%s fÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂjl nem "
+#~ "lÄÂĂÂÄÂĂÂĂÂĂÂÄÂĂÂĂÂĂÂĂĹĄĂÂĂÂĂÂÄÂĂÂ tezik!"

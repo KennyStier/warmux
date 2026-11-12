@@ -13,7 +13,7 @@ msgstr ""
 "Language-Team: Estonian <et@li.org>\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -21,7 +21,7 @@ msgstr ""
 #: src/map/maps_list.cpp:379
 #, c-format
 msgid "! Map %s not found :-("
-msgstr "! Ei leia m‰nguv‰lja %s :-("
+msgstr "! Ei leia m√§nguv√§lja %s :-("
 
 #: src/graphic/fps.cpp:99
 #, c-format
@@ -32,15 +32,15 @@ msgstr "%.1f kaadrit/sek"
 #, c-format
 msgid "%i player connected"
 msgid_plural "%i players connected"
-msgstr[0] "%i m‰ngija ¸hendet"
-msgstr[1] "%i m‰ngijat ¸hendet"
+msgstr[0] "%i m√§ngija √ºhendet"
+msgstr[1] "%i m√§ngijat √ºhendet"
 
 #: src/menu/network_menu.cpp:134 src/menu/network_menu.cpp:369
 #, c-format
 msgid "%i player ready"
 msgid_plural "%i players ready"
-msgstr[0] "%i m‰ngija valmis"
-msgstr[1] "%i m‰ngijat valmis"
+msgstr[0] "%i m√§ngija valmis"
+msgstr[1] "%i m√§ngijat valmis"
 
 #: src/map/maps_list.cpp:141
 #, c-format
@@ -87,7 +87,7 @@ msgstr "%s meeskonnast %s lendas auti!"
 #: src/game/game.cpp:1178
 #, c-format
 msgid "%s from %s team has hit the ground too hard!"
-msgstr "%s meeskonnast %s prantsatas liiga kıvasti vastu maad!"
+msgstr "%s meeskonnast %s prantsatas liiga k√µvasti vastu maad!"
 
 #. The playing character killed himself
 #: src/game/game.cpp:1185
@@ -110,29 +110,29 @@ msgstr ""
 #: src/object/medkit.cpp:73
 #, fuzzy, c-format
 msgid "%s has won %u points of energy!"
-msgstr "%s vıitis %u elupunkti!"
+msgstr "%s v√µitis %u elupunkti!"
 
 #: src/game/game.cpp:1209
 #, c-format
 msgid "%s is a psychopath, he has killed a member of the %s team!"
-msgstr "%s on ps¸hh, sest ta kututas ‰ra meeskonna %s liikme!"
+msgstr "%s on ps√ºhh, sest ta kututas √§ra meeskonna %s liikme!"
 
 #: src/weapon/mine.cpp:121
 #, c-format
 msgid "%s is next to a mine!"
-msgstr "%s seisab miini kırval!"
+msgstr "%s seisab miini k√µrval!"
 
 #. For translators: extended in "<nickname> (<host>) just connected
 #: src/include/action_handler.cpp:952
 #, fuzzy, c-format
 msgid "%s just connected"
-msgstr "%i m‰ngija ¸hendet"
+msgstr "%i m√§ngija √ºhendet"
 
 #. For translators: extended in "<nickname> (<host>) just disconnected
 #: src/include/action_handler.cpp:1064
 #, fuzzy, c-format
 msgid "%s just disconnected"
-msgstr "%i m‰ngija ¸hendet"
+msgstr "%i m√§ngija √ºhendet"
 
 #: src/network/admin_commands.cpp:66
 #, c-format
@@ -148,34 +148,34 @@ msgstr ""
 #: src/object/bonus_box.cpp:88
 #, c-format
 msgid "%s team already has infinite ammo for the %s!"
-msgstr "Meeskonnal %s on n¸¸d %s jaoks lıputult laskemoona!"
+msgstr "Meeskonnal %s on n√º√ºd %s jaoks l√µputult laskemoona!"
 
 #. Show message
 #: src/weapon/skip_turn.cpp:55
 #, c-format
 msgid "%s team has skipped its turn."
-msgstr "Meeskond %s j‰i vahele."
+msgstr "Meeskond %s j√§i vahele."
 
 #: src/weapon/cluzooka.cpp:360
 #, c-format
 msgid "%s team has won %u Cluster bazookas!"
 msgid_plural "%s team has won %u Cluster bazookas!"
-msgstr[0] "Meeskond %s vıitis %u granaadiheitja!"
-msgstr[1] "Meeskond %s vıitis %u granaadiheitjat!"
+msgstr[0] "Meeskond %s v√µitis %u granaadiheitja!"
+msgstr[1] "Meeskond %s v√µitis %u granaadiheitjat!"
 
 #: src/weapon/gnu.cpp:239
 #, c-format
 msgid "%s team has won %u Gnu! Blow them all, cowboy!"
 msgid_plural "%s team has won %u Gnus! Blow them all, cowboy!"
-msgstr[0] "Meeskond %s vıitlis %u Gnu! Lase nad vastu taevast, kauboi!"
-msgstr[1] "Meeskond %s vıitlis %u Gnud! Lase nad vastu taevast, kauboi!"
+msgstr[0] "Meeskond %s v√µitlis %u Gnu! Lase nad vastu taevast, kauboi!"
+msgstr[1] "Meeskond %s v√µitlis %u Gnud! Lase nad vastu taevast, kauboi!"
 
 #: src/weapon/air_attack.cpp:256
 #, c-format
 msgid "%s team has won %u air attack!"
 msgid_plural "%s team has won %u air attacks!"
-msgstr[0] "Meeskond %s vıitis %u ıhur¸nnaku!"
-msgstr[1] "Meeskond %s vıitis %u ıhur¸nnakut!"
+msgstr[0] "Meeskond %s v√µitis %u √µhur√ºnnaku!"
+msgstr[1] "Meeskond %s v√µitis %u √µhur√ºnnakut!"
 
 #: src/weapon/airhammer.cpp:167
 #, c-format
@@ -186,39 +186,39 @@ msgid_plural ""
 "%s team has won %u airhammers! Don't make too much noise with them! Thanks, "
 "your neighbours."
 msgstr[0] ""
-"Meeskond %s vıitis %u suruıhuhaamri! ƒra kasuta l‰rmakaid kodumasinaid peale "
+"Meeskond %s v√µitis %u suru√µhuhaamri! √Ñra kasuta l√§rmakaid kodumasinaid peale "
 "kella 11!"
 msgstr[1] ""
-"Meeskond %s vıitis %u suruıhuhaamrit! ƒra kasuta l‰rmakaid kodumasinaid "
+"Meeskond %s v√µitis %u suru√µhuhaamrit! √Ñra kasuta l√§rmakaid kodumasinaid "
 "peale kella 11!"
 
 #: src/weapon/anvil.cpp:195
 #, c-format
 msgid "%s team has won %u anvil! Splat them all!"
 msgid_plural "%s team has won %u anvils! Splat them all!"
-msgstr[0] "Meeskond %s vıitis %u alasi! Lajata neile!"
-msgstr[1] "Meeskond %s vıitis %u alasit! Lajata neile kıigile!"
+msgstr[0] "Meeskond %s v√µitis %u alasi! Lajata neile!"
+msgstr[1] "Meeskond %s v√µitis %u alasit! Lajata neile k√µigile!"
 
 #: src/weapon/auto_bazooka.cpp:325
 #, c-format
 msgid "%s team has won %u automatic bazooka!"
 msgid_plural "%s team has won %u automatic bazookas!"
-msgstr[0] "Meeskond %s vıitis %u intelligentse m¸rsu!"
-msgstr[1] "Meeskond %s vıitis %u intelligentset m¸rsku!"
+msgstr[0] "Meeskond %s v√µitis %u intelligentse m√ºrsu!"
+msgstr[1] "Meeskond %s v√µitis %u intelligentset m√ºrsku!"
 
 #: src/weapon/baseball.cpp:112
 #, c-format
 msgid "%s team has won %u baseball bat!"
 msgid_plural "%s team has won %u baseball bats!"
-msgstr[0] "Meeskond %s vıitis %u pesapallikurika!"
-msgstr[1] "Meeskond %s vıitis %u pesapallikurikat!"
+msgstr[0] "Meeskond %s v√µitis %u pesapallikurika!"
+msgstr[1] "Meeskond %s v√µitis %u pesapallikurikat!"
 
 #: src/weapon/bazooka.cpp:126
 #, c-format
 msgid "%s team has won %u bazooka!"
 msgid_plural "%s team has won %u bazookas!"
-msgstr[0] "Meeskond %s vıitis %u tankirusika!"
-msgstr[1] "Meeskond %s vıitis %u Bazookat!"
+msgstr[0] "Meeskond %s v√µitis %u tankirusika!"
+msgstr[1] "Meeskond %s v√µitis %u Bazookat!"
 
 #: src/weapon/blowtorch.cpp:154
 #, c-format
@@ -228,89 +228,89 @@ msgid_plural ""
 "%s team has won %u blowtorchs! If you're under 18, ask your parents to use "
 "it."
 msgstr[0] ""
-"Meeskond %s vıitis %u leeklambi! Kui oled alla 18, siis on kasutamiseks vaja "
-"lapsevanema vıi hooldaja luba!"
+"Meeskond %s v√µitis %u leeklambi! Kui oled alla 18, siis on kasutamiseks vaja "
+"lapsevanema v√µi hooldaja luba!"
 msgstr[1] ""
-"Meeskond %s vıitis %u leeklampi! Kui oled alla 18, siis on kasutamiseks vaja "
-"lapsevanema vıi hooldaja luba!"
+"Meeskond %s v√µitis %u leeklampi! Kui oled alla 18, siis on kasutamiseks vaja "
+"lapsevanema v√µi hooldaja luba!"
 
 #: src/weapon/bounce_ball.cpp:113
 #, c-format
 msgid "%s team has won %u bounce ball! Boing!"
 msgid_plural "%s team has won %u bounce balls! Boing!"
-msgstr[0] "Meeskond %s vıitis %u pırkepalli! Boing!"
-msgstr[1] "Meeskond %s vıitis %u pırkepalli! Boing!"
+msgstr[0] "Meeskond %s v√µitis %u p√µrkepalli! Boing!"
+msgstr[1] "Meeskond %s v√µitis %u p√µrkepalli! Boing!"
 
 #: src/weapon/cluster_bomb.cpp:204
 #, c-format
 msgid "%s team has won %u cluster bomb!"
 msgid_plural "%s team has won %u cluster bombs!"
-msgstr[0] "Meeskond %s vıitis %u kildgranaadi!"
-msgstr[1] "Meeskond %s vıitis %u kildgranaati!"
+msgstr[0] "Meeskond %s v√µitis %u kildgranaadi!"
+msgstr[1] "Meeskond %s v√µitis %u kildgranaati!"
 
 #: src/weapon/construct.cpp:82
 #, c-format
 msgid "%s team has won %u construct weapon! Don't forget your helmet."
 msgid_plural "%s team has won %u construct weapons! Don't forget your helmet."
-msgstr[0] "Meeskond %s vıitis %u ehitusploki! ƒra unusta kiivrit!"
-msgstr[1] "Meeskond %s vıitis %u ehitusplokki! ƒra unusta kiivrit!"
+msgstr[0] "Meeskond %s v√µitis %u ehitusploki! √Ñra unusta kiivrit!"
+msgstr[1] "Meeskond %s v√µitis %u ehitusplokki! √Ñra unusta kiivrit!"
 
 #: src/weapon/disco_grenade.cpp:168
 #, c-format
 msgid "%s team has won %u disco grenade! Shake your body when throwing it!"
 msgid_plural ""
 "%s team has won %u disco grenades! Shake your body when throwing them!"
-msgstr[0] "Meeskond %s vıitis %u diskogranaadi! Puus nıksuma ja hopp!"
-msgstr[1] "Meeskond %s vıitis %u diskogranaati! Puus nıksuma ja hopp!"
+msgstr[0] "Meeskond %s v√µitis %u diskogranaadi! Puus n√µksuma ja hopp!"
+msgstr[1] "Meeskond %s v√µitis %u diskogranaati! Puus n√µksuma ja hopp!"
 
 #: src/weapon/dynamite.cpp:150
 #, c-format
 msgid "%s team has won %u dynamite!"
 msgid_plural "%s team has won %u dynamites!"
-msgstr[0] "Meeskond %s vıitis %u d¸namiidi!"
-msgstr[1] "Meeskond %s vıitis %u d¸namiiti!"
+msgstr[0] "Meeskond %s v√µitis %u d√ºnamiidi!"
+msgstr[1] "Meeskond %s v√µitis %u d√ºnamiiti!"
 
 #: src/weapon/flamethrower.cpp:194
 #, c-format
 msgid "%s team has won %u flame-thrower!"
 msgid_plural "%s team has won %u flame-throwers!"
-msgstr[0] "Meeskond %s vıitis %u leegiheitja!"
-msgstr[1] "Meeskond %s vıitis %u leegiheitjat!"
+msgstr[0] "Meeskond %s v√µitis %u leegiheitja!"
+msgstr[1] "Meeskond %s v√µitis %u leegiheitjat!"
 
 #: src/weapon/footbomb.cpp:167
 #, c-format
 msgid "%s team has won %u football bomb!"
 msgid_plural "%s team has won %u football bombs!"
-msgstr[0] "Meeskond %s vıitis %u jalgpommi!"
-msgstr[1] "Meeskond %s vıitis %u jalgpommi!"
+msgstr[0] "Meeskond %s v√µitis %u jalgpommi!"
+msgstr[1] "Meeskond %s v√µitis %u jalgpommi!"
 
 #: src/weapon/grapple.cpp:713
 #, c-format
 msgid "%s team has won %u grapple!"
 msgid_plural "%s team has won %u grapples!"
-msgstr[0] "Meeskond %s vıitis %u pootshaagi!"
-msgstr[1] "Meeskond %s vıitis %u pootshaaki!"
+msgstr[0] "Meeskond %s v√µitis %u pootshaagi!"
+msgstr[1] "Meeskond %s v√µitis %u pootshaaki!"
 
 #: src/weapon/grenade.cpp:88
 #, c-format
 msgid "%s team has won %u grenade!"
 msgid_plural "%s team has won %u grenades!"
-msgstr[0] "Meeskond %s vıitis %u granaadi!"
-msgstr[1] "Meeskond %s vıitis %u granaati!"
+msgstr[0] "Meeskond %s v√µitis %u granaadi!"
+msgstr[1] "Meeskond %s v√µitis %u granaati!"
 
 #: src/weapon/gun.cpp:95
 #, c-format
 msgid "%s team has won %u gun!"
 msgid_plural "%s team has won %u guns!"
-msgstr[0] "Meeskond %s vıitis %u p¸stoli!"
-msgstr[1] "Meeskond %s vıitis %u p¸stolit!"
+msgstr[0] "Meeskond %s v√µitis %u p√ºstoli!"
+msgstr[1] "Meeskond %s v√µitis %u p√ºstolit!"
 
 #: src/weapon/jetpack.cpp:206
 #, c-format
 msgid "%s team has won %u jetpack! Groovy!"
 msgid_plural "%s team has won %u jetpacks! Groovy!"
-msgstr[0] "Meeskond %s vıitis %u reaktiivranitsa! Jıud olgu sinuga!"
-msgstr[1] "Meeskond %s vıitis %u reaktiivranitsat! Jıud olgu sinuga!"
+msgstr[0] "Meeskond %s v√µitis %u reaktiivranitsa! J√µud olgu sinuga!"
+msgstr[1] "Meeskond %s v√µitis %u reaktiivranitsat! J√µud olgu sinuga!"
 
 #: src/weapon/lowgrav.cpp:83
 #, fuzzy, c-format
@@ -319,109 +319,109 @@ msgid ""
 msgid_plural ""
 "%s team has won %u lowgravs! Small step for man, giant leap for free "
 "software!"
-msgstr[0] "Meeskond %s vıitis %u antigravikiivri! Ema on sul Neil Armstrong!"
-msgstr[1] "Meeskond %s vıitis %u antigravikiivri! Ema on sul Neil Armstrong!"
+msgstr[0] "Meeskond %s v√µitis %u antigravikiivri! Ema on sul Neil Armstrong!"
+msgstr[1] "Meeskond %s v√µitis %u antigravikiivri! Ema on sul Neil Armstrong!"
 
 #: src/weapon/mine.cpp:249
 #, c-format
 msgid "%s team has won %u mine!"
 msgid_plural "%s team has won %u mines!"
-msgstr[0] "Meeskond %s vıitis %u miini!"
-msgstr[1] "Meeskond %s vıitis %u miini!"
+msgstr[0] "Meeskond %s v√µitis %u miini!"
+msgstr[1] "Meeskond %s v√µitis %u miini!"
 
 #: src/weapon/parachute.cpp:174
 #, c-format
 msgid "%s team has won %u parachute!"
 msgid_plural "%s team has won %u parachutes!"
-msgstr[0] "Meeskond %s vıitis %u langevarju!"
-msgstr[1] "Meeskond %s vıitis %u langevarju!"
+msgstr[0] "Meeskond %s v√µitis %u langevarju!"
+msgstr[1] "Meeskond %s v√µitis %u langevarju!"
 
 #: src/weapon/polecat.cpp:273
 #, fuzzy, c-format
 msgid "%s team has won %u polecat! You have your gas mask, right?"
 msgid_plural "%s team has won %u polecats! You have your gas mask, right?"
-msgstr[0] "Meeskond %s vıitis %u haisutuhkru! Kus su gaasimask on?"
-msgstr[1] "Meeskond %s vıitis %u haisutuhkrut! Kus su gaasimask on?"
+msgstr[0] "Meeskond %s v√µitis %u haisutuhkru! Kus su gaasimask on?"
+msgstr[1] "Meeskond %s v√µitis %u haisutuhkrut! Kus su gaasimask on?"
 
 #: src/weapon/rail_gun.cpp:133
 #, fuzzy, c-format
 msgid "%s team has won %u rail gun! It's skewer time!"
 msgid_plural "%s team has won %u rail guns! It's skewer time!"
-msgstr[0] "Meeskond %s vıitis %u kildgranaadi!"
-msgstr[1] "Meeskond %s vıitis %u kildgranaati!"
+msgstr[0] "Meeskond %s v√µitis %u kildgranaadi!"
+msgstr[1] "Meeskond %s v√µitis %u kildgranaati!"
 
 #: src/weapon/riot_bomb.cpp:131
 #, c-format
 msgid "%s team has won %u riot bomb!"
 msgid_plural "%s team has won %u riot bombs!"
-msgstr[0] "Meeskond %s vıitis %u raketiheitja!"
-msgstr[1] "Meeskond %s vıitis %u raketiheitjat!"
+msgstr[0] "Meeskond %s v√µitis %u raketiheitja!"
+msgstr[1] "Meeskond %s v√µitis %u raketiheitjat!"
 
 #: src/weapon/shotgun.cpp:127
 #, c-format
 msgid "%s team has won %u shotgun!"
 msgid_plural "%s team has won %u shotguns!"
-msgstr[0] "Meeskond %s vıitis %u haavlip¸ssi!"
-msgstr[1] "Meeskond %s vıitis %u haavlip¸ssi!"
+msgstr[0] "Meeskond %s v√µitis %u haavlip√ºssi!"
+msgstr[1] "Meeskond %s v√µitis %u haavlip√ºssi!"
 
 #: src/weapon/slap.cpp:79
 #, c-format
 msgid "%s team has won %u slap!"
 msgid_plural "%s team has won %u slaps! Dodge this!"
-msgstr[0] "Meeskond %s on vıitnud %u litaka!"
-msgstr[1] "Meeskond %s on vıitnud %u litakat!"
+msgstr[0] "Meeskond %s on v√µitnud %u litaka!"
+msgstr[1] "Meeskond %s on v√µitnud %u litakat!"
 
 #: src/weapon/snipe_rifle.cpp:259
 #, c-format
 msgid "%s team has won %u sniper rifle! Aim and shoot between the eyes!"
 msgid_plural ""
 "%s team has won %u sniper rifles! Aim and shoot between the eyes!"
-msgstr[0] "Meeskond %s vıitis %u t‰psusp¸ssi! Sihi t‰pselt silmade vahele!"
-msgstr[1] "Meeskond %s vıitis %u t‰psusp¸ssi! Sihi t‰pselt silmade vahele!"
+msgstr[0] "Meeskond %s v√µitis %u t√§psusp√ºssi! Sihi t√§pselt silmade vahele!"
+msgstr[1] "Meeskond %s v√µitis %u t√§psusp√ºssi! Sihi t√§pselt silmade vahele!"
 
 #: src/weapon/submachine_gun.cpp:147
 #, c-format
 msgid "%s team has won %u submachine gun!"
 msgid_plural "%s team has won %u submachine guns!"
-msgstr[0] "Meeskond %s vıitis %u automaadi!"
-msgstr[1] "Meeskond %s vıitis %u automaadi!"
+msgstr[0] "Meeskond %s v√µitis %u automaadi!"
+msgstr[1] "Meeskond %s v√µitis %u automaadi!"
 
 #: src/weapon/suicide.cpp:78
 #, c-format
 msgid "%s team has won %u suicide!"
 msgid_plural "%s team has won %u suicides! Use them all for an extra bonus!"
-msgstr[0] "Meeskond %s vıitis %u enesetapu!"
-msgstr[1] "Meeskond %s vıitis %u enesetappu! Sˆˆ kogu pakk kohe t¸hjaks!"
+msgstr[0] "Meeskond %s v√µitis %u enesetapu!"
+msgstr[1] "Meeskond %s v√µitis %u enesetappu! S√∂√∂ kogu pakk kohe t√ºhjaks!"
 
 #: src/weapon/syringe.cpp:120
 #, c-format
 msgid "%s team has won %u syringe!"
 msgid_plural "%s team has won %u syringes!"
-msgstr[0] "Meeskond %s vıitis %u s¸stla!"
-msgstr[1] "Meeskond %s vıitis %u s¸stalt!"
+msgstr[0] "Meeskond %s v√µitis %u s√ºstla!"
+msgstr[1] "Meeskond %s v√µitis %u s√ºstalt!"
 
 #: src/weapon/teleportation.cpp:126
 #, c-format
 msgid "%s team has won %u teleportation!"
 msgid_plural "%s team has won %u teleportations!"
-msgstr[0] "Meeskond %s vıitis %u telepordi!"
-msgstr[1] "Meeskond %s vıitis %u teleporti!"
+msgstr[0] "Meeskond %s v√µitis %u telepordi!"
+msgstr[1] "Meeskond %s v√µitis %u teleporti!"
 
 #: src/weapon/skip_turn.cpp:65
 #, c-format
 msgid "%s team has won %u turn skip! I know you'll love it."
 msgid_plural "%s team has won %u turn skips! I know you'll love them."
-msgstr[0] "Meeskond %s vıitis %u vahelej‰‰mise! Ma tean, et see on su lemmik!"
-msgstr[1] "Meeskond %s vıitis %u vahelej‰‰mist! Ma tean, et see on su lemmik!"
+msgstr[0] "Meeskond %s v√µitis %u vahelej√§√§mise! Ma tean, et see on su lemmik!"
+msgstr[1] "Meeskond %s v√µitis %u vahelej√§√§mist! Ma tean, et see on su lemmik!"
 
 #: src/weapon/supertux.cpp:291
 #, c-format
 msgid "%s team has won %u tux launcher! Never seen a flying penguin?"
 msgid_plural "%s team has won %u tux launchers! Never seen a flying penguin?"
 msgstr[0] ""
-"Meeskond %s vıitis %u tuksiheitja! Pole enne lendavat pingviini n‰inud?"
+"Meeskond %s v√µitis %u tuksiheitja! Pole enne lendavat pingviini n√§inud?"
 msgstr[1] ""
-"Meeskond %s vıitis %u tuksiheitjat! Pole enne lendavat pingviini n‰inud?"
+"Meeskond %s v√µitis %u tuksiheitjat! Pole enne lendavat pingviini n√§inud?"
 
 #: src/game/game_blitz.cpp:67
 #, c-format
@@ -431,7 +431,7 @@ msgstr "Meeskond %s lasti ribadeks."
 #: src/game/game.cpp:1193 src/game/game.cpp:1205
 #, c-format
 msgid "%s took a member of the %s team to the grave with him!"
-msgstr "%s vıttis %s meeskonna liikme hauda kaasa!"
+msgstr "%s v√µttis %s meeskonna liikme hauda kaasa!"
 
 #: src/network/admin_commands.cpp:81
 #, c-format
@@ -441,37 +441,37 @@ msgstr ""
 #: src/interface/man_machine_interface.cpp:1149
 #, fuzzy
 msgid "'Duel' weapon category"
-msgstr "Muuda relvat¸¸pi"
+msgstr "Muuda relvat√º√ºpi"
 
 #: src/interface/man_machine_interface.cpp:1145
 #, fuzzy
 msgid "'Heavy' weapon category"
-msgstr "Muuda relvat¸¸pi"
+msgstr "Muuda relvat√º√ºpi"
 
 #: src/interface/man_machine_interface.cpp:1150
 #, fuzzy
 msgid "'Move' weapon category"
-msgstr "Muuda relvat¸¸pi"
+msgstr "Muuda relvat√º√ºpi"
 
 #: src/interface/man_machine_interface.cpp:1146
 #, fuzzy
 msgid "'Rifle' weapon category"
-msgstr "Muuda relvat¸¸pi"
+msgstr "Muuda relvat√º√ºpi"
 
 #: src/interface/man_machine_interface.cpp:1148
 #, fuzzy
 msgid "'Special' weapon category"
-msgstr "Muuda relvat¸¸pi"
+msgstr "Muuda relvat√º√ºpi"
 
 #: src/interface/man_machine_interface.cpp:1147
 #, fuzzy
 msgid "'Throwing' weapon category"
-msgstr "Muuda relvat¸¸pi"
+msgstr "Muuda relvat√º√ºpi"
 
 #: src/interface/man_machine_interface.cpp:1151
 #, fuzzy
 msgid "'Tool' weapon category"
-msgstr "Muuda relvat¸¸pi"
+msgstr "Muuda relvat√º√ºpi"
 
 #: src/interface/interface.cpp:291
 msgid "(dead)"
@@ -480,7 +480,7 @@ msgstr "(kutu)"
 #. Setting language selection
 #: src/menu/options_menu.cpp:339
 msgid "(system language)"
-msgstr "(s¸steemi keel)"
+msgstr "(s√ºsteemi keel)"
 
 #: src/network/chatlogger.cpp:28 src/network/chatlogger.cpp:67
 msgid "(unknown time)"
@@ -497,8 +497,8 @@ msgid ""
 "A new version %s is available, while your version is %s. You may want to "
 "check whether an update is available for your OS!"
 msgstr ""
-"Uus v‰ljalase %s on saadaval. Kasutatav v‰ljalase on %s. Vıiksid "
-"kontrollida, kas on olemas uuendus sinu s¸steemi jaoks!"
+"Uus v√§ljalase %s on saadaval. Kasutatav v√§ljalase on %s. V√µiksid "
+"kontrollida, kas on olemas uuendus sinu s√ºsteemi jaoks!"
 
 #. Action name
 #: src/gui/control_config.cpp:292
@@ -508,15 +508,15 @@ msgstr "Suvandid"
 
 #: src/weapon/air_attack.cpp:213
 msgid "Air Attack"
-msgstr "’hur¸nnak"
+msgstr "√ïhur√ºnnak"
 
 #: src/weapon/airhammer.cpp:76
 msgid "Airhammer"
-msgstr "Suruıhuhaamer"
+msgstr "Suru√µhuhaamer"
 
 #: src/menu/results_menu.cpp:313
 msgid "All teams"
-msgstr "Kıik meeskonnad"
+msgstr "K√µik meeskonnad"
 
 #: src/menu/game_mode_editor.cpp:56
 msgid "Always"
@@ -524,7 +524,7 @@ msgstr "Alati"
 
 #: src/game/game_blitz.cpp:48 src/game/game_classic.cpp:54
 msgid "And the winner is..."
-msgstr "Ja meie vıitja on..."
+msgstr "Ja meie v√µitja on..."
 
 #: src/weapon/baseball.cpp:56
 #, fuzzy
@@ -533,9 +533,9 @@ msgid ""
 "Fire: space key\n"
 "a hit per turn"
 msgstr ""
-"Nurk : ¸les/alla\n"
-"Tulistamine : t¸hik\n"
-"¸ks lask k‰igu kohta"
+"Nurk : √ºles/alla\n"
+"Tulistamine : t√ºhik\n"
+"√ºks lask k√§igu kohta"
 
 #: src/weapon/anvil.cpp:141
 msgid "Anvil"
@@ -551,7 +551,7 @@ msgstr "Autorid:"
 
 #: src/weapon/auto_bazooka.cpp:220
 msgid "Automatic Bazooka"
-msgstr "Intelligentne m¸rsk"
+msgstr "Intelligentne m√ºrsk"
 
 #: src/interface/man_machine_interface.cpp:1174
 msgid "Back jump"
@@ -575,7 +575,7 @@ msgstr "Tankirusikas"
 
 #: src/menu/game_mode_editor.cpp:57
 msgid "Before action"
-msgstr "Enne k‰iku"
+msgstr "Enne k√§iku"
 
 #: src/menu/main_menu.cpp:64
 msgid "Benchmark"
@@ -583,7 +583,7 @@ msgstr ""
 
 #: src/game/game_mode.cpp:336
 msgid "Blitz"
-msgstr "V‰lk"
+msgstr "V√§lk"
 
 #: src/weapon/blowtorch.cpp:63
 msgid "Blowtorch"
@@ -591,12 +591,12 @@ msgstr "Leeklamp"
 
 #: src/weapon/bounce_ball.cpp:90
 msgid "Bounce Ball"
-msgstr "Pırkepall"
+msgstr "P√µrkepall"
 
 #: src/weapon/supertux.cpp:177
 #, fuzzy
 msgid "Bye bye Tux..."
-msgstr "H¸vasti, Tux..."
+msgstr "H√ºvasti, Tux..."
 
 #: src/team/teams_list.cpp:469 src/team/teams_list.cpp:504
 #: src/team/teams_list.cpp:513 src/team/teams_list.cpp:519
@@ -647,7 +647,7 @@ msgstr "Muuda sihtimisnurka"
 #: src/menu/help_menu.cpp:54
 #, fuzzy
 msgid "Change number of players per team"
-msgstr "M‰ngijaid maksimaalselt:"
+msgstr "M√§ngijaid maksimaalselt:"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:107
@@ -659,13 +659,13 @@ msgstr ""
 #: src/interface/man_machine_interface.cpp:1176
 #, fuzzy
 msgid "Change weapon"
-msgstr "Muuda relvat¸¸pi"
+msgstr "Muuda relvat√º√ºpi"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:134
 #, fuzzy
 msgid "Change weapon category"
-msgstr "Muuda relvat¸¸pi"
+msgstr "Muuda relvat√º√ºpi"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:135
@@ -696,11 +696,11 @@ msgstr ""
 
 #: src/menu/options_menu.cpp:246
 msgid "Check updates online?"
-msgstr "Kas kontrollida uut v‰ljalaset onlainis?"
+msgstr "Kas kontrollida uut v√§ljalaset onlainis?"
 
 #: src/menu/map_selection_box.cpp:227
 msgid "Choose randomly between the different maps"
-msgstr "Vıta m‰nguv‰ljade hulgast suvaline"
+msgstr "V√µta m√§nguv√§ljade hulgast suvaline"
 
 #: src/game/game_mode.cpp:334
 msgid "Classic"
@@ -740,7 +740,7 @@ msgstr ""
 #. Client Mode
 #: src/menu/network_menu.cpp:167 src/network/network.cpp:456
 msgid "Client mode"
-msgstr "Kliendire∏iim"
+msgstr "Kliendire≈æiim"
 
 #: src/menu/results_menu.cpp:181 src/menu/results_menu.cpp:183
 msgid "Clumsiest"
@@ -770,19 +770,19 @@ msgstr "Enesetapp"
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:132
 msgid "Configuration menu"
-msgstr "Seadistusmen¸¸"
+msgstr "Seadistusmen√º√º"
 
 #: src/menu/network_connection_menu.cpp:166
 msgid "Connect to game"
-msgstr "‹hendu m‰ngu"
+msgstr "√úhendu m√§ngu"
 
 #: src/network/net_error_msg.cpp:29
 msgid "Connected !"
-msgstr "‹hendatud!"
+msgstr "√úhendatud!"
 
 #: src/network/admin_commands.cpp:96
 msgid "Connected players: "
-msgstr "‹hendet m‰ngijaid:"
+msgstr "√úhendet m√§ngijaid:"
 
 #: src/weapon/construct.cpp:62 src/weapon/construct.cpp:71
 msgid "Construct"
@@ -795,12 +795,12 @@ msgstr "Pealik:"
 #: lib/warmux/net/download.cpp:199
 #, c-format
 msgid "Couldn't fetch last version from %s"
-msgstr "Ei suuda alla laadida viimast v‰ljalaset serverist %s"
+msgstr "Ei suuda alla laadida viimast v√§ljalaset serverist %s"
 
 #: src/network/chatlogger.cpp:52
 #, c-format
 msgid "Couldn't open file %s"
-msgstr "Ei suuda avada s‰ilikut %s "
+msgstr "Ei suuda avada s√§ilikut %s "
 
 #: src/menu/main_menu.cpp:70
 msgid "Credits"
@@ -826,13 +826,13 @@ msgstr ""
 
 #: src/menu/game_mode_editor.cpp:88
 msgid "Damage per turn during death mode"
-msgstr "Kahju k‰igu kohta surmare∏iimis"
+msgstr "Kahju k√§igu kohta surmare≈æiimis"
 
 #. Date
 #: src/menu/replay_menu.cpp:79
 #, fuzzy
 msgid "Date"
-msgstr "D¸namiit"
+msgstr "D√ºnamiit"
 
 #: src/interface/man_machine_interface.cpp:1186
 msgid "Decrease explosion delay"
@@ -852,7 +852,7 @@ msgstr "Diskogranaat"
 
 #: src/network/admin_commands.cpp:33
 msgid "Displays this message"
-msgstr "N‰ita seda sınumit"
+msgstr "N√§ita seda s√µnumit"
 
 #: src/menu/network_menu.cpp:169
 msgid "Don't forget to validate once you have selected your team(s)!"
@@ -870,30 +870,30 @@ msgstr ""
 #: src/menu/help_menu.cpp:128
 #, fuzzy
 msgid "Drag&drop: Move camera"
-msgstr "Klıpsa ja vea: Liiguta kaamerat"
+msgstr "Kl√µpsa ja vea: Liiguta kaamerat"
 
 #. Duration
 #: src/menu/replay_menu.cpp:84
 #, fuzzy
 msgid "Duration"
-msgstr "K‰igu kestvus"
+msgstr "K√§igu kestvus"
 
 #. some death mode options
 #: src/menu/game_mode_editor.cpp:82
 msgid "Duration before death mode"
-msgstr "Aega enne surmare∏iimi minekut"
+msgstr "Aega enne surmare≈æiimi minekut"
 
 #: src/menu/game_mode_editor.cpp:49
 msgid "Duration of a turn"
-msgstr "K‰igu kestvus"
+msgstr "K√§igu kestvus"
 
 #: src/weapon/dynamite.cpp:118
 msgid "Dynamite"
-msgstr "D¸namiit"
+msgstr "D√ºnamiit"
 
 #: src/game/game.cpp:513
 msgid "END OF GAME"
-msgstr "MƒNGU L’PP"
+msgstr "M√ÑNGU L√ïPP"
 
 #: src/menu/options_menu.cpp:291
 msgid "Effects volume"
@@ -906,7 +906,7 @@ msgstr "Elupunktid"
 #: src/include/action_handler.cpp:282
 #, c-format
 msgid "Error initializing network: Client %s does not agree with you!! - %s"
-msgstr "Viga vırgu¸henduse loomisel: M‰ngija %s ei nıustu sinuga!! -- %s"
+msgstr "Viga v√µrgu√ºhenduse loomisel: M√§ngija %s ei n√µustu sinuga!! -- %s"
 
 #: src/map/ground.cpp:61
 #, fuzzy
@@ -940,21 +940,21 @@ msgstr "Viga faili \"%s\" kustutamisel. Ei suuda kustutada kohandet meeskonda."
 #: src/menu/network_connection_menu.cpp:524
 #, c-format
 msgid "Error: Unable to connect to %s:%s"
-msgstr "Viga: Ei saa ¸henduda serveriga %s:%s"
+msgstr "Viga: Ei saa √ºhenduda serveriga %s:%s"
 
 #: src/menu/network_connection_menu.cpp:474
 msgid "Error: Unable to contact the index server to host a game"
-msgstr "Viga: Ei saa ¸hendust indeksserveriga, et m‰ngu ¸les seada"
+msgstr "Viga: Ei saa √ºhendust indeksserveriga, et m√§ngu √ºles seada"
 
 #: src/menu/network_connection_menu.cpp:385
 msgid ""
 "Error: Unable to contact the index server to search for an internet game"
-msgstr "Viga: Ei saa ¸hendust indeksserveriga, et valida m‰ngu internetis"
+msgstr "Viga: Ei saa √ºhendust indeksserveriga, et valida m√§ngu internetis"
 
 #: src/menu/network_connection_menu.cpp:502
 #, fuzzy
 msgid "Error: Unable to start the server"
-msgstr "Viga: Ei suuda serverit k‰ivitada"
+msgstr "Viga: Ei suuda serverit k√§ivitada"
 
 #: src/menu/network_connection_menu.cpp:495
 #: tools/servers/game_server/server.cpp:389
@@ -965,9 +965,9 @@ msgid ""
 "are not directly connected to the internet, check your router configuration: "
 "TCP Port %s must be forwarded on your computer."
 msgstr ""
-"Viga: Sinu server pole k‰ttesaadav internetis. Vaata oma "
-"tulem¸¸riseadistused ¸le: TCP port %s peab olema avatud ¸hendustele "
-"v‰ljastpoolt. Kui sa pole ¸hendatud interneti otse, siis vaata ¸le ka oma "
+"Viga: Sinu server pole k√§ttesaadav internetis. Vaata oma "
+"tulem√º√ºriseadistused √ºle: TCP port %s peab olema avatud √ºhendustele "
+"v√§ljastpoolt. Kui sa pole √ºhendatud interneti otse, siis vaata √ºle ka oma "
 "ruuteri seadistused: TCP port %s peab olema tunneldatud sinu arvutisse."
 
 #: src/team/team.cpp:161
@@ -1004,7 +1004,7 @@ msgstr ""
 #: lib/warmux/net/download.cpp:191
 #, fuzzy, c-format
 msgid "Fail to open temporary file: %s"
-msgstr "Ei suuda avada m‰ngv‰ljade kausta (%s)!"
+msgstr "Ei suuda avada m√§ngv√§ljade kausta (%s)!"
 
 #: src/menu/results_menu.cpp:434
 msgid "Failed to save replay"
@@ -1013,7 +1013,7 @@ msgstr ""
 #: src/menu/results_menu.cpp:354
 #, fuzzy
 msgid "Filename:"
-msgstr "M‰ngu nimi:"
+msgstr "M√§ngu nimi:"
 
 #: src/weapon/flamethrower.cpp:134
 msgid "Flame Thrower"
@@ -1025,11 +1025,11 @@ msgstr "Jalgpomm"
 
 #: src/menu/options_menu.cpp:112
 msgid "Fullscreen?"
-msgstr "T‰isekraan?"
+msgstr "T√§isekraan?"
 
 #: src/menu/game_menu.cpp:94 src/menu/network_menu.cpp:197
 msgid "Game"
-msgstr "M‰ng"
+msgstr "M√§ng"
 
 #: src/include/action_handler.cpp:921
 msgid ""
@@ -1042,7 +1042,7 @@ msgstr ""
 #: src/menu/help_menu.cpp:59
 #, fuzzy
 msgid "Game menu"
-msgstr "M‰ngure∏iim"
+msgstr "M√§ngure≈æiim"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #. Using the game mode editor but currently we are not able to send
@@ -1050,11 +1050,11 @@ msgstr "M‰ngure∏iim"
 #: src/menu/game_mode_editor.cpp:45 src/menu/help_menu.cpp:73
 #: src/menu/network_menu.cpp:193
 msgid "Game mode"
-msgstr "M‰ngure∏iim"
+msgstr "M√§ngure≈æiim"
 
 #: src/menu/network_connection_menu.cpp:263
 msgid "Game name:"
-msgstr "M‰ngu nimi:"
+msgstr "M√§ngu nimi:"
 
 #: src/include/action_handler.cpp:245
 msgid "Game out of sync!"
@@ -1090,15 +1090,15 @@ msgstr "Granaat"
 
 #: src/map/ground.cpp:39
 msgid "Ground initialization..."
-msgstr "S‰tin m‰nguv‰lja..."
+msgstr "S√§tin m√§nguv√§lja..."
 
 #: src/weapon/gun.cpp:72
 msgid "Gun"
-msgstr "P¸stol"
+msgstr "P√ºstol"
 
 #: src/menu/network_connection_menu.cpp:311
 msgid "Have a good game!"
-msgstr "’nn kaasa!"
+msgstr "√ïnn kaasa!"
 
 #. *******    Names: "Head commander" + text/custom team    ******
 #: src/interface/interface.cpp:280 src/menu/options_menu.cpp:182
@@ -1114,20 +1114,20 @@ msgstr "Appi"
 #: src/menu/options_menu.cpp:128
 #, fuzzy
 msgid "High"
-msgstr "Kırgush¸pe"
+msgstr "K√µrgush√ºpe"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/interface/man_machine_interface.cpp:1172 src/menu/help_menu.cpp:125
 msgid "High jump"
-msgstr "Kırgush¸pe"
+msgstr "K√µrgush√ºpe"
 
 #: src/menu/network_connection_menu.cpp:287
 msgid "Host a game"
-msgstr "Sea m‰ng ¸les"
+msgstr "Sea m√§ng √ºles"
 
 #: src/game/game_classic.cpp:196
 msgid "Hurry up, you are too slow !!"
-msgstr "Kiirusta! ƒra ole nii aeglane!"
+msgstr "Kiirusta! √Ñra ole nii aeglane!"
 
 #: src/menu/results_menu.cpp:367
 msgid "I like WarMUX :)"
@@ -1165,7 +1165,7 @@ msgstr ""
 #: src/menu/help_menu.cpp:71
 #, fuzzy
 msgid "Increase this for faster death mode end"
-msgstr "Aega enne surmare∏iimi minekut"
+msgstr "Aega enne surmare≈æiimi minekut"
 
 #. Select between "classic", "blitz" and "unlimited" rules
 #: src/menu/help_menu.cpp:66
@@ -1195,32 +1195,32 @@ msgid ""
 "Fire: Press space until desired strength is reached\n"
 "One ammo per turn"
 msgstr ""
-"Esialgne tulenurk: ‹les/alla\n"
-"Tulistamine: Hoida t¸hikut all, kuni soovitud vıimsuse saavutamiseni\n"
-"¸ks soru k‰igu kohta"
+"Esialgne tulenurk: √úles/alla\n"
+"Tulistamine: Hoida t√ºhikut all, kuni soovitud v√µimsuse saavutamiseni\n"
+"√ºks soru k√§igu kohta"
 
 #: src/game/game.cpp:124
 msgid "Initialisation"
-msgstr "S‰ttimine"
+msgstr "S√§ttimine"
 
 #. Load the map
 #: src/game/game.cpp:161
 msgid "Initialise map"
-msgstr "S‰tin m‰nguv‰lja"
+msgstr "S√§tin m√§nguv√§lja"
 
 #: src/game/game.cpp:172
 msgid "Initialise sounds"
-msgstr "S‰tin helisid"
+msgstr "S√§tin helisid"
 
 #: src/game/game.cpp:168
 msgid "Initialise teams"
-msgstr "S‰tin meeskondi"
+msgstr "S√§tin meeskondi"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:90
 #, fuzzy
 msgid "Interface"
-msgstr "N‰ita/peida liides"
+msgstr "N√§ita/peida liides"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:79
@@ -1241,12 +1241,12 @@ msgstr "Reaktiivranits"
 
 #: src/interface/man_machine_interface.cpp:1171
 msgid "Jump"
-msgstr "H¸pe"
+msgstr "H√ºpe"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:126 src/menu/help_menu.cpp:127
 msgid "Jump backwards"
-msgstr "Tagasih¸pe"
+msgstr "Tagasih√ºpe"
 
 #: src/weapon/blowtorch.cpp:64
 #, fuzzy
@@ -1255,9 +1255,9 @@ msgid ""
 "Angle: Up/Down\n"
 "One ammo per turn"
 msgstr ""
-"Kasutamine: Hoia t¸hikut all\n"
-"Nurk: ‹les/alla\n"
-"¸ks soru k‰igu kohta"
+"Kasutamine: Hoia t√ºhikut all\n"
+"Nurk: √úles/alla\n"
+"√ºks soru k√§igu kohta"
 
 #. Actual key
 #: src/gui/control_config.cpp:304
@@ -1276,7 +1276,7 @@ msgstr ""
 #: src/network/admin_commands.cpp:35
 #, fuzzy
 msgid "Kicks the player designated by <nickname> out of the game"
-msgstr "Lˆˆb m‰ngijad nimega <nickname> m‰ngust v‰lja"
+msgstr "L√∂√∂b m√§ngijad nimega <nickname> m√§ngust v√§lja"
 
 #: src/menu/options_menu.cpp:162
 msgid "Language"
@@ -1289,11 +1289,11 @@ msgstr ""
 #: src/network/admin_commands.cpp:37
 #, fuzzy
 msgid "Lists the connected players"
-msgstr "‹hendet m‰ngijate nimekiri"
+msgstr "√úhendet m√§ngijate nimekiri"
 
 #: src/map/maps_list.cpp:276
 msgid "Load maps:"
-msgstr "Laadi m‰nguv‰lju:"
+msgstr "Laadi m√§nguv√§lju:"
 
 #: src/team/teams_list.cpp:130
 msgid "Load teams:"
@@ -1314,12 +1314,12 @@ msgstr "Antigravikiiver"
 #: src/menu/network_connection_menu.cpp:201
 #: src/menu/network_connection_menu.cpp:203
 msgid "Manual connection"
-msgstr "K‰sitsi ¸hendumine"
+msgstr "K√§sitsi √ºhendumine"
 
 #: src/menu/game_menu.cpp:77 src/menu/game_menu.cpp:81
 #: src/menu/network_menu.cpp:99 src/menu/network_menu.cpp:103
 msgid "Map"
-msgstr "M‰nguv‰li"
+msgstr "M√§nguv√§li"
 
 #: src/map/maps_list.cpp:105
 #, c-format
@@ -1329,7 +1329,7 @@ msgstr ""
 #: src/map/map.cpp:425
 #, c-format
 msgid "Map %s, a creation of: "
-msgstr "M‰nguv‰li %s, mille on loonud: "
+msgstr "M√§nguv√§li %s, mille on loonud: "
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:57
@@ -1338,11 +1338,11 @@ msgstr ""
 
 #: src/game/game.cpp:162
 msgid "Maps"
-msgstr "M‰nguv‰ljad"
+msgstr "M√§nguv√§ljad"
 
 #: src/menu/network_menu.cpp:429 src/menu/network_menu.cpp:431
 msgid "Master mode"
-msgstr "M‰ngu t¸¸p:"
+msgstr "M√§ngu t√º√ºp:"
 
 #: src/menu/game_mode_editor.cpp:73
 msgid "Max energy"
@@ -1350,7 +1350,7 @@ msgstr "Elupunkte maksimaalselt"
 
 #: src/menu/options_menu.cpp:117
 msgid "Maximum FPS"
-msgstr "Kaadrit/sek ¸lempiir"
+msgstr "Kaadrit/sek √ºlempiir"
 
 #: src/menu/options_menu.cpp:126
 msgid "Medium"
@@ -1368,7 +1368,7 @@ msgstr "Miin"
 #: src/menu/help_menu.cpp:118
 #, fuzzy
 msgid "Minimap"
-msgstr "M‰nguv‰li"
+msgstr "M√§nguv√§li"
 
 #: src/menu/help_menu.cpp:78
 msgid "Minimap, more details in another tab"
@@ -1376,7 +1376,7 @@ msgstr ""
 
 #: src/menu/options_menu.cpp:267
 msgid "Misc"
-msgstr "T‰ppisseaded"
+msgstr "T√§ppisseaded"
 
 #. Modifiers
 #: src/gui/control_config.cpp:298
@@ -1390,7 +1390,7 @@ msgstr ""
 
 #: src/menu/results_menu.cpp:189 src/menu/results_menu.cpp:191
 msgid "Most accurate"
-msgstr "T‰pseim"
+msgstr "T√§pseim"
 
 #: src/menu/results_menu.cpp:173 src/menu/results_menu.cpp:175
 msgid "Most sold-out"
@@ -1406,7 +1406,7 @@ msgstr "Kasutuim"
 
 #: src/menu/results_menu.cpp:149 src/menu/results_menu.cpp:151
 msgid "Most violent"
-msgstr "V‰givaldseim"
+msgstr "V√§givaldseim"
 
 #: src/interface/man_machine_interface.cpp:1170
 #, fuzzy
@@ -1432,7 +1432,7 @@ msgstr "Liiguta tegelaskuju"
 #: src/menu/help_menu.cpp:142
 #, fuzzy
 msgid "Move camera with mouse or arrows"
-msgstr "Kaamerat liiguta hiire vıi nooleklahvidega"
+msgstr "Kaamerat liiguta hiire v√µi nooleklahvidega"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:137
@@ -1471,11 +1471,11 @@ msgstr "Muusika?"
 #: src/game/game.cpp:185
 #, fuzzy
 msgid "Network"
-msgstr "Vırgum‰ng"
+msgstr "V√µrgum√§ng"
 
 #: src/menu/main_menu.cpp:58
 msgid "Network Game"
-msgstr "Vırgum‰ng"
+msgstr "V√µrgum√§ng"
 
 #: src/menu/game_mode_editor.cpp:58
 msgid "Never"
@@ -1484,11 +1484,11 @@ msgstr "Mitte kunagi"
 #. TRANSLATORS: after this string there will be a time stamp or the string '(unknown time)'
 #: src/network/chatlogger.cpp:46
 msgid "New network game at "
-msgstr "Uus vırgum‰ng asukohas"
+msgstr "Uus v√µrgum√§ng asukohas"
 
 #: src/menu/options_menu.cpp:316
 msgid "New player warning?"
-msgstr "Hoiatus uue m‰ngija puhul?"
+msgstr "Hoiatus uue m√§ngija puhul?"
 
 #: src/interface/man_machine_interface.cpp:1188
 #, fuzzy
@@ -1498,11 +1498,11 @@ msgstr "Liiguta tegelaskuju"
 #: src/weapon/weapon.cpp:640
 #, c-format
 msgid "No element <%s> found in the xml config file!"
-msgstr "Ei leia elementi <%s> XML-seadistuste s‰ilikust!"
+msgstr "Ei leia elementi <%s> XML-seadistuste s√§ilikust!"
 
 #: src/network/admin_commands.cpp:92
 msgid "No player connected"
-msgstr "‹htki m‰ngijat pole ¸hendet"
+msgstr "√úhtki m√§ngijat pole √ºhendet"
 
 #: lib/warmux/net/download.cpp:140
 msgid "No pointer"
@@ -1537,12 +1537,12 @@ msgstr "Tegelaskuju peal: vahetab aktiivset"
 #: src/menu/help_menu.cpp:138
 #, fuzzy
 msgid "On map: select a target"
-msgstr "M‰nguv‰ljal: vali sobiv"
+msgstr "M√§nguv√§ljal: vali sobiv"
 
 #: src/interface/man_machine_interface.cpp:1189
 #, fuzzy
 msgid "Open options menu"
-msgstr "Suvandite men¸¸"
+msgstr "Suvandite men√º√º"
 
 #: src/menu/main_menu.cpp:61
 msgid "Options"
@@ -1550,7 +1550,7 @@ msgstr "Suvandid"
 
 #: src/menu/pause_menu.cpp:52
 msgid "Options menu"
-msgstr "Suvandite men¸¸"
+msgstr "Suvandite men√º√º"
 
 #: src/weapon/parachute.cpp:64
 msgid "Parachute"
@@ -1567,7 +1567,7 @@ msgstr ""
 #: src/menu/network_connection_menu.cpp:236
 #: src/menu/network_connection_menu.cpp:275
 msgid "Password:"
-msgstr "Salasına:"
+msgstr "Salas√µna:"
 
 #: src/interface/man_machine_interface.cpp:1153
 msgid "Pause"
@@ -1582,23 +1582,23 @@ msgstr ""
 
 #: src/menu/main_menu.cpp:55
 msgid "Play"
-msgstr "M‰ng"
+msgstr "M√§ng"
 
 #: src/menu/network_menu.cpp:127
 msgid "Play several times"
-msgstr "M‰ngu korduvalt"
+msgstr "M√§ngu korduvalt"
 
 #: src/menu/teams_selection_box.cpp:120
 msgid "Player"
-msgstr "M‰ngija"
+msgstr "M√§ngija"
 
 #: src/menu/options_menu.cpp:103
 msgid "Player energy?"
-msgstr "M‰ngija elupunktid?"
+msgstr "M√§ngija elupunktid?"
 
 #: src/menu/options_menu.cpp:107
 msgid "Player's name?"
-msgstr "M‰ngija nimi?"
+msgstr "M√§ngija nimi?"
 
 #: src/menu/results_menu.cpp:305
 msgid "Podium"
@@ -1680,7 +1680,7 @@ msgstr ""
 
 #: src/menu/network_connection_menu.cpp:175
 msgid "Public battles"
-msgstr "J‰ta lahing sinnapaika"
+msgstr "J√§ta lahing sinnapaika"
 
 #: src/menu/options_menu.cpp:130
 msgid "Quality"
@@ -1693,16 +1693,16 @@ msgstr ""
 
 #: src/interface/man_machine_interface.cpp:1144 src/menu/main_menu.cpp:76
 msgid "Quit"
-msgstr "V‰lju"
+msgstr "V√§lju"
 
 #: src/main.cpp:279
 #, fuzzy
 msgid "Quit Warmux"
-msgstr "V‰lju Warmuxist"
+msgstr "V√§lju Warmuxist"
 
 #: src/menu/help_menu.cpp:124 src/menu/pause_menu.cpp:59
 msgid "Quit game"
-msgstr "V‰lju m‰ngust"
+msgstr "V√§lju m√§ngust"
 
 #: src/weapon/rail_gun.cpp:97
 msgid "Rail Gun"
@@ -1710,7 +1710,7 @@ msgstr ""
 
 #: src/menu/map_selection_box.cpp:226
 msgid "Random map"
-msgstr "Juhuslik m‰nguv‰li"
+msgstr "Juhuslik m√§nguv√§li"
 
 #: lib/warmux/net/download.cpp:134
 #, fuzzy, c-format
@@ -1739,12 +1739,12 @@ msgstr ""
 #: src/menu/replay_menu.cpp:69
 #, fuzzy
 msgid "Replay info"
-msgstr "M‰ngure∏iim"
+msgstr "M√§ngure≈æiim"
 
 #: src/game/game.cpp:212
 #, fuzzy
 msgid "Replay mode"
-msgstr "M‰ngure∏iim"
+msgstr "M√§ngure≈æiim"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:108
@@ -1759,7 +1759,7 @@ msgstr ""
 
 #: src/menu/options_menu.cpp:152
 msgid "Resolution"
-msgstr "Eraldusvıime"
+msgstr "Eraldusv√µime"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:106
@@ -1774,7 +1774,7 @@ msgstr "Raketiheitja"
 
 #: src/main.cpp:89
 msgid "Run game"
-msgstr "M‰ng k‰ima"
+msgstr "M√§ng k√§ima"
 
 #: src/menu/results_menu.cpp:379
 msgid "Save replay?"
@@ -1782,7 +1782,7 @@ msgstr ""
 
 #: src/network/chat.cpp:83
 msgid "Say: "
-msgstr "‹tle:"
+msgstr "√útle:"
 
 #: src/menu/options_menu.cpp:262
 msgid "Scroll border size"
@@ -1799,7 +1799,7 @@ msgstr ""
 #: src/menu/help_menu.cpp:53
 #, fuzzy
 msgid "Select number of playing teams"
-msgstr "M‰ngijaid maksimaalselt:"
+msgstr "M√§ngijaid maksimaalselt:"
 
 #: src/menu/network_connection_menu.cpp:214
 msgid "Server address:"
@@ -1812,7 +1812,7 @@ msgstr "Server on saadaval internetis"
 
 #: src/menu/network_menu.cpp:174 src/network/network.cpp:486
 msgid "Server mode"
-msgstr "Serverire∏iim"
+msgstr "Serverire≈æiim"
 
 #: src/weapon/supertux.cpp:225
 msgid ""
@@ -1837,7 +1837,7 @@ msgstr ""
 #: src/interface/man_machine_interface.cpp:1175
 #, fuzzy
 msgid "Shoot"
-msgstr "Haavlip¸ss"
+msgstr "Haavlip√ºss"
 
 #: src/weapon/rail_gun.cpp:98
 msgid "Shoots all players in a straight line!"
@@ -1845,19 +1845,19 @@ msgstr ""
 
 #: src/weapon/shotgun.cpp:86
 msgid "Shotgun"
-msgstr "Haavlip¸ss"
+msgstr "Haavlip√ºss"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:140
 #, fuzzy
 msgid "Show weapons menu"
-msgstr "N‰ita relvamen¸¸d"
+msgstr "N√§ita relvamen√º√ºd"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:130
 #, fuzzy
 msgid "Show/hide the interface"
-msgstr "N‰ita/peida liides"
+msgstr "N√§ita/peida liides"
 
 #: src/network/admin_commands.cpp:39
 msgid "Shows the designated player address"
@@ -1865,7 +1865,7 @@ msgstr ""
 
 #: src/weapon/skip_turn.cpp:46
 msgid "Skip turn"
-msgstr "J‰ta k‰ik vahele"
+msgstr "J√§ta k√§ik vahele"
 
 #: src/weapon/slap.cpp:72
 msgid "Slap"
@@ -1878,19 +1878,19 @@ msgstr "Viruta vastasele, et ta natuke eemale lendaks."
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:141
 msgid "Smaller aim angle and walk step"
-msgstr "V‰iksem sihtimisnurk ja liikumissamm"
+msgstr "V√§iksem sihtimisnurk ja liikumissamm"
 
 #: src/weapon/snipe_rifle.cpp:247
 msgid "Sniper Rifle"
-msgstr "T‰psusp¸ss"
+msgstr "T√§psusp√ºss"
 
 #: src/object/bonus_box.cpp:75
 msgid "Someone put a booby trap into the crate!"
-msgstr "Keegi oli na ¸llatuse kasti pistnud!"
+msgstr "Keegi oli na √ºllatuse kasti pistnud!"
 
 #: src/menu/network_connection_menu.cpp:390
 msgid "Sorry, currently, no game is waiting for players"
-msgstr "Kahjuks ei oota ¸kski m‰ng uusi osalejaid"
+msgstr "Kahjuks ei oota √ºkski m√§ng uusi osalejaid"
 
 #: src/menu/network_connection_menu.cpp:444
 #: tools/servers/game_server/server.cpp:374
@@ -1899,8 +1899,8 @@ msgid ""
 "Sorry, your version is not supported anymore. Supported versions are %s. You "
 "can download an updated version from http://www.warmux.org/wiki/download.php"
 msgstr ""
-"Vabandust, aga sinu v‰ljalaset ei toetata enam. Toetatud v‰ljalasked on %s. "
-"Uue v‰ljalaske saate hankida http://www.warmux.org/wiki/download.php."
+"Vabandust, aga sinu v√§ljalaset ei toetata enam. Toetatud v√§ljalasked on %s. "
+"Uue v√§ljalaske saate hankida http://www.warmux.org/wiki/download.php."
 
 #: src/menu/options_menu.cpp:320
 msgid "Sound"
@@ -1921,7 +1921,7 @@ msgstr "Helid"
 
 #: src/game/game.cpp:206
 msgid "Starting a new game"
-msgstr "Alusta uut m‰ngu"
+msgstr "Alusta uut m√§ngu"
 
 #: src/interface/interface.cpp:315
 msgid "Stock:"
@@ -1941,7 +1941,7 @@ msgstr ""
 
 #: src/weapon/syringe.cpp:69
 msgid "Syringe"
-msgstr "S¸stal"
+msgstr "S√ºstal"
 
 #: src/interface/man_machine_interface.cpp:1195
 msgid "Take screenshot"
@@ -1951,7 +1951,7 @@ msgstr ""
 #: src/menu/help_menu.cpp:133
 #, fuzzy
 msgid "Talk in network battles"
-msgstr "Lobise vırgulahingus"
+msgstr "Lobise v√µrgulahingus"
 
 #: src/menu/options_menu.cpp:614
 msgid "Team deleted"
@@ -1992,30 +1992,30 @@ msgstr "Teleport"
 
 #: src/weapon/cluster_bomb.cpp:145
 msgid "The Cluster Bomb has left the battlefield before it could explode."
-msgstr "Granaat lahkus m‰nguv‰ljalt enne, kui see jıudis plahvatada."
+msgstr "Granaat lahkus m√§nguv√§ljalt enne, kui see j√µudis plahvatada."
 
 #: src/weapon/footbomb.cpp:107
 msgid "The Football Bomb has left the battlefield before it could explode."
-msgstr "Jalgpomm lahkus m‰nguv‰ljalt enne, kui see jıudis plahvatada."
+msgstr "Jalgpomm lahkus m√§nguv√§ljalt enne, kui see j√µudis plahvatada."
 
 #: src/weapon/gnu.cpp:137
 #, fuzzy
 msgid "The Gnu left the battlefield before exploding!"
-msgstr "Gnu lahkus m‰nguv‰ljalt enne, kui see jıudis plahvatada."
+msgstr "Gnu lahkus m√§nguv√§ljalt enne, kui see j√µudis plahvatada."
 
 #: src/weapon/polecat.cpp:172
 #, fuzzy
 msgid "The Polecat left the battlefield before exploding!"
-msgstr "Haisutuhkur lahkus m‰nguv‰ljalt enne, kui see jıudis plahvatada."
+msgstr "Haisutuhkur lahkus m√§nguv√§ljalt enne, kui see j√µudis plahvatada."
 
 #: src/weapon/auto_bazooka.cpp:175
 msgid "The automatic rocket has left the battlefield..."
-msgstr "Automaatm¸rsk lahkus m‰nguv‰ljalt..."
+msgstr "Automaatm√ºrsk lahkus m√§nguv√§ljalt..."
 
 #: src/weapon/bounce_ball.cpp:73
 #, fuzzy
 msgid "The ball left the battlefield before exploding!"
-msgstr "Pall lahkus m‰nguv‰ljalt enne, kui see jıudis plahvatada."
+msgstr "Pall lahkus m√§nguv√§ljalt enne, kui see j√µudis plahvatada."
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:72
@@ -2034,31 +2034,31 @@ msgid ""
 "The client and server versions are incompatible (local=%s, server=%s). "
 "Please try another server."
 msgstr ""
-"Kliendi ja serveri v‰ljalasked ei ¸hildu (kohalik=%s, server=%s). Proovi "
-"mında teist serverit!"
+"Kliendi ja serveri v√§ljalasked ei √ºhildu (kohalik=%s, server=%s). Proovi "
+"m√µnda teist serverit!"
 
 #: src/network/net_error_msg.cpp:34
 msgid "The connection timed out. Check there is no firewall in the way!"
-msgstr "‹henduse ootamise aeg l‰bi. Kontrolli, ega tulem¸¸ri ees pole!"
+msgstr "√úhenduse ootamise aeg l√§bi. Kontrolli, ega tulem√º√ºri ees pole!"
 
 #: src/weapon/disco_grenade.cpp:127
 #, fuzzy
 msgid "The disco grenade has left the dance floor before exploding!"
-msgstr "Diskogranaat lahkus m‰nguv‰ljalt enne, kui see jıudis plahvatada."
+msgstr "Diskogranaat lahkus m√§nguv√§ljalt enne, kui see j√µudis plahvatada."
 
 #: src/game/game.cpp:769
 msgid "The game was interrupted because you got disconnected."
-msgstr "M‰ng katkestati, sest ¸hendus kadus ‰ra."
+msgstr "M√§ng katkestati, sest √ºhendus kadus √§ra."
 
 #: src/weapon/grenade.cpp:58
 #, fuzzy
 msgid "The grenade left the battlefield before exploding!"
-msgstr "Granaat lahkus m‰nguv‰ljalt enne, kui see jıudis plahvatada."
+msgstr "Granaat lahkus m√§nguv√§ljalt enne, kui see j√µudis plahvatada."
 
 #: src/menu/network_menu.cpp:375
 #, fuzzy
 msgid "The others are waiting for you! Wake up! :-)"
-msgstr "Teised ootavad sinu j‰rel! ƒrka ¸les!"
+msgstr "Teised ootavad sinu j√§rel! √Ñrka √ºles!"
 
 #: src/weapon/parachute.cpp:92
 #, fuzzy
@@ -2068,15 +2068,15 @@ msgstr "Langevari avaneb automaatselt."
 #: src/weapon/bazooka.cpp:80 src/weapon/cluzooka.cpp:304
 #: src/weapon/riot_bomb.cpp:85
 msgid "The rocket has left the battlefield..."
-msgstr "Rakett lahkus m‰nguv‰ljalt enne, kui see jıudis plahvatada."
+msgstr "Rakett lahkus m√§nguv√§ljalt enne, kui see j√µudis plahvatada."
 
 #: src/network/net_error_msg.cpp:33
 msgid "The server rejected the connection."
-msgstr "Server keeldus ¸hendusest."
+msgstr "Server keeldus √ºhendusest."
 
 #: src/network/net_error_msg.cpp:35
 msgid "The server rejected the connection: wrong password!"
-msgstr "Server keeldus ¸hendusest: vale salasına!"
+msgstr "Server keeldus √ºhendusest: vale salas√µna!"
 
 #: src/weapon/weapon.cpp:652
 #, c-format
@@ -2115,10 +2115,10 @@ msgid ""
 "Fire: Press space until desired strength is reached\n"
 "One ammo per turn"
 msgstr ""
-"Ajasti: Hiire kerimisrull vıi lk ¸les/alla\n"
-"Nurk: ‹les/alla\n"
-"Tulistamine: Hoida t¸hikut all, kuni soovitud vıimsuse saavutamiseni\n"
-"¸ks soru k‰igu kohta"
+"Ajasti: Hiire kerimisrull v√µi lk √ºles/alla\n"
+"Nurk: √úles/alla\n"
+"Tulistamine: Hoida t√ºhikut all, kuni soovitud v√µimsuse saavutamiseni\n"
+"√ºks soru k√§igu kohta"
 
 #: src/weapon/bounce_ball.cpp:91
 #, fuzzy
@@ -2128,32 +2128,32 @@ msgid ""
 "Fire: space key\n"
 "One ammo per turn"
 msgstr ""
-"Ajasti: Hiire kerimisrull vıi lk ¸les/alla\n"
-"Nurk: ‹les/alla\n"
-"Tulistamine: T¸hik\n"
-"¸ks soru k‰igu kohta"
+"Ajasti: Hiire kerimisrull v√µi lk √ºles/alla\n"
+"Nurk: √úles/alla\n"
+"Tulistamine: T√ºhik\n"
+"√ºks soru k√§igu kohta"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/interface/man_machine_interface.cpp:1154 src/menu/help_menu.cpp:131
 #, fuzzy
 msgid "Toggle fullscreen"
-msgstr "T‰isekraan?"
+msgstr "T√§isekraan?"
 
 #: src/interface/man_machine_interface.cpp:1155
 #, fuzzy
 msgid "Toggle interface"
-msgstr "N‰ita/peida liides"
+msgstr "N√§ita/peida liides"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/interface/man_machine_interface.cpp:1190 src/menu/help_menu.cpp:144
 #, fuzzy
 msgid "Toggle minimap"
-msgstr "N‰ita/peida navigaator"
+msgstr "N√§ita/peida navigaator"
 
 #: src/interface/man_machine_interface.cpp:1157
 #, fuzzy
 msgid "Toggle weapons menu"
-msgstr "N‰ita relvamen¸¸d"
+msgstr "N√§ita relvamen√º√ºd"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:100
@@ -2188,17 +2188,17 @@ msgstr ""
 #: src/network/net_error_msg.cpp:30
 #, fuzzy
 msgid "Unable to contact the host."
-msgstr "Ei saa serveriga ¸hendust."
+msgstr "Ei saa serveriga √ºhendust."
 
 #: src/map/maps_list.cpp:288
 #, fuzzy, c-format
 msgid "Unable to open the maps directory (%s)!"
-msgstr "Ei suuda avada m‰ngv‰ljade kausta (%s)!"
+msgstr "Ei suuda avada m√§ngv√§ljade kausta (%s)!"
 
 #: src/map/maps_list.cpp:302
 #, fuzzy, c-format
 msgid "Unable to open the personal maps directory (%s)!"
-msgstr "Ei suuda avada isiklikku m‰ngv‰ljade kausta (%s)!"
+msgstr "Ei suuda avada isiklikku m√§ngv√§ljade kausta (%s)!"
 
 #: src/network/net_error_msg.cpp:31
 msgid "Unable to use this port!"
@@ -2206,12 +2206,12 @@ msgstr "Ei saa seda porti kasutada!"
 
 #: src/network/admin_commands.cpp:122
 msgid "Unknown command"
-msgstr "Tundmatu k‰sk"
+msgstr "Tundmatu k√§sk"
 
 #: src/network/admin_commands.cpp:72
 #, fuzzy, c-format
 msgid "Unknown command of type %i"
-msgstr "Tundmatu k‰sk"
+msgstr "Tundmatu k√§sk"
 
 #: src/game/game_mode.cpp:335
 msgid "Unlimited"
@@ -2239,8 +2239,8 @@ msgid ""
 "Anvil kill all characters beneath.\n"
 "One ammo per turn"
 msgstr ""
-"Kasutamine: Vasak hiirklıps sihtm‰rgil\n"
-"¸ks soru k‰igu kohta"
+"Kasutamine: Vasak hiirkl√µps sihtm√§rgil\n"
+"√ºks soru k√§igu kohta"
 
 #: src/weapon/auto_bazooka.cpp:221
 #, fuzzy
@@ -2250,20 +2250,20 @@ msgid ""
 "Firing: keep the space key pressed until the desired strength\n"
 "One ammo per turn"
 msgstr ""
-"Kasutamine: Vasak hiirklıps sihtm‰rgil\n"
-"Esialgne tulenurk: ‹les/alla\n"
-"Tulistamine: Hoida t¸hikut all, kuni soovitud vıimsuse saavutamiseni\n"
-"¸ks soru k‰igu kohta"
+"Kasutamine: Vasak hiirkl√µps sihtm√§rgil\n"
+"Esialgne tulenurk: √úles/alla\n"
+"Tulistamine: Hoida t√ºhikut all, kuni soovitud v√µimsuse saavutamiseni\n"
+"√ºks soru k√§igu kohta"
 
 #. Version
 #: src/main.cpp:206 src/menu/main_menu.cpp:90 src/menu/replay_menu.cpp:74
 msgid "Version"
-msgstr "V‰ljalase"
+msgstr "V√§ljalase"
 
 #: src/menu/options_menu.cpp:543
 #, fuzzy, c-format
 msgid "Version verification failed because: %s"
-msgstr "V‰ljalaske kontrollimine kukkus l‰bi, sest: %s\n"
+msgstr "V√§ljalaske kontrollimine kukkus l√§bi, sest: %s\n"
 
 #: src/menu/network_menu.cpp:443
 msgid "Wait until some opponent(s) connect!"
@@ -2273,8 +2273,8 @@ msgstr ""
 #, c-format
 msgid "Wait! %i player is not ready yet!"
 msgid_plural "Wait! %i players are not ready yet!"
-msgstr[0] "Kannatust! %i m‰ngijatest pole veel valmis!"
-msgstr[1] "Kannatust! %i m‰ngijat pole veel valmis!"
+msgstr[0] "Kannatust! %i m√§ngijatest pole veel valmis!"
+msgstr[1] "Kannatust! %i m√§ngijat pole veel valmis!"
 
 #: src/game/game.cpp:664
 #, c-format
@@ -2288,28 +2288,28 @@ msgstr ""
 #: src/menu/network_menu.cpp:514
 #, fuzzy
 msgid "Waiting for the server. All you can do is cancel or chat!"
-msgstr "Ootan serverit. Sa saad kas katkestada vıi lobiseda!"
+msgstr "Ootan serverit. Sa saad kas katkestada v√µi lobiseda!"
 
 #: src/main.cpp:217
 #, fuzzy
 msgid "Warmux launching..."
-msgstr "Warmux k‰ivitub..."
+msgstr "Warmux k√§ivitub..."
 
 #: src/main.cpp:357
 #, fuzzy
 msgid "Warmux version "
-msgstr "Warmuxi v‰ljalase "
+msgstr "Warmuxi v√§ljalase "
 
 #: src/interface/man_machine_interface.cpp:1152
 #, fuzzy
 msgid "Weapon category 8"
-msgstr "Muuda relvat¸¸pi"
+msgstr "Muuda relvat√º√ºpi"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:143
 #, fuzzy
 msgid "Weapon: Fire / Bonus box: drop"
-msgstr "Relv: Tule/h¸ve laegas: Kukub k‰hku"
+msgstr "Relv: Tule/h√ºve laegas: Kukub k√§hku"
 
 #: src/game/game.cpp:165
 msgid "Weapons"
@@ -2334,7 +2334,7 @@ msgstr ""
 #: src/game/game.cpp:1214
 #, c-format
 msgid "What a shame for %s - he was killed by a simple gun!"
-msgstr "H‰bilugu! %s lasti lihtsalt p¸stoliga maha!"
+msgstr "H√§bilugu! %s lasti lihtsalt p√ºstoliga maha!"
 
 #. TRANSLATORS: please be imaginative and keep it short!
 #: src/menu/help_menu.cpp:67
@@ -2354,7 +2354,7 @@ msgstr ""
 
 #: src/menu/results_menu.cpp:284
 msgid "Winner"
-msgstr "Vıitja"
+msgstr "V√µitja"
 
 #. The shot efficiency was improved by having more than one target hit
 #: src/weapon/rail_gun.cpp:124
@@ -2364,11 +2364,11 @@ msgstr ""
 
 #: src/include/action_handler.cpp:241
 msgid "Wrong map CRC!"
-msgstr "M‰nguv‰lja kontrollsumma ei klapi!"
+msgstr "M√§nguv√§lja kontrollsumma ei klapi!"
 
 #: src/include/action_handler.cpp:239
 msgid "Wrong map name!"
-msgstr "Vale m‰nguv‰lja nimi!"
+msgstr "Vale m√§nguv√§lja nimi!"
 
 #: src/include/action_handler.cpp:243
 msgid "Wrong team!"
@@ -2382,7 +2382,7 @@ msgstr ""
 #: src/menu/network_menu.cpp:287 src/menu/network_menu.cpp:379
 #, fuzzy
 msgid "You are alone. :-/"
-msgstr "Sa oled ¸ksi :-/"
+msgstr "Sa oled √ºksi :-/"
 
 #: src/menu/network_menu.cpp:442
 msgid ""
@@ -2396,21 +2396,21 @@ msgstr ""
 #: src/map/maps_list.cpp:311
 #, fuzzy
 msgid "You need at least one valid map!"
-msgstr "Sul on vaja v‰hemalt ¸hte m‰nguv‰ljat!"
+msgstr "Sul on vaja v√§hemalt √ºhte m√§nguv√§ljat!"
 
 #: src/game/game.cpp:305 src/team/teams_list.cpp:166
 #, fuzzy
 msgid "You need at least two valid teams!"
-msgstr "Sul on vaja v‰hemalt kahte meeskonda!"
+msgstr "Sul on vaja v√§hemalt kahte meeskonda!"
 
 #: src/menu/network_menu.cpp:267
 #, fuzzy
 msgid "You won't be able to play before selecting a team!"
-msgstr "Sa ei saa m‰ngida enne, kui oled meeskonna valinud!"
+msgstr "Sa ei saa m√§ngida enne, kui oled meeskonna valinud!"
 
 #: src/weapon/weapon_launcher.cpp:552
 msgid "Your shot has missed!"
-msgstr "Mˆˆda lasid!"
+msgstr "M√∂√∂da lasid!"
 
 #: src/menu/credits_menu.cpp:72
 msgid "aka"
@@ -2423,9 +2423,9 @@ msgid ""
 "Bombing: Left click on the target\n"
 "One bombing per turn"
 msgstr ""
-"R¸nnakusuund : Vasakule/paremale\n"
-"Pommitamine: Vasak hiireklıps sihtm‰rgil\n"
-"¸ks pomm k‰igu kohta"
+"R√ºnnakusuund : Vasakule/paremale\n"
+"Pommitamine: Vasak hiirekl√µps sihtm√§rgil\n"
+"√ºks pomm k√§igu kohta"
 
 #: src/map/maps_list.cpp:83
 msgid "couldn't load config"
@@ -2434,7 +2434,7 @@ msgstr "ei suutnud laadida seadistusi"
 #. the default player name for custom teams
 #: src/team/custom_team.cpp:47
 msgid "custom player"
-msgstr "kohandet m‰ngija"
+msgstr "kohandet m√§ngija"
 
 #: src/map/ground.cpp:67
 msgid "done"
@@ -2468,43 +2468,43 @@ msgstr "o Laadin heliprofiili: %s"
 #: src/sound/jukebox.cpp:134
 #, c-format
 msgid "o Opened audio at %d Hz %d bit"
-msgstr "o Audio s‰titud %d Hz ja %d biti peale"
+msgstr "o Audio s√§titud %d Hz ja %d biti peale"
 
 #, fuzzy
 #~ msgid "Selected weapon and ammo left"
-#~ msgstr "Muuda relvat¸¸pi"
+#~ msgstr "Muuda relvat√º√ºpi"
 
 #, fuzzy
 #~ msgid "Change per team number of players"
-#~ msgstr "M‰ngijaid maksimaalselt:"
+#~ msgstr "M√§ngijaid maksimaalselt:"
 
 #, fuzzy
 #~ msgid "Edit player name"
-#~ msgstr "M‰ngija nimi?"
+#~ msgstr "M√§ngija nimi?"
 
 #~ msgid "Fullscreen / window"
-#~ msgstr "T‰isekraan/aken"
+#~ msgstr "T√§isekraan/aken"
 
 #~ msgid "Quit battle"
-#~ msgstr "V‰lju lahingust"
+#~ msgstr "V√§lju lahingust"
 
 #~ msgid "You are alone..."
-#~ msgstr "Sa oled ¸ksi..."
+#~ msgstr "Sa oled √ºksi..."
 
 #, fuzzy
 #~ msgid ""
 #~ "How to use it : keep the space key pressed\n"
 #~ "an ammo per turn"
 #~ msgstr ""
-#~ "Kasutamine: Hoia t¸hikut all\n"
-#~ "¸ks soru k‰igu kohta"
+#~ "Kasutamine: Hoia t√ºhikut all\n"
+#~ "√ºks soru k√§igu kohta"
 
 #~ msgid "Head commander: "
 #~ msgstr "Pealik:"
 
 #, fuzzy
 #~ msgid "Click: Center the camera on the character"
-#~ msgstr "Klıpsa: Fokuseeri kaamera tegelaskujul"
+#~ msgstr "Kl√µpsa: Fokuseeri kaamera tegelaskujul"
 
 #~ msgid ""
 #~ "Error:\n"
@@ -2530,13 +2530,13 @@ msgstr "o Audio s‰titud %d Hz ja %d biti peale"
 #~ "outside. If you are not directly connected to the internet, check your "
 #~ "router configuration: TCP Port %u must be forwarded on your computer."
 #~ msgstr ""
-#~ "Viga: Sinu server pole k‰ttesaadav internetis. Vaata oma "
-#~ "tulem¸¸riseadistused ¸le: TCP port %s peab olema avatud ¸hendustele "
-#~ "v‰ljastpoolt. Kui sa pole ¸hendatud interneti otse, siis vaata ¸le ka oma "
+#~ "Viga: Sinu server pole k√§ttesaadav internetis. Vaata oma "
+#~ "tulem√º√ºriseadistused √ºle: TCP port %s peab olema avatud √ºhendustele "
+#~ "v√§ljastpoolt. Kui sa pole √ºhendatud interneti otse, siis vaata √ºle ka oma "
 #~ "ruuteri seadistused: TCP port %s peab olema tunneldatud sinu arvutisse."
 
 #~ msgid "HOME directory (environment variable $HOME) could not be found!"
-#~ msgstr "HOME kaust (keskkonnamuutuja $HOME) pole m‰‰ratud!"
+#~ msgstr "HOME kaust (keskkonnamuutuja $HOME) pole m√§√§ratud!"
 
 #, fuzzy
 #~ msgid "Head commander:"
@@ -2548,11 +2548,11 @@ msgstr "o Audio s‰titud %d Hz ja %d biti peale"
 #~ "You can download a updated version on http://www.warmux.org/wiki/download."
 #~ "php"
 #~ msgstr ""
-#~ "Vabandust, aga sinu v‰ljalaset ei toetata enam. Toetatud v‰ljalasked on "
-#~ "%s. Uue v‰ljalaske saate hankida http://www.warmux.org/wiki/download.php."
+#~ "Vabandust, aga sinu v√§ljalaset ei toetata enam. Toetatud v√§ljalasked on "
+#~ "%s. Uue v√§ljalaske saate hankida http://www.warmux.org/wiki/download.php."
 
 #~ msgid "Tools"
-#~ msgstr "Tˆˆriistad"
+#~ msgstr "T√∂√∂riistad"
 
 #~ msgid "Unnamed"
 #~ msgstr "Nimetu"
