@@ -198,6 +198,7 @@ public:
   virtual void HandleKeyReleased_More() { SetTimeoutForAllPlayers(GetTimeout() + 1); }
 
   WeaponProjectile* GetProjectile() { return projectile; };
+  bool HasAdjustableTimer() const { return projectile && projectile->change_timeout_allowed(); }
   ExplosiveWeaponConfig& cfg() const;
 
   // Implemeting a method that would otherwise have required RTTI

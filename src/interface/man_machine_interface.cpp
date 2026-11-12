@@ -34,6 +34,7 @@
 #include "network/chat.h"
 #include "network/network.h"
 #include "object/objbox.h"
+#include "replay/replay.h"
 #include "team/teams_list.h"
 #include "team/team.h"
 #include "sound/jukebox.h"
@@ -222,6 +223,13 @@ void ManMachineInterface::HandleKeyReleased(const Key_t &key)
       return;
     case KEY_CENTER:
       Camera::GetInstance()->CenterOnActiveCharacter();
+      return;
+    case KEY_TOGGLE_WEAPONS_MENUS:
+      // Same rules as the weapon button on the bottom bar
+      if (ActiveTeam().IsLocalHuman() && !ActiveCharacter().IsDead()
+          && Game::GetInstance()->ReadState() == Game::PLAYING
+          && !Replay::GetConstInstance()->IsPlaying())
+        Interface::GetInstance()->weapons_menu.SwitchDisplay();
       return;
     case KEY_TOGGLE_INTERFACE:
       Interface::GetInstance()->EnableDisplay(!Interface::GetInstance()->IsDisplayed());

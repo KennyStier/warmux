@@ -98,16 +98,16 @@ void TouchControls::Layout()
   if (interf->IsDisplayed() && (W - interf->GetWidth()) / 2 < corner_w)
     bottom = H - interf->GetHeight() - m;
 
-  // Left thumb
-  radius[BTN_LEFT] = radius[BTN_RIGHT] = radius[BTN_JUMP] = r;
+  // Left thumb: walking only, so the right thumb can jump while running
+  radius[BTN_LEFT] = radius[BTN_RIGHT] = r;
   center[BTN_LEFT]  = Point2i(m + r, bottom - r);
   center[BTN_RIGHT] = Point2i(m + 3 * r + gap, bottom - r);
-  center[BTN_JUMP]  = Point2i(m + 2 * r + gap / 2, bottom - 3 * r - gap);
 
-  // Right thumb
+  // Right thumb: fire in the corner, jump above it, aim to their left
   radius[BTN_FIRE] = rf;
-  radius[BTN_UP] = radius[BTN_DOWN] = r;
+  radius[BTN_JUMP] = radius[BTN_UP] = radius[BTN_DOWN] = r;
   center[BTN_FIRE] = Point2i(W - m - rf, bottom - rf);
+  center[BTN_JUMP] = Point2i(W - m - rf, bottom - 2 * rf - gap - r);
   center[BTN_UP]   = Point2i(W - m - 2 * rf - gap - r, bottom - 3 * r - gap);
   center[BTN_DOWN] = Point2i(W - m - 2 * rf - gap - r, bottom - r);
 
@@ -128,11 +128,25 @@ bool TouchControls::Active() const
   return state == Game::PLAYING || state == Game::HAS_PLAYED;
 }
 
+bool TouchControls::Shown(int button) const
+{
+  switch (button) {
+  case BTN_FIRE:
+    // Also outside the turn: it drops the falling crate straight away
+    return true;
+  case BTN_TIMER_LESS:
+  case BTN_TIMER_MORE:
+    return Active() && ActiveTeam().GetWeapon().HasAdjustableTimer();
+  default:
+    return Active();
+  }
+}
+
 TouchControls::Button TouchControls::HitTest(const Point2i &p) const
 {
-  if (!Active())
-    return BTN_NONE;
   for (int i = 0; i < BTN_COUNT; i++) {
+    if (!Shown(i))
+      continue;
     // A little larger than drawn: fingers are imprecise
     int r = radius[i] * 5 / 4;
     if (p.SquareDistance(center[i]) <= r * r)
@@ -359,7 +373,7 @@ void TouchControls::DrawButton(int b, bool pressed) const
 
 void TouchControls::Draw()
 {
-  if (!enabled || !Active())
+  if (!enabled)
     return;
   if (layout_for != GetMainWindow().GetSize())
     Layout();
@@ -371,7 +385,8 @@ void TouchControls::Draw()
       pressed[it->second.target] = true;
 
   for (int i = 0; i < BTN_COUNT; i++)
-    DrawButton(i, pressed[i]);
+    if (Shown(i))
+      DrawButton(i, pressed[i]);
 }
 
 #endif // HAVE_TOUCHSCREEN

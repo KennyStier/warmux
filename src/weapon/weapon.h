@@ -250,6 +250,9 @@ public:
 
 
   // While the method returns true the character can not start moving left nor right.
+  // Whether the timer (fuse) can be changed, e.g. grenades
+  virtual bool HasAdjustableTimer() const { return false; }
+
   virtual bool IsPreventingLRMovement() { return false; };
   // While the method returns true the character will not jump when the user press the jump key.
   virtual bool IsPreventingJumps() { return false; };

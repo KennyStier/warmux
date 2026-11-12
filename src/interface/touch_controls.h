@@ -18,10 +18,11 @@
  ******************************************************************************
  * On-screen touch controls for touchscreen builds (HAVE_TOUCHSCREEN):
  *
- *   bottom left    walk left / right (slide between them), jump above
- *                  (tap: jump, hold: high jump)
- *   bottom right   fire (hold to charge), aim up / down beside it
- *   top right      weapons menu, weapon timer - / +
+ *   bottom left    walk left / right (slide between them)
+ *   bottom right   fire (hold to charge; also shown outside the turn, where
+ *                  it drops the falling crate), jump above it (tap: jump,
+ *                  hold: high jump), aim up / down to their left
+ *   top right      weapons menu, weapon timer - / + (timed weapons only)
  *   top left       centre the camera on the character
  *   elsewhere      drag to move the camera, tap to click (targets,
  *                  choosing a character, the bottom bar, weapon menu)
@@ -69,6 +70,7 @@ private:
 
   void Layout();
   bool Active() const;    // the local human player is playing
+  bool Shown(int button) const;
   Button HitTest(const Point2i &p) const;
   Point2i ToGame(float x, float y) const;
   void Press(int button);
