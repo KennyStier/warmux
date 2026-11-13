@@ -32,9 +32,27 @@ android {
         }
     }
 
+    // Release signing, from the environment (the release workflow sets
+    // these from repository secrets). Without them the release APK is
+    // unsigned; debug builds always use the local debug key.
+    def keystore = System.getenv('WARMUX_KEYSTORE')
+    signingConfigs {
+        if (keystore) {
+            release {
+                storeFile file(keystore)
+                storePassword System.getenv('WARMUX_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('WARMUX_KEY_ALIAS') ?: 'warmux'
+                keyPassword System.getenv('WARMUX_KEY_PASSWORD') ?: System.getenv('WARMUX_KEYSTORE_PASSWORD')
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            if (keystore) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 
