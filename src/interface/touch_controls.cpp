@@ -37,6 +37,8 @@
 #include "map/map.h"
 #include "team/macro.h"
 #include "team/team.h"
+#include "tool/string_tools.h"
+#include "weapon/weapon_launcher.h"
 
 // A finger that moves further than this (game pixels) is dragging, not tapping
 static const int DRAG_DISTANCE = 12;
@@ -47,6 +49,7 @@ TouchControls::TouchControls()
   : enabled(false)
   , layout_for(-1, -1)
   , cache_scale(0)
+  , timer_text(NULL)
 {
   for (int i = 0; i < BTN_COUNT; i++) {
     radius[i] = 0;
@@ -123,11 +126,12 @@ void TouchControls::Layout()
 
   // Top corners
   radius[BTN_WEAPONS] = radius[BTN_TIMER_LESS] = radius[BTN_TIMER_MORE] = rs;
-  radius[BTN_CENTER] = rs;
+  radius[BTN_CENTER] = radius[BTN_PAUSE] = rs;
   center[BTN_WEAPONS]    = Point2i(W - m - rs, m + rs);
   center[BTN_TIMER_MORE] = Point2i(W - m - 3 * rs - gap, m + rs);
   center[BTN_TIMER_LESS] = Point2i(W - m - 5 * rs - 2 * gap, m + rs);
-  center[BTN_CENTER]     = Point2i(m + rs, m + rs);
+  center[BTN_PAUSE]      = Point2i(m + rs, m + rs);
+  center[BTN_CENTER]     = Point2i(m + 3 * rs + gap, m + rs);
 }
 
 bool TouchControls::Active() const
@@ -143,6 +147,7 @@ bool TouchControls::Shown(int button) const
   switch (button) {
   case BTN_FIRE:
     // Also outside the turn: it drops the falling crate straight away
+  case BTN_PAUSE:
     return true;
   case BTN_TIMER_LESS:
   case BTN_TIMER_MORE:
@@ -215,6 +220,10 @@ void TouchControls::Release(int button, Uint32 held_ms)
   case BTN_CENTER:
     HandleKeyPressed(KEY_CENTER);
     HandleKeyReleased(KEY_CENTER);
+    break;
+  case BTN_PAUSE:
+    HandleKeyPressed(KEY_PAUSE);
+    HandleKeyReleased(KEY_PAUSE);
     break;
   default: break;
   }
@@ -383,6 +392,13 @@ static void DrawShapes(Surface &target, int b, const Point2i &c, int r,
     target.CircleColor(c.x, c.y, r / 2, glyph);
     target.FilledCircleColor(c.x, c.y, r / 6, glyph);
     break;
+  case TouchControls::BTN_PAUSE: {
+    // Two bars
+    int h = r * 2 / 5, w = r / 7 + 1, d = r / 5;
+    target.BoxColor(Rectanglei(c.x - d - w, c.y - h, 2 * w, 2 * h), glyph);
+    target.BoxColor(Rectanglei(c.x + d - w, c.y - h, 2 * w, 2 * h), glyph);
+    break;
+  }
   }
 }
 
@@ -446,6 +462,25 @@ void TouchControls::Draw()
   for (int i = 0; i < BTN_COUNT; i++)
     if (Shown(i))
       DrawButton(i, pressed[i]);
+  if (Shown(BTN_TIMER_LESS))
+    DrawTimer();
+}
+
+// The fuse time under the - / + buttons, so a tap shows its effect even with
+// the character (and the time above it) off screen
+void TouchControls::DrawTimer() const
+{
+  // Only launchers have an adjustable timer (and no RTTI on Android)
+  if (!ActiveTeam().GetWeapon().HasAdjustableTimer())
+    return;
+  WeaponLauncher *launcher = static_cast<WeaponLauncher*>(&ActiveTeam().AccessWeapon());
+  std::string txt = uint2str(launcher->GetTimeout()) + "s";
+  if (!timer_text)
+    timer_text = new Text(txt, white_color, Font::FONT_MEDIUM, Font::FONT_BOLD, true);
+  else if (timer_text->GetText() != txt)
+    timer_text->SetText(txt);
+  Point2i between = (center[BTN_TIMER_LESS] + center[BTN_TIMER_MORE]) / 2;
+  timer_text->DrawCenterTop(between + Point2i(0, radius[BTN_TIMER_LESS] + 2));
 }
 
 #endif // HAVE_TOUCHSCREEN

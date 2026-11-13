@@ -22,11 +22,12 @@
  *   bottom right   fire (hold to charge; also shown outside the turn, where
  *                  it drops the falling crate), jump above it (tap: jump,
  *                  hold: high jump), aim up / down to their left
- *   top right      weapons menu, weapon timer - / + (timed weapons only)
- *   top left       centre the camera on the character
+ *   top right      weapons menu, weapon timer - / + (timed weapons only,
+ *                  with the current fuse time shown under them)
+ *   top left       pause menu, centre the camera on the character
  *   elsewhere      drag to move the camera, tap to click (targets,
  *                  choosing a character, the bottom bar, weapon menu)
- *   Back button    pause menu
+ *   Back button    pause menu too
  *
  * Every finger is tracked on its own, so walking and aiming can happen at
  * the same time. Actions go through ManMachineInterface like the keyboard
@@ -46,12 +47,14 @@
 #include "interface/man_machine_interface.h"
 #include "graphic/surface.h"
 
+class Text;
+
 class TouchControls : public Singleton<TouchControls>, public ManMachineInterface
 {
 public:
   typedef enum {
     BTN_LEFT, BTN_RIGHT, BTN_JUMP, BTN_FIRE, BTN_UP, BTN_DOWN,
-    BTN_WEAPONS, BTN_TIMER_LESS, BTN_TIMER_MORE, BTN_CENTER,
+    BTN_WEAPONS, BTN_TIMER_LESS, BTN_TIMER_MORE, BTN_CENTER, BTN_PAUSE,
     BTN_COUNT,
     BTN_NONE = BTN_COUNT,
     CAMERA_DRAG       // finger moving the camera instead of a button
@@ -73,6 +76,7 @@ private:
   mutable Surface cache[BTN_COUNT][2];
   mutable SDL_Texture *cache_tex[BTN_COUNT][2];  // the same, on the GPU
   mutable int cache_scale;
+  mutable Text *timer_text;  // fuse time under the timer buttons
 
   void Layout();
   bool Active() const;    // the local human player is playing
@@ -83,6 +87,7 @@ private:
   void Release(int button, Uint32 held_ms);
   void Click(const Point2i &p);
   void DrawButton(int button, bool pressed) const;
+  void DrawTimer() const;
 
 protected:
   friend class Singleton<TouchControls>;
