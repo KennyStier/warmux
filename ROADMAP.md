@@ -62,10 +62,14 @@ game server, client setting); only deployment and testing remain.
 
 ### What needs work
 
-- **Network play has not been tested since the SDL2 port.** Check a full
-  game between two machines first. Areas to watch: the network thread,
-  and `lib/warmux/net/extSDL_net.cpp`, which reaches into SDL_net's private
-  `struct _TCPsocket`; confirm its layout still matches SDL2_net 2.x.
+- **Direct-IP network play works** (12.0.1: a full LAN game between Linux
+  and Android, hosted on Linux). Not yet tried: more than two players,
+  internet play, a Windows player. `lib/warmux/net/extSDL_net.cpp` reaches
+  into SDL_net's private `struct _TCPsocket`; recheck it on SDL2_net
+  updates.
+- The host needs TCP port 3826 open; a firewall that drops it shows up as
+  "The connection timed out" on the joining side (for ufw:
+  `sudo ufw allow from 192.168.0.0/24 to any port 3826 proto tcp`).
 - Versions are compared strictly: 12.0.x cannot join games of the original
   11.04 release. The index server's `versions=` must list the versions it
   accepts.
@@ -208,10 +212,10 @@ text. CI builds a debug APK on every push (`build.yml`, artifact
   `.mo` files staged with the data.
 - **Online lobby and update check:** curl is not built, so the downloader
   is a no-op (`lib/warmux/net/download.cpp`). Direct-IP network games
-  should still work but are untested. Options: build curl with mbedTLS,
+  work (joined a Linux host over LAN). Options: build curl with mbedTLS,
   or fetch over Java (`HttpURLConnection`) through JNI.
-- **Release builds:** a signing key (kept out of the repository, as a CI
-  secret), a release APK or AAB in `release.yml`, then distribution:
+- **Distribution:** 12.0.1 ships a signed release APK (`release.yml`;
+  the key is kept outside the repository and as CI secrets). Next:
   F-Droid (free, suits GPL; builds from source) and/or Google Play
   (one-time fee, recent target SDK required).
 - **Storage:** the data is stored twice (in the APK and the copy, about
