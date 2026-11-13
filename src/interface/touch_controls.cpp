@@ -37,8 +37,6 @@
 #include "map/map.h"
 #include "team/macro.h"
 #include "team/team.h"
-#include "tool/string_tools.h"
-#include "weapon/weapon_launcher.h"
 
 // A finger that moves further than this (game pixels) is dragging, not tapping
 static const int DRAG_DISTANCE = 12;
@@ -49,7 +47,6 @@ TouchControls::TouchControls()
   : enabled(false)
   , layout_for(-1, -1)
   , cache_scale(0)
-  , timer_text(NULL)
 {
   for (int i = 0; i < BTN_COUNT; i++) {
     radius[i] = 0;
@@ -462,25 +459,6 @@ void TouchControls::Draw()
   for (int i = 0; i < BTN_COUNT; i++)
     if (Shown(i))
       DrawButton(i, pressed[i]);
-  if (Shown(BTN_TIMER_LESS))
-    DrawTimer();
-}
-
-// The fuse time under the - / + buttons, so a tap shows its effect even with
-// the character (and the time above it) off screen
-void TouchControls::DrawTimer() const
-{
-  // Only launchers have an adjustable timer (and no RTTI on Android)
-  if (!ActiveTeam().GetWeapon().HasAdjustableTimer())
-    return;
-  WeaponLauncher *launcher = static_cast<WeaponLauncher*>(&ActiveTeam().AccessWeapon());
-  std::string txt = uint2str(launcher->GetTimeout()) + "s";
-  if (!timer_text)
-    timer_text = new Text(txt, white_color, Font::FONT_MEDIUM, Font::FONT_BOLD, true);
-  else if (timer_text->GetText() != txt)
-    timer_text->SetText(txt);
-  Point2i between = (center[BTN_TIMER_LESS] + center[BTN_TIMER_MORE]) / 2;
-  timer_text->DrawCenterTop(between + Point2i(0, radius[BTN_TIMER_LESS] + 2));
 }
 
 #endif // HAVE_TOUCHSCREEN
