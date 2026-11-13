@@ -66,7 +66,7 @@ game server, client setting); only deployment and testing remain.
   game between two machines first. Areas to watch: the network thread,
   and `lib/warmux/net/extSDL_net.cpp`, which reaches into SDL_net's private
   `struct _TCPsocket`; confirm its layout still matches SDL2_net 2.x.
-- Versions are compared strictly: 12.0.0 cannot join games of the original
+- Versions are compared strictly: 12.0.x cannot join games of the original
   11.04 release. The index server's `versions=` must list the versions it
   accepts.
 - Deployment: a systemd service on an always-on machine, reachable over a

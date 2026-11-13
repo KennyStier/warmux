@@ -93,7 +93,7 @@
 #define PACKAGE_NAME "Warmux"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Warmux 12.0.0"
+#define PACKAGE_STRING "Warmux 12.0.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "warmux"
@@ -102,7 +102,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "12.0.0"
+#define PACKAGE_VERSION "12.0.1"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
@@ -114,7 +114,7 @@
 /* #undef USE_X11 */
 
 /* Version number of package */
-#define VERSION "12.0.0"
+#define VERSION "12.0.1"
 
 #define HAVE_TOUCHSCREEN
 // No HAVE_HANDHELD: its memory and CPU savings were for 2011 phones

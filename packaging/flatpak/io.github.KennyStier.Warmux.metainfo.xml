@@ -39,6 +39,18 @@
     <control>gamepad</control>
   </supports>
   <releases>
+    <release version="12.0.1" date="2026-11-12">
+      <description>
+        <p>Windows and Android ports, smoother and sharper graphics:</p>
+        <ul>
+          <li>Windows 10/11 installer</li>
+          <li>60 FPS by default</li>
+          <li>Sharp text and interface at high display scales</li>
+          <li>Faster drawing of the game screen and weapons menu</li>
+          <li>The toggle-weapons-menu key works again</li>
+        </ul>
+      </description>
+    </release>
     <release version="12.0.0" date="2026-11-12">
       <description>
         <p>First release of the maintained fork:</p>
