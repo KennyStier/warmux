@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Warmux: a convivial mass murder game</title>
+  <meta name="description" content="Warmux is a free, open source, turn-based artillery game. Pick a team of open source mascots and blow each other up on Windows, Linux and Android, or online.">
+  <meta name="theme-color" content="#9fc6dd">
+  <meta property="og:title" content="Warmux">
+  <meta property="og:description" content="A free, turn-based artillery game: open source mascots, 30+ weapons, online and LAN play.">
+  <meta property="og:image" content="https://warmux.net/assets/shots/halloween.webp">
+  <meta property="og:url" content="https://warmux.net/">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/img/favicon-64.png" type="image/png" sizes="64x64">
+  <link rel="preload" href="/assets/fonts/baloo2.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/style.css">
+  <script src="/assets/main.js" defer></script>
+</head>
+<body>
+
+<!-- ============ The main menu, as a page ============ -->
+<header class="scene" id="top">
+  <div class="sky" aria-hidden="true">
+    <div class="rays"></div>
+    <div class="sun"></div>
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+    <div class="cloud c4"></div>
+  </div>
+
+  <img class="tux" src="/assets/img/tux.png" alt="" width="186" height="210" aria-hidden="true">
+
+  <div class="hero">
+    <h1 class="logo" aria-label="Warmux">
+      <span aria-hidden="true">W</span><img src="/assets/img/bomb.png" alt="" width="256" height="256"><span aria-hidden="true">RMUX</span>
+    </h1>
+    <p class="tagline">A convivial mass murder game</p>
+
+    <div class="get panel" id="get">
+      <a class="big-button" id="dl" href="https://github.com/KennyStier/warmux/releases/latest">
+        <span class="os-icon" id="dl-icon" aria-hidden="true"></span>
+        <span class="big-label">
+          <span id="dl-title">Download Warmux</span>
+          <span class="big-sub" id="dl-sub">Free · Windows, Linux, Android</span>
+        </span>
+      </a>
+      <p class="hint" id="dl-hint">Free and open source. No ads, no accounts.</p>
+      <p class="others"><a href="#downloads">Other platforms and versions</a></p>
+    </div>
+  </div>
+
+  <svg class="land" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="peak" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffffff"/>
+        <stop offset=".45" stop-color="#e6f4fb"/>
+        <stop offset="1" stop-color="#9fd2ea"/>
+      </linearGradient>
+      <linearGradient id="hill1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#a7c45a"/>
+        <stop offset="1" stop-color="#7ea23c"/>
+      </linearGradient>
+      <linearGradient id="hill2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#7fa63a"/>
+        <stop offset="1" stop-color="#4d7a26"/>
+      </linearGradient>
+      <filter id="far" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="2.2"/></filter>
+    </defs>
+    <!-- snowy peaks, blurred like the menu's far background -->
+    <path filter="url(#far)" fill="url(#peak)" d="M0 210 L60 120 L110 175 L170 70 L230 160 L280 110 L340 185 L400 95 L470 170 L520 60 L590 165 L650 120 L700 180 L770 80 L840 170 L900 115 L960 185 L1030 90 L1100 175 L1160 65 L1230 160 L1290 110 L1350 180 L1400 100 L1440 150 L1440 300 L0 300 Z"/>
+    <!-- forest band with round tree tops -->
+    <path filter="url(#far)" fill="#3f6a2b" d="M-20 250 q30 -42 60 0 q29 -36 58 0 q32 -46 64 0 q28 -44 56 0 q33 -46 66 0 q31 -40 62 0 q29 -42 58 0 q32 -38 64 0 q30 -44 60 0 q31 -38 62 0 q30 -42 60 0 q29 -36 58 0 q32 -46 64 0 q28 -44 56 0 q33 -46 66 0 q31 -40 62 0 q29 -42 58 0 q32 -38 64 0 q30 -44 60 0 q31 -38 62 0 q30 -42 60 0 q29 -36 58 0 q32 -46 64 0 q28 -44 56 0 q33 -46 66 0 L1520 330 L-20 330 Z"/>
+    <!-- rolling hills -->
+    <path fill="url(#hill1)" d="M0 300 C240 250 420 330 720 300 C980 272 1180 236 1440 262 L1440 420 L0 420 Z"/>
+    <path fill="url(#hill2)" d="M0 352 C300 318 560 392 860 360 C1100 334 1290 330 1440 344 L1440 420 L0 420 Z"/>
+  </svg>
+
+  <!-- the teams, standing on the hill -->
+  <ul class="crowd" aria-label="Teams">
+    <li><img src="/assets/img/team-tux.png" alt="Tux" width="64" height="64"></li>
+    <li><img src="/assets/img/team-firefox.png" alt="Firefox" width="64" height="64"></li>
+    <li><img src="/assets/img/team-gnu.png" alt="GNU" width="64" height="64"></li>
+    <li><img src="/assets/img/team-konqi.png" alt="Konqi" width="64" height="64"></li>
+    <li><img src="/assets/img/team-wilber.png" alt="Wilber" width="64" height="64"></li>
+    <li><img src="/assets/img/team-beastie.png" alt="Beastie" width="64" height="64"></li>
+    <li><img src="/assets/img/team-bugzilla.png" alt="Bugzilla" width="64" height="64"></li>
+    <li><img src="/assets/img/team-pidgin.png" alt="Pidgin" width="64" height="64"></li>
+  </ul>
+</header>
+
+<main class="meadow">
+
+  <!-- ============ What it is ============ -->
+  <section class="intro">
+    <h2>Pick a team. Aim. <em>Boom.</em></h2>
+    <p>
+      Warmux is a turn-based artillery game starring the mascots of free software.
+      Each turn you get one character, a few seconds and a ridiculous arsenal.
+      Blow holes in the map, knock rivals into the water, and try not to
+      catch yourself in the blast.
+    </p>
+  </section>
+
+  <section class="features">
+    <article class="panel feature">
+      <img src="/assets/img/w/dynamite_ico.png" alt="" width="48" height="48">
+      <h3>Turn-based mayhem</h3>
+      <p>Up to eight teams take turns wrecking fully destructible maps, and each other.</p>
+    </article>
+    <article class="panel feature">
+      <img src="/assets/img/w/bazooka_ico.png" alt="" width="48" height="48">
+      <h3>30+ weapons</h3>
+      <p>Bazookas, disco grenades, a stampeding gnu, anvils from the sky and one very smelly polecat.</p>
+    </article>
+    <article class="panel feature">
+      <img src="/assets/img/globe.png" alt="" width="48" height="48">
+      <h3>Online in one click</h3>
+      <p>Public Battle is always open: pick it in the Network Game menu. No port forwarding.</p>
+    </article>
+    <article class="panel feature">
+      <img src="/assets/img/w/jet_pack_ico.png" alt="" width="48" height="48">
+      <h3>Couch, LAN or phone</h3>
+      <p>Share one screen, find games on your network automatically, or play with touch controls on Android.</p>
+    </article>
+  </section>
+
+  <!-- ============ Screenshots ============ -->
+  <section class="gallery" aria-label="Screenshots">
+    <figure class="panel shot">
+      <img id="shot-main" src="/assets/shots/halloween.webp" alt="A battle on the Halloween map, between giant pumpkins" width="1248" height="702">
+    </figure>
+    <div class="thumbs" role="list">
+      <button class="thumb is-on" role="listitem" data-src="/assets/shots/halloween.webp" data-alt="A battle on the Halloween map, between giant pumpkins"><img src="/assets/shots/halloween.webp" alt="Halloween map" width="320" height="180"></button>
+      <button class="thumb" role="listitem" data-src="/assets/shots/abyss.webp" data-alt="Characters among the bubbles of the Abyss map"><img src="/assets/shots/abyss.webp" alt="Abyss map" width="320" height="180"></button>
+      <button class="thumb" role="listitem" data-src="/assets/shots/farm.webp" data-alt="A cliff on the Farm map, above the water"><img src="/assets/shots/farm.webp" alt="Farm map" width="320" height="180"></button>
+      <button class="thumb" role="listitem" data-src="/assets/shots/junglemountain.webp" data-alt="Green slopes of the Jungle Mountain map"><img src="/assets/shots/junglemountain.webp" alt="Jungle Mountain map" width="320" height="180"></button>
+    </div>
+  </section>
+
+  <!-- ============ The arsenal ============ -->
+  <section class="arsenal" aria-label="Some of the weapons">
+    <h2>The arsenal</h2>
+    <div class="belt">
+      <ul class="belt-track" id="belt"></ul>
+    </div>
+  </section>
+
+  <!-- ============ Teams ============ -->
+  <section class="teams">
+    <h2>Choose your army</h2>
+    <ul class="team-grid" id="teams"></ul>
+  </section>
+
+  <!-- ============ Downloads ============ -->
+  <section class="downloads panel" id="downloads">
+    <div class="dl-head">
+      <h2>Downloads</h2>
+      <p class="dl-version" id="dl-version">Latest release</p>
+    </div>
+    <ul class="dl-list" id="dl-list">
+      <li class="dl-loading">Loading the latest release… or <a href="https://github.com/KennyStier/warmux/releases/latest">see it on GitHub</a>.</li>
+    </ul>
+    <p class="dl-more">
+      Older versions, release notes and the source code are on
+      <a href="https://github.com/KennyStier/warmux/releases">GitHub</a>.
+    </p>
+  </section>
+</main>
+
+<footer class="sea">
+  <svg class="waves" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+    <path class="w1" d="M0 40 Q60 10 120 40 T240 40 T360 40 T480 40 T600 40 T720 40 T840 40 T960 40 T1080 40 T1200 40 T1320 40 T1440 40 T1560 40 T1680 40 V80 H0 Z"/>
+    <path class="w2" d="M0 52 Q60 26 120 52 T240 52 T360 52 T480 52 T600 52 T720 52 T840 52 T960 52 T1080 52 T1200 52 T1320 52 T1440 52 T1560 52 T1680 52 V80 H0 Z"/>
+  </svg>
+  <div class="sea-body">
+    <p class="sea-logo"><img src="/assets/img/bomb.png" alt="" width="40" height="40"> Warmux</p>
+    <nav>
+      <a href="https://github.com/KennyStier/warmux">Source code</a>
+      <a href="https://github.com/KennyStier/warmux/issues">Report a bug</a>
+      <a href="#downloads">Downloads</a>
+    </nav>
+    <p class="fine">
+      Free software under the GNU GPL v2 or later. Warmux was created by the
+      Warmux Team (2001–2011); this edition is developed on GitHub.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

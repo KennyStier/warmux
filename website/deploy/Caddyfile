@@ -1,0 +1,31 @@
+# warmux.net: the website, with HTTPS certificates from Let's Encrypt
+# (Caddy gets and renews them on its own)
+
+warmux.net {
+	root * /var/www/warmux.net
+	encode zstd gzip
+	file_server
+
+	# The latest release, refreshed from GitHub by warmux-latest.timer
+	handle /latest.json {
+		root * /var/lib/warmux-web
+		header Cache-Control "public, max-age=300"
+		file_server
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options "DENY"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+		-Server
+	}
+	header /assets/* Cache-Control "public, max-age=86400"
+	header / Cache-Control "public, max-age=600"
+}
+
+www.warmux.net {
+	redir https://warmux.net{uri} permanent
+}

@@ -1,0 +1,518 @@
+/* Warmux website: the main menu's sky, mountains and hills, with the dark
+   rounded panels of the in-game menus. */
+
+@font-face {
+  font-family: "Baloo 2";
+  src: url("/assets/fonts/baloo2.woff2") format("woff2");
+  font-weight: 400 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/assets/fonts/ubuntu-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/assets/fonts/ubuntu-500.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/assets/fonts/ubuntu-700.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  --sky-top: #8fbcd8;
+  --sky-low: #dcebf1;
+  --sun: #fbe07a;
+  --grass: #4d7a26;
+  --meadow: #3d6620;
+  --meadow-deep: #24411a;
+  --panel: rgba(27, 32, 41, 0.86);
+  --inset: rgba(255, 255, 255, 0.07);
+  --inset-hover: rgba(255, 255, 255, 0.13);
+  --text: #f4f5f2;
+  --text-dim: #b5bcc1;
+  --primary: #2fa35c;
+  --primary-hover: #37b867;
+  --gold: #ffd23f;
+  --gold-edge: #6b4a00;
+  --sea: #1f6fb3;
+  --sea-deep: #0f3e6e;
+  --radius: 16px;
+  --display: "Baloo 2", "Ubuntu", system-ui, sans-serif;
+  --body: "Ubuntu", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--body);
+  color: var(--text);
+  background: var(--meadow-deep);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { max-width: 100%; height: auto; }
+a { color: var(--gold); }
+a:hover { color: #fff; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+
+/* The dark rounded panels of the redesigned menus */
+.panel {
+  background: var(--panel);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* ================= Scene ================= */
+
+.scene {
+  position: relative;
+  min-height: max(640px, 100svh);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background: linear-gradient(180deg, var(--sky-top) 0%, #b5d3e4 45%, var(--sky-low) 80%);
+  overflow: hidden;
+}
+
+/* Sun rays turning slowly around the sun */
+.rays {
+  position: absolute;
+  left: 26%;
+  top: 46%;
+  width: 260vmax;
+  height: 260vmax;
+  translate: -50% -50%;
+  background: repeating-conic-gradient(from 0deg,
+              rgba(255, 255, 255, 0.22) 0deg 5deg,
+              rgba(255, 255, 255, 0) 5deg 15deg);
+  -webkit-mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0.5) 22%, transparent 48%);
+          mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0.5) 22%, transparent 48%);
+  animation: spin 160s linear infinite;
+}
+@keyframes spin { to { rotate: 360deg; } }
+
+.sun {
+  position: absolute;
+  left: 26%;
+  top: 46%;
+  width: clamp(90px, 11vw, 150px);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, #fff6c4 0 12%, var(--sun) 34%, #f6cf4d 100%);
+  box-shadow: 0 0 60px 20px rgba(255, 236, 150, 0.45);
+}
+
+/* Soft, slightly blurred clouds, like the menu's */
+.cloud {
+  position: absolute;
+  height: 60px;
+  border-radius: 60px;
+  background: #fff;
+  filter: blur(3px);
+  opacity: 0.9;
+  animation: drift linear infinite;
+}
+.cloud::before, .cloud::after {
+  content: "";
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+}
+.cloud::before { width: 46%; aspect-ratio: 1; left: 14%; bottom: 30%; }
+.cloud::after { width: 34%; aspect-ratio: 1; left: 48%; bottom: 22%; }
+.c1 { width: 340px; top: 9%; left: -6%; animation-duration: 140s; }
+.c2 { width: 260px; top: 22%; left: 58%; animation-duration: 110s; animation-delay: -40s; }
+.c3 { width: 300px; top: 42%; left: 36%; animation-duration: 170s; animation-delay: -90s; opacity: 0.8; }
+.c4 { width: 220px; top: 34%; left: 80%; animation-duration: 125s; animation-delay: -20s; }
+@keyframes drift {
+  from { transform: translateX(-40vw); }
+  to   { transform: translateX(110vw); }
+}
+
+/* Super Tux, flying over the hills */
+.tux {
+  position: absolute;
+  right: clamp(12px, 9vw, 160px);
+  top: clamp(70px, 13vh, 150px);
+  width: clamp(96px, 13vw, 186px);
+  z-index: -1;
+  animation: fly 6s ease-in-out infinite;
+  filter: drop-shadow(0 12px 10px rgba(30, 60, 90, 0.18));
+}
+@keyframes fly {
+  0%, 100% { transform: translate(0, 0) rotate(-2deg); }
+  50%      { transform: translate(-14px, -18px) rotate(3deg); }
+}
+
+.land {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 46%;
+  z-index: -2;
+}
+
+.hero {
+  position: relative;
+  width: min(100% - 32px, 760px);
+  margin-top: clamp(28px, 7vh, 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* The logo: white rounded letters, the bomb standing in for the A */
+.logo {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(64px, 13vw, 150px);
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  color: #fff;
+  text-shadow: 0 6px 0 rgba(120, 140, 160, 0.35), 0 14px 26px rgba(40, 70, 100, 0.25);
+  animation: drop-in 0.8s cubic-bezier(.2, 1.4, .4, 1) both;
+}
+.logo img {
+  width: 0.92em;
+  height: auto;
+  margin: 0 -0.1em 0 0.02em; /* the fuse sticks out on the right */
+  translate: 0 -0.04em;
+  filter: drop-shadow(0 8px 10px rgba(40, 70, 100, 0.25));
+  animation: wobble 4s ease-in-out 1s infinite;
+}
+@keyframes wobble {
+  0%, 100% { rotate: -4deg; }
+  50%      { rotate: 5deg; }
+}
+@keyframes drop-in {
+  from { opacity: 0; transform: translateY(-40px) scale(0.92); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Gold with a dark edge, like "Version 12.0.1" under the menu */
+.tagline {
+  margin: 6px 0 26px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(20px, 3.2vw, 30px);
+  color: var(--gold);
+  letter-spacing: 0.01em;
+  text-shadow:
+    -2px -2px 0 var(--gold-edge), 2px -2px 0 var(--gold-edge),
+    -2px 2px 0 var(--gold-edge), 2px 2px 0 var(--gold-edge),
+    0 4px 0 var(--gold-edge);
+  animation: drop-in 0.8s 0.12s cubic-bezier(.2, 1.4, .4, 1) both;
+}
+
+/* ================= The download card ================= */
+
+.get {
+  width: min(100%, 520px);
+  padding: 18px 18px 14px;
+  animation: drop-in 0.8s 0.24s cubic-bezier(.2, 1.4, .4, 1) both;
+}
+
+.big-button {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 22px;
+  border-radius: 14px;
+  background: var(--primary);
+  color: #fff;
+  text-decoration: none;
+  text-align: left;
+  box-shadow: 0 5px 0 #1d7341, 0 10px 24px rgba(0, 0, 0, 0.25);
+  transition: background 0.15s, transform 0.12s, box-shadow 0.12s;
+}
+.big-button:hover { background: var(--primary-hover); color: #fff; transform: translateY(-2px); box-shadow: 0 7px 0 #1d7341, 0 14px 28px rgba(0, 0, 0, 0.28); }
+.big-button:active { transform: translateY(3px); box-shadow: 0 2px 0 #1d7341, 0 6px 14px rgba(0, 0, 0, 0.25); }
+.big-button.is-unavailable { background: #4a525b; box-shadow: 0 5px 0 #30363c, 0 10px 24px rgba(0, 0, 0, 0.25); }
+
+.os-icon {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+}
+.os-icon svg { width: 100%; height: 100%; fill: currentColor; }
+
+.big-label { display: flex; flex-direction: column; min-width: 0; }
+#dl-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(22px, 4.4vw, 30px);
+  line-height: 1.1;
+}
+.big-sub { font-size: 14px; opacity: 0.9; overflow-wrap: anywhere; }
+
+.hint {
+  margin: 14px 4px 4px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+.hint code, .dl-hint code {
+  font-size: 13px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--inset);
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.others { margin: 6px 0 0; font-size: 14px; font-weight: 500; }
+
+/* ================= The teams on the hill ================= */
+
+.crowd {
+  list-style: none;
+  margin: auto 0 0;
+  padding: 0 16px 10px;
+  display: flex;
+  justify-content: center;
+  gap: clamp(2px, 2vw, 22px);
+  flex-wrap: wrap;
+  position: relative;
+}
+.crowd li { animation: hop 2.4s ease-in-out infinite; }
+.crowd li:nth-child(2n) { animation-delay: -0.6s; }
+.crowd li:nth-child(3n) { animation-delay: -1.3s; }
+.crowd img {
+  width: clamp(40px, 6vw, 64px);
+  filter: drop-shadow(0 6px 4px rgba(20, 40, 10, 0.35));
+  transition: transform 0.15s;
+}
+.crowd img:hover { transform: scale(1.18) rotate(-6deg); }
+@keyframes hop {
+  0%, 70%, 100% { transform: translateY(0); }
+  80%           { transform: translateY(-14px); }
+  90%           { transform: translateY(0); }
+}
+
+/* ================= Below the hills ================= */
+
+.meadow {
+  background: linear-gradient(180deg, var(--grass) 0%, var(--meadow) 30%, var(--meadow-deep) 100%);
+  padding: 40px 16px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 64px;
+}
+.meadow > section { width: min(100%, 1080px); }
+
+h2 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1.1;
+  margin: 0 0 14px;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.25);
+}
+h2 em { font-style: normal; color: var(--gold); }
+
+.intro { text-align: center; max-width: 760px; }
+.intro p { font-size: clamp(17px, 2.2vw, 20px); color: #e2ead9; margin: 0; }
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+.feature { padding: 22px; transition: transform 0.15s; }
+.feature:hover { transform: translateY(-4px) rotate(-0.5deg); }
+.feature img {
+  width: 56px;
+  height: 56px;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--inset);
+}
+.feature h3 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 22px;
+  margin: 12px 0 4px;
+}
+.feature p { margin: 0; color: var(--text-dim); font-size: 15px; }
+
+/* Screenshots */
+.gallery { display: grid; gap: 12px; }
+.shot { margin: 0; padding: 10px; }
+.shot img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 10px; }
+.thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.thumb {
+  padding: 5px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--panel);
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+.thumb img { display: block; border-radius: 8px; aspect-ratio: 16 / 9; object-fit: cover; opacity: 0.65; transition: opacity 0.15s; }
+.thumb:hover img, .thumb.is-on img { opacity: 1; }
+.thumb.is-on { background: var(--primary); }
+.thumb:hover { transform: translateY(-2px); }
+
+/* Weapons on a conveyor belt */
+.arsenal { text-align: center; }
+.belt {
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--panel);
+  padding: 16px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.belt-track {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 18px;
+  width: max-content;
+  animation: belt 50s linear infinite;
+}
+.belt:hover .belt-track { animation-play-state: paused; }
+.belt-track li {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--inset);
+}
+.belt-track img { width: 48px; height: 48px; }
+@keyframes belt { to { transform: translateX(-50%); } }
+
+/* Teams */
+.teams { text-align: center; }
+.team-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 12px;
+}
+.team-grid li {
+  padding: 14px 8px 10px;
+  border-radius: 14px;
+  background: var(--panel);
+  transition: transform 0.15s, background 0.15s;
+}
+.team-grid li:hover { transform: translateY(-4px); background: rgba(27, 32, 41, 0.95); }
+.team-grid li:hover img { animation: hop-once 0.5s ease-out; }
+.team-grid img { width: 64px; height: 64px; }
+.team-grid span { display: block; font-weight: 700; font-size: 14px; margin-top: 4px; }
+@keyframes hop-once {
+  40% { transform: translateY(-12px) rotate(-8deg); }
+  100% { transform: none; }
+}
+
+/* Downloads */
+.downloads { padding: clamp(18px, 3vw, 30px); }
+.dl-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.dl-version { margin: 0; color: var(--text-dim); font-weight: 500; }
+.dl-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 10px; }
+.dl-loading { color: var(--text-dim); padding: 14px 0; }
+.dl-item {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--inset);
+}
+.dl-item.is-yours { background: rgba(47, 163, 92, 0.18); box-shadow: inset 0 0 0 2px var(--primary); }
+.dl-item .os-icon { width: 36px; height: 36px; color: var(--text-dim); }
+.dl-item.is-yours .os-icon { color: #fff; }
+.dl-name { font-weight: 700; }
+.dl-name small { margin-left: 8px; font-weight: 500; color: var(--gold); }
+.dl-file { font-size: 13px; color: var(--text-dim); overflow-wrap: anywhere; }
+.dl-hint { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+.dl-get {
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.dl-get:hover { background: var(--primary-hover); color: #fff; }
+.dl-more { margin: 18px 0 0; color: var(--text-dim); font-size: 15px; }
+
+/* ================= The sea ================= */
+
+.sea { background: var(--sea-deep); position: relative; }
+.waves { display: block; width: 100%; height: 60px; margin-top: -1px; background: var(--meadow-deep); }
+.waves .w1 { fill: #4aa3e0; animation: swell 7s ease-in-out infinite alternate; }
+.waves .w2 { fill: var(--sea); animation: swell 5s ease-in-out -2s infinite alternate-reverse; }
+@keyframes swell { to { transform: translateX(-120px); } }
+.sea-body {
+  background: linear-gradient(180deg, var(--sea) 0%, var(--sea-deep) 100%);
+  padding: 10px 16px 40px;
+  text-align: center;
+}
+.sea-logo {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 28px;
+}
+.sea nav { display: flex; justify-content: center; gap: 22px; flex-wrap: wrap; margin: 8px 0; }
+.sea nav a { color: #fff; font-weight: 500; text-decoration: none; border-bottom: 2px solid rgba(255, 255, 255, 0.35); }
+.sea nav a:hover { border-color: var(--gold); }
+.fine { margin: 10px auto 0; max-width: 620px; font-size: 13px; color: #b9d3ea; }
+
+/* ================= Small screens ================= */
+
+@media (max-width: 640px) {
+  .scene { min-height: auto; padding-bottom: 6px; }
+  .land { height: 34%; }
+  .hero { margin-top: 84px; }
+  .tux { top: 14px; right: 10px; }
+  .crowd { margin-top: 40px; }
+  .thumbs { grid-template-columns: repeat(2, 1fr); }
+  .dl-item { grid-template-columns: 32px 1fr; }
+  .dl-item .os-icon { width: 28px; height: 28px; }
+  .dl-get { grid-column: 1 / -1; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  html { scroll-behavior: auto; }
+}

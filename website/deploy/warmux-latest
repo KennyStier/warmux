@@ -1,0 +1,17 @@
+#!/bin/sh
+# Writes latest.json (the newest Warmux release and its files) for the
+# website's download button, from the GitHub API.
+set -eu
+OUT=/var/lib/warmux-web/latest.json
+TMP=$(mktemp /var/lib/warmux-web/.latest.XXXXXX)
+trap 'rm -f "$TMP"' EXIT
+curl -fsS --max-time 30 -H "Accept: application/vnd.github+json" \
+     -A "warmux.net-website" \
+     https://api.github.com/repos/KennyStier/warmux/releases/latest |
+  jq '{tag: .tag_name, version: (.tag_name | ltrimstr("v")), published: .published_at,
+       url: .html_url,
+       assets: [.assets[] | {name, size, url: .browser_download_url}]}' > "$TMP"
+# Never replace a good list with an empty one
+jq -e '.assets | length > 0' "$TMP" > /dev/null
+chmod 644 "$TMP"
+mv "$TMP" "$OUT"
