@@ -231,6 +231,8 @@ warmux_SOURCES = \
         network/chat.h \
         network/chatlogger.cpp \
         network/chatlogger.h \
+        network/lan_discovery.cpp \
+        network/lan_discovery.h \
         network/net_error_msg.cpp \
         network/net_error_msg.h \
         network/network.cpp \

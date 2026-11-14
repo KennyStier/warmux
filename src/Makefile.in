@@ -202,6 +202,7 @@ am__warmux_SOURCES_DIST = ai/ai_command.cpp ai/ai_command.h \
 	msvc/getopt.h network/admin_commands.cpp \
 	network/admin_commands.h network/chat.cpp network/chat.h \
 	network/chatlogger.cpp network/chatlogger.h \
+	network/lan_discovery.cpp network/lan_discovery.h \
 	network/net_error_msg.cpp network/net_error_msg.h \
 	network/network.cpp network/network.h \
 	network/network_client.cpp network/network_client.h \
@@ -323,15 +324,16 @@ am_warmux_OBJECTS = ai_command.$(OBJEXT) ai_idea.$(OBJEXT) \
 	pause_menu.$(OBJEXT) replay_menu.$(OBJEXT) \
 	results_menu.$(OBJEXT) team_box.$(OBJEXT) \
 	teams_selection_box.$(OBJEXT) admin_commands.$(OBJEXT) \
-	chat.$(OBJEXT) chatlogger.$(OBJEXT) net_error_msg.$(OBJEXT) \
-	network.$(OBJEXT) network_client.$(OBJEXT) \
-	network_local.$(OBJEXT) network_server.$(OBJEXT) \
-	randomsync.$(OBJEXT) barrel.$(OBJEXT) bonus_box.$(OBJEXT) \
-	medkit.$(OBJEXT) objbox.$(OBJEXT) object_cfg.$(OBJEXT) \
-	objects_list.$(OBJEXT) physical_obj.$(OBJEXT) \
-	physics.$(OBJEXT) body_member.$(OBJEXT) bullet.$(OBJEXT) \
-	dark_smoke.$(OBJEXT) explosion_particle.$(OBJEXT) \
-	explosion_smoke.$(OBJEXT) fading_text.$(OBJEXT) fire.$(OBJEXT) \
+	chat.$(OBJEXT) chatlogger.$(OBJEXT) lan_discovery.$(OBJEXT) \
+	net_error_msg.$(OBJEXT) network.$(OBJEXT) \
+	network_client.$(OBJEXT) network_local.$(OBJEXT) \
+	network_server.$(OBJEXT) randomsync.$(OBJEXT) barrel.$(OBJEXT) \
+	bonus_box.$(OBJEXT) medkit.$(OBJEXT) objbox.$(OBJEXT) \
+	object_cfg.$(OBJEXT) objects_list.$(OBJEXT) \
+	physical_obj.$(OBJEXT) physics.$(OBJEXT) body_member.$(OBJEXT) \
+	bullet.$(OBJEXT) dark_smoke.$(OBJEXT) \
+	explosion_particle.$(OBJEXT) explosion_smoke.$(OBJEXT) \
+	fading_text.$(OBJEXT) fire.$(OBJEXT) \
 	ground_particles.$(OBJEXT) ill_bubble.$(OBJEXT) \
 	magic_star.$(OBJEXT) particle.$(OBJEXT) polecat_fart.$(OBJEXT) \
 	smoke.$(OBJEXT) star.$(OBJEXT) teleport_member.$(OBJEXT) \
@@ -422,16 +424,17 @@ am__depfiles_remade = ./$(DEPDIR)/abstract_spin_button.Po \
 	./$(DEPDIR)/interface.Po ./$(DEPDIR)/jetpack.Po \
 	./$(DEPDIR)/joystick.Po ./$(DEPDIR)/jukebox.Po \
 	./$(DEPDIR)/keyboard.Po ./$(DEPDIR)/label.Po \
-	./$(DEPDIR)/loading_screen.Po ./$(DEPDIR)/lowgrav.Po \
-	./$(DEPDIR)/magic_star.Po ./$(DEPDIR)/main.Po \
-	./$(DEPDIR)/main_menu.Po ./$(DEPDIR)/man_machine_interface.Po \
-	./$(DEPDIR)/map.Po ./$(DEPDIR)/map_selection_box.Po \
-	./$(DEPDIR)/maps_list.Po ./$(DEPDIR)/medkit.Po \
-	./$(DEPDIR)/member.Po ./$(DEPDIR)/menu.Po ./$(DEPDIR)/mine.Po \
-	./$(DEPDIR)/mouse.Po ./$(DEPDIR)/mouse_cursor.Po \
-	./$(DEPDIR)/move_intention.Po ./$(DEPDIR)/movement.Po \
-	./$(DEPDIR)/msg_box.Po ./$(DEPDIR)/net_error_msg.Po \
-	./$(DEPDIR)/network.Po ./$(DEPDIR)/network_client.Po \
+	./$(DEPDIR)/lan_discovery.Po ./$(DEPDIR)/loading_screen.Po \
+	./$(DEPDIR)/lowgrav.Po ./$(DEPDIR)/magic_star.Po \
+	./$(DEPDIR)/main.Po ./$(DEPDIR)/main_menu.Po \
+	./$(DEPDIR)/man_machine_interface.Po ./$(DEPDIR)/map.Po \
+	./$(DEPDIR)/map_selection_box.Po ./$(DEPDIR)/maps_list.Po \
+	./$(DEPDIR)/medkit.Po ./$(DEPDIR)/member.Po \
+	./$(DEPDIR)/menu.Po ./$(DEPDIR)/mine.Po ./$(DEPDIR)/mouse.Po \
+	./$(DEPDIR)/mouse_cursor.Po ./$(DEPDIR)/move_intention.Po \
+	./$(DEPDIR)/movement.Po ./$(DEPDIR)/msg_box.Po \
+	./$(DEPDIR)/net_error_msg.Po ./$(DEPDIR)/network.Po \
+	./$(DEPDIR)/network_client.Po \
 	./$(DEPDIR)/network_connection_menu.Po \
 	./$(DEPDIR)/network_local.Po ./$(DEPDIR)/network_menu.Po \
 	./$(DEPDIR)/network_server.Po \
@@ -827,6 +830,7 @@ warmux_SOURCES = ai/ai_command.cpp ai/ai_command.h ai/ai_idea.cpp \
 	msvc/getopt.h network/admin_commands.cpp \
 	network/admin_commands.h network/chat.cpp network/chat.h \
 	network/chatlogger.cpp network/chatlogger.h \
+	network/lan_discovery.cpp network/lan_discovery.h \
 	network/net_error_msg.cpp network/net_error_msg.h \
 	network/network.cpp network/network.h \
 	network/network_client.cpp network/network_client.h \
@@ -1086,6 +1090,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jukebox.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/keyboard.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/label.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lan_discovery.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loading_screen.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lowgrav.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/magic_star.Po@am__quote@ # am--include-marker
@@ -2730,6 +2735,20 @@ chatlogger.obj: network/chatlogger.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o chatlogger.obj `if test -f 'network/chatlogger.cpp'; then $(CYGPATH_W) 'network/chatlogger.cpp'; else $(CYGPATH_W) '$(srcdir)/network/chatlogger.cpp'; fi`
 
+lan_discovery.o: network/lan_discovery.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT lan_discovery.o -MD -MP -MF $(DEPDIR)/lan_discovery.Tpo -c -o lan_discovery.o `test -f 'network/lan_discovery.cpp' || echo '$(srcdir)/'`network/lan_discovery.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lan_discovery.Tpo $(DEPDIR)/lan_discovery.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='network/lan_discovery.cpp' object='lan_discovery.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o lan_discovery.o `test -f 'network/lan_discovery.cpp' || echo '$(srcdir)/'`network/lan_discovery.cpp
+
+lan_discovery.obj: network/lan_discovery.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT lan_discovery.obj -MD -MP -MF $(DEPDIR)/lan_discovery.Tpo -c -o lan_discovery.obj `if test -f 'network/lan_discovery.cpp'; then $(CYGPATH_W) 'network/lan_discovery.cpp'; else $(CYGPATH_W) '$(srcdir)/network/lan_discovery.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lan_discovery.Tpo $(DEPDIR)/lan_discovery.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='network/lan_discovery.cpp' object='lan_discovery.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o lan_discovery.obj `if test -f 'network/lan_discovery.cpp'; then $(CYGPATH_W) 'network/lan_discovery.cpp'; else $(CYGPATH_W) '$(srcdir)/network/lan_discovery.cpp'; fi`
+
 net_error_msg.o: network/net_error_msg.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT net_error_msg.o -MD -MP -MF $(DEPDIR)/net_error_msg.Tpo -c -o net_error_msg.o `test -f 'network/net_error_msg.cpp' || echo '$(srcdir)/'`network/net_error_msg.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/net_error_msg.Tpo $(DEPDIR)/net_error_msg.Po
@@ -4309,6 +4328,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/jukebox.Po
 	-rm -f ./$(DEPDIR)/keyboard.Po
 	-rm -f ./$(DEPDIR)/label.Po
+	-rm -f ./$(DEPDIR)/lan_discovery.Po
 	-rm -f ./$(DEPDIR)/loading_screen.Po
 	-rm -f ./$(DEPDIR)/lowgrav.Po
 	-rm -f ./$(DEPDIR)/magic_star.Po
@@ -4555,6 +4575,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/jukebox.Po
 	-rm -f ./$(DEPDIR)/keyboard.Po
 	-rm -f ./$(DEPDIR)/label.Po
+	-rm -f ./$(DEPDIR)/lan_discovery.Po
 	-rm -f ./$(DEPDIR)/loading_screen.Po
 	-rm -f ./$(DEPDIR)/lowgrav.Po
 	-rm -f ./$(DEPDIR)/magic_star.Po

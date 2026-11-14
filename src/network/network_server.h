@@ -24,6 +24,7 @@
 //-----------------------------------------------------------------------------
 #include <WARMUX_socket.h>
 #include "network.h"
+#include "network/lan_discovery.h"
 //-----------------------------------------------------------------------------
 
 class NetworkServer : public Network
@@ -31,6 +32,7 @@ class NetworkServer : public Network
   uint max_nb_players;
   WSocket server_socket; // Wait for incoming connections on this socket
   int port; // store listening port
+  LanResponder lan; // answers LAN discovery probes while players can join
 
   uint NextPlayerId() const;
   bool HandShake(WSocket& client_socket, std::string& nickname, uint player_id) const;

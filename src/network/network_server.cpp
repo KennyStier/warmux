@@ -95,6 +95,10 @@ bool NetworkServer::HandShake(WSocket& client_socket,
 void NetworkServer::WaitActionSleep()
 {
   if (server_socket.IsConnected()) {
+    // Let LAN players find the game while it is still in the lobby
+    if (GetState() == WNet::NETWORK_MENU_INIT || GetState() == WNet::NETWORK_MENU_OK)
+      lan.Poll(GetGameName(), port, !GetPassword().empty());
+
 
     // Check for an incoming connection
     WSocket* incoming = server_socket.LookForClient();
@@ -152,6 +156,7 @@ connection_state_t NetworkServer::StartServer(const std::string &net_port, uint 
     return CONN_REJECTED;
   }
 
+  lan.Open();
   NetworkThread::Start();
 
   SetState(WNet::NETWORK_MENU_INIT);

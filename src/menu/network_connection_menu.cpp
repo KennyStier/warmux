@@ -39,6 +39,8 @@
 #include "team/teams_list.h"
 #include "tool/resource_manager.h"
 #include "tool/string_tools.h"
+#include "network/lan_discovery.h"
+#include "interface/mouse.h"
 
 class GameInfoBox : public HBox
 {
@@ -72,6 +74,21 @@ class GameListBox : public SelectBox
 public:
   GameListBox(const Point2i &size) : SelectBox(size, false) { }
   void Select(uint index) { SelectBox::Select(index); }
+  // A click on a game selects it (never deselects: clicking the game that
+  // was picked automatically would otherwise unpick it, and OK would then
+  // use the manual address), and counts as a click on the list itself so
+  // double-clicks are recognised
+  virtual Widget *ClickUp(const Point2i &mousePosition, uint button)
+  {
+    int item = MouseIsOnWhichItem(mousePosition);
+    if (item != -1 && Mouse::IS_CLICK_BUTTON(button)) {
+      if (item != GetSelectedItem())
+        Select(item);
+      ScrollBox::ClickUp(mousePosition, button);
+      return this;
+    }
+    return SelectBox::ClickUp(mousePosition, button);
+  }
   void AddItem(bool selected, bool pwd, const std::string& ip_address,
                const std::string& port, const std::string& name)
   {
@@ -84,8 +101,10 @@ public:
 struct shared_net_info {
   SDL_Thread* thread_refresh;
   SDL_sem* lock;
-  std::list<GameServerInfo> lst_games;
+  std::list<GameServerInfo> lst_games;   // from the index server
+  std::list<GameServerInfo> lan_games;   // found on the local network
   connection_state_t index_conn_state;
+  bool searching_index;  // LAN results are in, the index server's are not
   bool todisplay;
   bool finished;
 } net_info;
@@ -94,6 +113,7 @@ static void InitNetInfo()
 {
   net_info.thread_refresh = NULL;
   net_info.index_conn_state = CONNECTED;
+  net_info.searching_index = false;
   net_info.lock = SDL_CreateSemaphore(1);
   net_info.todisplay = false;
   net_info.finished = true;
@@ -101,35 +121,54 @@ static void InitNetInfo()
 
 static void CleanNetInfo()
 {
-  SDL_SemWait(net_info.lock);
-  SDL_DestroySemaphore(net_info.lock);
+  // Let a running search finish first: it takes the lock when it is done,
+  // so holding (or destroying) the lock while waiting for it would hang
   int status;
   if (net_info.thread_refresh)
     SDL_WaitThread(net_info.thread_refresh, &status);
+  SDL_DestroySemaphore(net_info.lock);
   net_info.thread_refresh = NULL;
   net_info.finished = true;
   net_info.lst_games.clear();
+  net_info.lan_games.clear();
 }
 
 static int RefreshNetInfo(void *)
 {
   MSG_DEBUG("network.refresh_games_list", "Begin");
 
-  // Connect to the index server
+  // Games on the local network first: quick, and needs no index server
+  std::list<GameServerInfo> lan = LanDiscovery::Search();
+  SDL_SemWait(net_info.lock);
+  net_info.lan_games = lan;
+  net_info.lst_games.clear();
+  net_info.index_conn_state = CONNECTED;
+  net_info.searching_index = true;
+  net_info.todisplay = true;
+  SDL_SemPost(net_info.lock);
+  Menu::WakeUpOnCallback();
+
+  // Then the public games from the index server
+  std::list<GameServerInfo> lst;
   connection_state_t conn = IndexServer::GetInstance()->Connect(Constants::WARMUX_VERSION);
-  if (conn != CONNECTED) {
-    SDL_SemWait(net_info.lock);
-    net_info.index_conn_state = conn;
-    net_info.finished = true;
-    SDL_SemPost(net_info.lock);
-    return -1;
+  if (conn == CONNECTED) {
+    lst = IndexServer::GetInstance()->GetHostList(false);
+    IndexServer::GetInstance()->Disconnect();
+    // A LAN game that is also public shows up once, as a LAN game
+    for (std::list<GameServerInfo>::iterator it = lst.begin(); it != lst.end(); ) {
+      bool dup = false;
+      for (std::list<GameServerInfo>::const_iterator l = lan.begin(); l != lan.end(); ++l)
+        if (l->game_name == it->game_name && l->port == it->port)
+          dup = true;
+      it = dup ? lst.erase(it) : ++it;
+    }
   }
 
-  std::list<GameServerInfo> lst = IndexServer::GetInstance()->GetHostList(false);
-  IndexServer::GetInstance()->Disconnect();
-
   SDL_SemWait(net_info.lock);
+  net_info.lan_games = lan;
   net_info.lst_games = lst;
+  net_info.index_conn_state = conn;
+  net_info.searching_index = false;
   net_info.todisplay = true;
   net_info.finished = true;
   SDL_SemPost(net_info.lock);
@@ -323,6 +362,7 @@ NetworkConnectionMenu::NetworkConnectionMenu(network_menu_action_t action) :
     break;
   case NET_CONNECT:
     tabs->SelectTab(0);
+    ThreadRefreshList();
     break;
   default:
     ThreadRefreshList();
@@ -379,24 +419,21 @@ void NetworkConnectionMenu::__RefreshList()
   // Empty the list:
   cl_net_games_lst->Clear();
 
-  if (net_info.index_conn_state != CONNECTED) {
-    DisplayNetError(net_info.index_conn_state);
-    SDL_SemPost(net_info.lock);
-    msg_box->NewMessage(_("Error: Unable to contact the index server to search for an internet game"), c_red);
-    return;
+  // Messages rather than pop-ups: the list refreshes on its own
+  if (!net_info.searching_index) {
+    if (net_info.index_conn_state != CONNECTED)
+      msg_box->NewMessage(_("Error: Unable to contact the index server to search for an internet game"), c_red);
+    if (net_info.lan_games.empty() && net_info.lst_games.empty())
+      msg_box->NewMessage(_("Sorry, currently, no game is waiting for players"));
   }
 
-  if (net_info.lst_games.empty()) {
-      Menu::DisplayError(_("Sorry, currently, no game is waiting for players"));
-      SDL_SemPost(net_info.lock);
-      return;
-  }
-
-  for (std::list<GameServerInfo>::iterator it = net_info.lst_games.begin();
-       it != net_info.lst_games.end(); ++it) {
+  std::list<GameServerInfo>::iterator it;
+  for (it = net_info.lan_games.begin(); it != net_info.lan_games.end(); ++it)
     cl_net_games_lst->AddItem(false, it->passworded, it->ip_address,
                               it->port, it->game_name);
-  }
+  for (it = net_info.lst_games.begin(); it != net_info.lst_games.end(); ++it)
+    cl_net_games_lst->AddItem(false, it->passworded, it->ip_address,
+                              it->port, it->game_name);
   SDL_SemPost(net_info.lock);
 
   if (cl_net_games_lst->Size()) {
