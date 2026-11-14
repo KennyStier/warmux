@@ -29,6 +29,8 @@ class WSocket;
 
 class NetworkClient : public Network
 {
+  mutable std::string server_name; // reverse DNS of the server, looked up once
+
 protected:
   connection_state_t HandShake(WSocket& server_socket);
   virtual void HandleAction(Action* a, DistantComputer* sender);
@@ -47,6 +49,7 @@ public:
   connection_state_t ClientConnect(const std::string& host,
                                    const std::string& port);
 
+  // Host name of the server (reverse DNS), or its IP
   std::string GetServerAddress() const;
 };
 

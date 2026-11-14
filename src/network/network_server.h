@@ -33,6 +33,7 @@ class NetworkServer : public Network
   WSocket server_socket; // Wait for incoming connections on this socket
   int port; // store listening port
   LanResponder lan; // answers LAN discovery probes while players can join
+  int reported_players; // last player count sent to the index server
 
   uint NextPlayerId() const;
   bool HandShake(WSocket& client_socket, std::string& nickname, uint player_id) const;
@@ -54,6 +55,9 @@ public:
   void RejectIncoming();
   void CloseConnection(std::list<DistantComputer*>::iterator closed);
   void SetMaxNumberOfPlayers(uint num) { max_nb_players = num; }
+  // Players in the game, the host included, and the most it can take
+  int NbPlayersInGame() const { return 1 + (int)GetNbPlayersConnected(); }
+  int MaxPlayersInGame() const { return 1 + (int)max_nb_players; }
   void SendMapsList();
 };
 

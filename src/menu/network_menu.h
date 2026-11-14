@@ -14,35 +14,52 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  ******************************************************************************
- * Game menu
+ * The lobby of a network game, once hosted or joined:
+ *
+ *   left   your teams, the map
+ *   right  players (with who is ready, on the host), chat,
+ *          game mode and "Start game" (host) or "Ready" (others)
  *****************************************************************************/
 
 #ifndef NETWORK_MENU_H
 #define NETWORK_MENU_H
 
+#include <string>
+#include <utility>
+#include <vector>
 #include "menu.h"
 
-class Team;
-class SpinButton;
-class NetworkTeamsSelectionBox;
-class TalkBox;
+class FlatButton;
+class FlatPanel;
+class FlatToggle;
+class Label;
 class MapSelectionBox;
-class CheckBox;
-class ComboBox;
-class MultiTabs;
+class NetworkTeamsSelectionBox;
+class ScrollBox;
+class TalkBox;
+class Team;
 
 class NetworkMenu : public Menu
 {
   bool waiting_for_server;
 
-  /* Options controllers */
-  Label* mode_label;
-  Label* connected_players;
-  Label* initialized_players;
-  CheckBox* play_in_loop;
-  ComboBox *opt_game_mode;
+  Label *subtitle;
+  FlatButton *leave;
+
+  /* Players */
+  Label *players_status;
+  ScrollBox *players_list;
+  std::string shown_players;   // to rebuild the list only on change
+  int last_ready;              // players ready, for the chat notices (host)
+
+  /* Options and start */
+  FlatButton *mode_button;     // host only
+  std::vector<std::pair<std::string, std::string> > game_modes;
+  size_t game_mode;
+  FlatToggle *play_in_loop;
+  FlatButton *action_button;   // "Start game" or "Ready"
 
   /* Chat controller */
   TalkBox* msg_box;
@@ -53,17 +70,18 @@ class NetworkMenu : public Menu
   /* Map controllers */
   MapSelectionBox *map_box;
 
-  MultiTabs *tabs;
-
   void PrepareForNewGame();
   void SaveOptions();
   void WaitingForGameMaster();
 
-  void AddGameModeTab();
-  void ChangeGameMode();
+  void ShowGameMode();
+  void UpdateSubtitle();
+  void UpdatePlayers();
+  void UpdateActionButton();
 
   virtual void Draw(const Point2i &mousePosition);
   virtual void HandleEvent(const SDL_Event& evnt);
+  virtual void OnClickUp(const Point2i &mousePosition, int button);
 
   virtual void key_ok();
   virtual bool signal_ok();

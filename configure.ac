@@ -165,14 +165,15 @@ dnl ========================================================================
 SDL_VERSION=2.0.18
 
 dnl === Internet game discovery ============================================
-dnl The original upstream host is gone, so both default to empty (disabled).
+dnl The original upstream host is gone. The index server defaults to the
+dnl project's own (index.warmux.net); the meta URL defaults to empty (disabled).
 dnl Either can also be overridden at runtime via the environment variable of
 dnl the same name.
 
 AC_ARG_WITH([index-server],
             [AS_HELP_STRING([--with-index-server=HOST[:PORT]],
-                            [index server to contact directly for internet games (default: none)])],
-            [WARMUX_INDEX_SERVER="$withval"], [WARMUX_INDEX_SERVER=""])
+                            [index server to contact directly for internet games (default: index.warmux.net, "no" to disable)])],
+            [WARMUX_INDEX_SERVER="$withval"], [WARMUX_INDEX_SERVER="index.warmux.net"])
 test "x$WARMUX_INDEX_SERVER" = "xno" && WARMUX_INDEX_SERVER=""
 AC_SUBST([WARMUX_INDEX_SERVER])
 

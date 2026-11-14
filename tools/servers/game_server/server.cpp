@@ -48,12 +48,11 @@ void NetworkGame::AddCpu(DistantComputer* cpu)
 
   start_waiting = SDL_GetTicks();
 
-  std::string msg = Format("[Game %s] New client connected: %s - total: %zd",
-                           game_name.c_str(), cpu->ToString().c_str(), cpulist.size());
+  DPRINT(INFO, "[Game %s] New client connected: %s - total: %zd",
+         game_name.c_str(), cpu->ToLogString().c_str(), cpulist.size());
 
-  DPRINT(INFO, "%s", msg.c_str());
-
-  SendAdminMessage(msg);
+  SendAdminMessage(Format("[Game %s] New client connected: %s - total: %zd",
+                          game_name.c_str(), cpu->ToString().c_str(), cpulist.size()));
 }
 
 std::list<DistantComputer*>::iterator
@@ -66,7 +65,7 @@ NetworkGame::CloseConnection(std::list<DistantComputer*>::iterator closed)
   it = cpulist.erase(closed);
 
   DPRINT(INFO, "[Game %s] Client disconnected: %s - total: %zd", game_name.c_str(),
-         host->ToString().c_str(), cpulist.size());
+         host->ToLogString().c_str(), cpulist.size());
 
   delete host;
 
@@ -104,7 +103,7 @@ void NetworkGame::ElectGameMaster()
   DistantComputer* host = cpulist.front();
 
   DPRINT(INFO, "[Game %s] New game master: %s", game_name.c_str(),
-         host->ToString().c_str());
+         host->ToLogString().c_str());
 
   Action a(Action::ACTION_NETWORK_SET_GAME_MASTER);
   SendActionToOne(a, host);
@@ -306,7 +305,8 @@ GameServer::GameServer() :
   game_name("dedicated"),
   password(""),
   port(0),
-  clients_socket_set(NULL)
+  clients_socket_set(NULL),
+  reported_players(-1)
 {
 }
 
@@ -382,6 +382,7 @@ bool GameServer::ConnectToIndexServer()
     return false;
   }
 
+  reported_players = -1; // a new connection: send the count again
   bool r = IndexServer::GetInstance()->SendServerStatus(game_name, password != "", port);
   if (!r) {
     char port_str[8];
@@ -407,8 +408,27 @@ bool GameServer::RefreshConnexionToIndexServer()
   }
 
   IndexServer::GetInstance()->Refresh(true);
+  ReportPlayers();
 
   return true;
+}
+
+void GameServer::ReportPlayers()
+{
+  // The list shows one entry for this server: the game being filled, or
+  // full if no game can take players
+  int nb = NetworkGame::MAX_COMPUTERS;
+  std::map<uint, NetworkGame>::const_iterator it;
+  for (it = games.begin(); it != games.end(); ++it) {
+    if (it->second.AcceptNewComputers()) {
+      nb = (int)it->second.GetCpus().size();
+      break;
+    }
+  }
+  if (nb == reported_players)
+    return;
+  reported_players = nb;
+  IndexServer::GetInstance()->SendPlayers(nb, NetworkGame::MAX_COMPUTERS);
 }
 
 bool GameServer::ServerStart(uint _port, uint _max_nb_games, uint max_nb_clients,

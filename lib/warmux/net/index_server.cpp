@@ -33,7 +33,10 @@ IndexServer::IndexServer():
   server_lst(),
   first_server(server_lst.end()),
   current_server(server_lst.end()),
-  hidden_server(false)
+  hidden_server(false),
+  registered(false),
+  pending_players(-1),
+  pending_max(0)
 {
   action_sem = SDL_CreateSemaphore(1);
   ASSERT(action_sem);
@@ -177,6 +180,8 @@ connection_state_t IndexServer::ConnectTo(const std::string& address, const int&
 // Must be called protected by the semaphore
 void IndexServer::__Disconnect()
 {
+  registered = false;
+  pending_players = -1;
   if (hidden_server) {
     hidden_server = false;
     return;
@@ -351,6 +356,10 @@ bool IndexServer::SendServerStatus(const std::string& game_name, bool pwd, int p
   MSG_DEBUG("index_server", "ACK received by '%s' on port %i (pwd=%i)\n",
             game_name.c_str(), port, pwd);
 
+  registered = true;
+  if (pending_players >= 0 && !__SendPlayers(pending_players, pending_max))
+    goto disconnect;
+
   Unlock();
   return true;
 
@@ -361,6 +370,31 @@ disconnect:
   return false;
 }
 
+bool IndexServer::__SendPlayers(int nb_players, int max_players)
+{
+  char buf[64];
+  uint used = 0;
+  NewMsg(TS_MSG_PLAYERS, buf, used);
+  used += WNet::Batch(buf+used, nb_players);
+  used += WNet::Batch(buf+used, max_players);
+  WNet::FinalizeBatch(buf, used);
+  return socket.SendBuffer(buf, used);
+}
+
+void IndexServer::SendPlayers(int nb_players, int max_players)
+{
+  Lock();
+  if (!hidden_server && socket.IsConnected()) {
+    if (!registered) {
+      pending_players = nb_players;
+      pending_max = max_players;
+    } else if (!__SendPlayers(nb_players, max_players)) {
+      __Disconnect();
+    }
+  }
+  Unlock();
+}
+
 std::list<GameServerInfo> IndexServer::GetHostList(bool symbolic_name)
 {
   std::list<GameServerInfo> lst;
@@ -369,7 +403,7 @@ std::list<GameServerInfo> IndexServer::GetHostList(bool symbolic_name)
   Lock();
 
   uint used = 0;
-  NewMsg(TS_MSG_GET_LIST, buffer, used);
+  NewMsg(TS_MSG_GET_LIST_V2, buffer, used);
   if (!socket.IsConnected())
     goto out;
   SendMsg(socket, buffer, used);
@@ -402,6 +436,13 @@ std::list<GameServerInfo> IndexServer::GetHostList(bool symbolic_name)
     game_server_info.passworded = !!(nb);
 
     r = socket.ReceiveStr(game_server_info.game_name, 40);
+    if (!r)
+      goto out;
+
+    r = socket.ReceiveInt(game_server_info.nb_players);
+    if (!r)
+      goto out;
+    r = socket.ReceiveInt(game_server_info.max_players);
     if (!r)
       goto out;
 

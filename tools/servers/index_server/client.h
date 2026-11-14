@@ -45,6 +45,7 @@ class Client : public NetData
   bool handshake_done;
   bool is_hosting;
   int port; // port number where a game is hosted
+  int nb_players, max_players; // of the hosted game, 0/0 if not reported
 
   bool HandShake(const std::string & version);
   bool RegisterWarmuxServer();
@@ -53,7 +54,8 @@ class Client : public NetData
 
   bool SendSignature();
   bool RejectBadVersion();
-  bool SendList();
+  bool SendList(bool with_players = false);
+  bool ReceivePlayers();
   void AddMeToClientsList(const std::string & version);
 
   // Tell other index server that a new warmux server just registered

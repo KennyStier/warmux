@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 #include "gui/horizontal_box.h"
+#include "gui/picture_widget.h"
 
 class Button;
 class CustomTeam;
@@ -33,6 +34,8 @@ class SpinButtonWithPicture;
 class Label;
 class PictureWidget;
 class TextBox;
+
+class AbstractSpinButton;
 
 class TeamBox : public HBox
 {
@@ -47,10 +50,13 @@ class TeamBox : public HBox
   Team * associated_team;
   PictureWidget *team_logo, *player_type;
   Label * team_name;
+  Label * commander_label;
+  bool dark_theme;
+  bool compact;
   TextBox * player_name;
   Button * next_custom_team;
   Button * previous_custom_team;
-  SpinButtonWithPicture * nb_characters;
+  AbstractSpinButton * nb_characters;
 
   std::vector<CustomTeam *> custom_team_list;
   unsigned custom_team_current_id;
@@ -61,7 +67,16 @@ class TeamBox : public HBox
   void UpdatePlayerNameColor();
 
  public:
-  TeamBox(const std::string& player_name, const Point2i &size);
+  // White text, for dark backgrounds
+  void SetDarkTheme();
+  // compact: a card for the network lobby (small stepper, rounded background)
+  TeamBox(const std::string& player_name, const Point2i &size, bool compact = false);
+  static int CompactHeight();
+  PictureWidget::ScalingType PictureType() const;
+  // Click the logo to change team, the icon below to switch human / AI
+  Rectanglei LogoRect() const;
+  Rectanglei PlayerTypeRect() const;
+  virtual void RedrawBackground(const Rectanglei &rect) const;
 
   void SetTeam(Team& _team, bool read_team_values=false);
   void SetAIName(const std::string name);

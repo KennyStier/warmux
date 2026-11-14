@@ -125,6 +125,7 @@ int AppWarmux::Main(void)
     return 0;
   }
 
+  bool reopen_network = false;
   do {
     // Menus are laid out for the current size: follow the window first
     video->ApplyPendingResize();
@@ -150,6 +151,7 @@ int AppWarmux::Main(void)
         NetworkConnectionMenu network_connection_menu(net_action);
         SetCurrentMenu(&network_connection_menu);
         network_connection_menu.Run(skip_menu);
+        reopen_network = network_connection_menu.ClosedForResize();
         break;
       }
       case MainMenu::OPTIONS:
@@ -194,7 +196,9 @@ int AppWarmux::Main(void)
         break;
     }
     SetCurrentMenu(NULL);
-    choice = MainMenu::NONE;
+    // Closed to be laid out again at the new window size
+    choice = reopen_network ? MainMenu::NETWORK : MainMenu::NONE;
+    reopen_network = false;
     skip_menu = false;
     net_action = NetworkConnectionMenu::NET_NOTHING;
   }
@@ -396,7 +400,7 @@ void PrintUsage(const char* cmd_name)
   printf("%s -f|--force-refresh : force game to refresh, even very slowly. Useful to run with valgrind\n", cmd_name);
   printf("%s --size <width>x<height> : set the display resolution\n", cmd_name);
   printf("%s [-p|--play] [-g|--game-mode <game_mode>]"
-         " [-s|--server] [-c|--client [ip]]\n"
+         " [-s|--server] [-c|--client [ip]] [-n|--network]\n"
          " [-i|--index-server [ip/hostname of index server]]\n"
          " [-q|--quick-quit : exit the game immediately after first run\n"
 #ifdef WMX_LOG
@@ -422,6 +426,7 @@ void ParseArgs(int argc, char * argv[])
     {"quick-quit", no_argument,       NULL, 'q'},
     {"client",     optional_argument, NULL, 'c'},
     {"server",     no_argument,       NULL, 's'},
+    {"network",    no_argument,       NULL, 'n'},
     {"index-server", optional_argument, NULL, 'i'},
     {"game-mode",  required_argument, NULL, 'g'},
     {"debug",      required_argument, NULL, 'd'},
@@ -431,7 +436,7 @@ void ParseArgs(int argc, char * argv[])
     {NULL,         no_argument,       NULL,  0 }
   };
 
-  while ((c = getopt_long(argc, argv, "ufhvpqc::si::g:d:rS:R:",
+  while ((c = getopt_long(argc, argv, "ufhvpqc::sni::g:d:rS:R:",
                           long_options, &option_index)) != -1) {
     switch (c) {
     case 'u':
@@ -474,6 +479,10 @@ void ParseArgs(int argc, char * argv[])
       break;
     case 'R':
       replay = optarg;
+      break;
+    case 'n':
+      // Open the Network Game menu, without connecting or hosting
+      choice = MainMenu::NETWORK;
       break;
     case 's':
       choice = MainMenu::NETWORK;

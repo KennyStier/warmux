@@ -24,6 +24,8 @@
 #include "gui/button.h"
 #include "gui/msg_box.h"
 #include "gui/text_box.h"
+#include "gui/flat_widgets.h"
+#include <algorithm>
 #include "gui/horizontal_box.h"
 #include "include/app.h"
 #include "network/admin_commands.h"
@@ -52,6 +54,33 @@ TalkBox::TalkBox(const Point2i& size, Font::font_size_t fsize, Font::font_style_
   tmp2_box->AddWidget(send_txt_bt);
 
   AddWidget(tmp2_box);
+}
+
+TalkBox::TalkBox(const Point2i& size, Font::font_size_t fsize, Font::font_style_t fstyle,
+                 bool /*flat*/) :
+  VBox(size.x, false, false, false)
+{
+  SetNoBorder();
+  const int u = Flat::Unit();
+  SetMargin(u);
+
+  line_to_send_tbox = new TextBox("", 0, Flat::F(Font::FONT_MEDIUM), fstyle);
+  const int send_w = std::max(10 * u, 70);
+  FlatField *field = new FlatField(line_to_send_tbox, size.x - send_w - u);
+  FlatButton *send = new FlatButton(_("Send"), Point2i(send_w, field->GetSizeY()));
+  send_txt_bt = send;
+
+  msg_box = new MsgBox(Point2i(size.x, size.y - field->GetSizeY() - u), fsize, fstyle);
+  msg_box->Widget::SetBorder(transparent_color, 0);
+  msg_box->Widget::SetBackgroundColor(transparent_color);
+  AddWidget(msg_box);
+
+  HBox* line = new HBox(field->GetSizeY(), false, false, false);
+  line->SetNoBorder();
+  line->SetMargin(u);
+  line->AddWidget(field);
+  line->AddWidget(send);
+  AddWidget(line);
 }
 
 void TalkBox::NewMessage(const std::string &msg, const Color& color)

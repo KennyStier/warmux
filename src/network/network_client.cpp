@@ -57,7 +57,7 @@ NetworkClient::~NetworkClient()
 
 void NetworkClient::CloseConnection(std::list<DistantComputer*>::iterator closed)
 {
-  printf("- client disconnected: %s\n", (*closed)->ToString().c_str());
+  printf("- client disconnected: %s\n", (*closed)->ToLogString().c_str());
 
   RemoveRemoteHost(closed);
 }
@@ -205,5 +205,7 @@ std::string NetworkClient::GetServerAddress() const
   if (sockets.size() != 1)
     return "??";
 
-  return (*sockets.begin())->GetAddress();
+  if (server_name.empty())
+    server_name = (*sockets.begin())->GetHostName();
+  return server_name;
 }

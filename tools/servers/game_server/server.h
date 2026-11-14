@@ -67,7 +67,9 @@ public:
   std::list<DistantComputer*>& GetCpus() { return cpulist; }
   const std::list<DistantComputer*>& GetCpus() const { return cpulist; }
 
-  bool AcceptNewComputers() const { return !game_started && cpulist.size() < 8; }
+  // Computers (players) a game takes before it fills up
+  static const uint MAX_COMPUTERS = 8;
+  bool AcceptNewComputers() const { return !game_started && cpulist.size() < MAX_COMPUTERS; }
 
   uint NextPlayerId() const;
   void ElectGameMaster();
@@ -114,6 +116,9 @@ private:
 
   bool ConnectToIndexServer();
   bool RefreshConnexionToIndexServer();
+  // Players in the game that new players join, for the online list
+  int reported_players;
+  void ReportPlayers();
 
 public:
   bool ServerStart(uint port, uint max_nb_games, uint max_nb_clients,

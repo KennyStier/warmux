@@ -71,6 +71,10 @@ enum IndexServerMsg
   TS_MSG_WIS_VERSION,    // Send the server version
   TS_MSG_JOIN_LEAVE,     // Send this when a warmux server joined or left the index server
 
+  //********  Added in 12.0.2 (older clients never send them)  *************************
+  TS_MSG_PLAYERS,        // A hosting game's player count: int players, int max (no answer)
+  TS_MSG_GET_LIST_V2,    // Like TS_MSG_GET_LIST, each game followed by int players, int max
+
   TS_LAST_MSG // Don't send this
 };
 

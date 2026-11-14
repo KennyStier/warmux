@@ -99,6 +99,8 @@ warmux_SOURCES = \
         gui/figure_widget.cpp \
         gui/figure_widget.h \
         gui/file_list_box.cpp \
+        gui/flat_widgets.cpp \
+        gui/flat_widgets.h \
         gui/file_list_box.h \
         gui/graph_canvas.cpp \
         gui/graph_canvas.h \

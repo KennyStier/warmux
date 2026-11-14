@@ -633,7 +633,49 @@ void Video::Present()
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_SetTextureBlendMode(texture, mode);
   }
+  DebugScreenshot();
   SDL_RenderPresent(renderer);
+}
+
+static Uint32 SDLCALL DebugScreenshotNudge(Uint32 interval, void *)
+{
+  SDL_Event e;
+  SDL_zero(e);
+  e.type = SDL_USEREVENT;
+  SDL_PushEvent(&e);
+  return interval;
+}
+
+// Developer aid: WARMUX_SCREENSHOT=<file.png> saves what is on screen after
+// WARMUX_SCREENSHOT_DELAY ms (default 2000) and quits. With
+// SDL_VIDEODRIVER=offscreen it captures menus without opening a window.
+void Video::DebugScreenshot()
+{
+  static const char *file = SDL_getenv("WARMUX_SCREENSHOT");
+  static Uint32 start = SDL_GetTicks();
+  static SDL_TimerID nudge = 0;
+  if (!file || !*file)
+    return;
+  if (!nudge) // menus that idle only redraw on events: wake them up
+    nudge = SDL_AddTimer(250, DebugScreenshotNudge, NULL);
+  const char *d = SDL_getenv("WARMUX_SCREENSHOT_DELAY");
+  Uint32 delay = d ? (Uint32)atoi(d) : 2000;
+  if (SDL_GetTicks() - start < delay)
+    return;
+
+  int w, h;
+  if (SDL_GetRendererOutputSize(renderer, &w, &h) == 0) {
+    SDL_Surface *shot = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, SDL_PIXELFORMAT_ARGB8888);
+    if (shot && SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_ARGB8888,
+                                     shot->pixels, shot->pitch) == 0
+        && IMG_SavePNG(shot, file) == 0)
+      printf("Saved screenshot %s (%dx%d)\n", file, w, h);
+    else
+      fprintf(stderr, "Screenshot failed: %s\n", SDL_GetError());
+    if (shot)
+      SDL_FreeSurface(shot);
+  }
+  exit(0);
 }
 
 static int SDLCALL InputFilter(void *data, SDL_Event *event)

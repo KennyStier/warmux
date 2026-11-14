@@ -58,6 +58,8 @@ class MapSelectionBox : public VBox
   std::vector<InfoMap*> common;
 
  public:
+  // White text, for dark backgrounds
+  void SetDarkTheme();
   void ChangeMapDelta(int delta_index);
   MapSelectionBox(const Point2i &size, bool show_border, bool _display_only = false);
 

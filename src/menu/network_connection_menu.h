@@ -14,28 +14,34 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  ******************************************************************************
- * Network connection menu: this menu allows the user to choose between
- * hosting a game or connecting to a server.
+ * The Network Game menu: finding a game (on the local network or through
+ * the index server), hosting one, or joining one by address.
+ *
+ *   left   games found, refreshed on their own, each with a Join button
+ *   right  "Host a game" (name, optional password, list online)
+ *          "Join by address" (host[:port], password if the game has one)
  *****************************************************************************/
 
 #ifndef NETWORK_CONNECTION_MENU_H
 #define NETWORK_CONNECTION_MENU_H
 
-#include <list>
+#include <map>
+#include <string>
+#include <vector>
+#include <SDL_timer.h>
 #include "menu.h"
 #include "network/network.h"
 #include <WARMUX_index_server.h> // for GameServerInfo
 
-// Forward declarations
-class Button;
-class TextBox;
-class PasswordBox;
-class MsgBox;
-class CheckBox;
-class MultiTabs;
+class FlatButton;
+class FlatPanel;
+class FlatToggle;
 class GameListBox;
+class Label;
+class PasswordBox;
+class TextBox;
 
 class NetworkConnectionMenu : public Menu
 {
@@ -47,47 +53,50 @@ public:
   } network_menu_action_t;
 
 private:
-  MultiTabs * tabs;
+  network_menu_action_t action;
 
-  TextBox* srv_port_number;
-  TextBox* srv_game_name;
-  PasswordBox* srv_game_pwd;
-  CheckBox* srv_internet_server;
+  // Games
+  GameListBox *games;
+  Label *games_status;
+  std::map<FlatButton*, GameServerInfo> join_buttons;
+  std::vector<std::string> shown_games; // to rebuild the list only on change
 
-  Button* cl_refresh_net_games;
-  Label* refresh_net_games_label;
-  GameListBox* cl_net_games_lst;
-  PasswordBox* cl_net_server_pwd;
+  // Host a game
+  TextBox *host_name;
+  PasswordBox *host_pwd;
+  FlatToggle *host_public;
+  FlatButton *host_start;
 
-  TextBox* cl_server_address;
-  TextBox* cl_port_number;
-  PasswordBox* cl_server_pwd;
+  // Join by address
+  TextBox *join_address;
+  PasswordBox *join_pwd;
+  FlatButton *join_go;
+  Label *join_hint;
 
-  MsgBox *msg_box;
+  FlatButton *back;
 
-  uint m_last_click_on_games_lst;
-  uint m_Double_click_interval;
+  SDL_TimerID refresh_timer;
+  Uint32 last_search_end;
 
   virtual void OnClickUp(const Point2i &mousePosition, int button);
   virtual void HandleEvent(const SDL_Event& evnt);
+  virtual void Draw(const Point2i &mousePosition);
 
-  void DisplayNetError(connection_state_t conn);
-
+  // Laid out for the window size: rebuilt (by main.cpp) when it changes
+  virtual bool RebuildOnResize() const { return true; }
   virtual bool signal_ok();
   virtual bool signal_cancel();
 
-  void __RefreshList();
-
-  bool HostingServer(const std::string& port,
-                     const std::string& game_name,
-                     const std::string& passwd,
-                     bool internet);
-  bool ConnectToClient(const std::string& srv_address,
-                       const std::string& port,
-                       const std::string& passwd);
-
-  static SDL_Thread* thread_refresh;
+  void ShowGames();
   void ThreadRefreshList();
+  void DisplayNetError(connection_state_t conn);
+
+  bool Host();
+  bool JoinGame(const GameServerInfo &game, const std::string &password);
+  bool JoinAddress();
+  bool Connect(const std::string& address, const std::string& port,
+               const std::string& password);
+  void PlayNetworkGame(); // the lobby, then back here
 
 public:
   NetworkConnectionMenu(network_menu_action_t action);

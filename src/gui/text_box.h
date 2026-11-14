@@ -32,6 +32,7 @@ class TextBox : public Label
 protected:
   uint max_nb_chars;
   std::string::size_type cursor_pos;
+  bool cursor_only_focused;
   virtual void BasicSetText(std::string const & new_txt);
 
 public:
@@ -47,6 +48,8 @@ public:
 
   void SetText(std::string const & new_txt);
   void SetMaxNbChars(uint nb_chars) { max_nb_chars = nb_chars; }
+  // Draw the cursor only while the text box has the focus
+  void SetCursorOnlyWhenFocused(bool b) { cursor_only_focused = b; }
 
   // From widget
   virtual bool SendKey(const SDL_Keysym & key);

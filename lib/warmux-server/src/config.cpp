@@ -130,7 +130,7 @@ void ServerConfig::Parse(std::ifstream & fin)
 
     // val is considered to be an int if it doesn't contain
     // a '.' (ip address have to be handled as string...
-    if(val.find('.',0) == std::string::npos
+    if(!val.empty() && val.find('.',0) == std::string::npos
        && ((val.at(0) >= '0' && val.at(0) <= '9')
            ||   val.at(0) == '-' )) {
       int nbr = atoi(val.c_str());

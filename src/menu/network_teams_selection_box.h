@@ -44,7 +44,7 @@ class NetworkTeamsSelectionBox : public TeamsSelectionBox
   void UpdateNbTeams();
 
 public:
-  NetworkTeamsSelectionBox(const Point2i &size, bool w_border);
+  NetworkTeamsSelectionBox(const Point2i &size, bool w_border, bool compact = false);
 
   virtual void ValidTeamsSelection();
   virtual Widget* ClickUp(const Point2i &mousePosition, uint button);

@@ -109,7 +109,10 @@ public:
   bool AddToTmpSocketSet();
   void RemoveFromTmpSocketSet();
 
+  // Numeric IP address of the peer (no DNS lookup)
   const std::string GetAddress();
+  // Host name of the peer from reverse DNS, or its IP if it has none
+  const std::string GetHostName();
   bool IsReady(int timeout = 0) const;
   bool IsReady(int timeout, bool force_check_activity) const;
 

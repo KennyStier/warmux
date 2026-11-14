@@ -105,7 +105,7 @@ automake_sources(GAME_SOURCES ${TOP}/src/Makefile.am ${TOP}/src)
 automake_sources(LIBWARMUX_SOURCES ${TOP}/lib/warmux/Makefile.am ${TOP}/lib/warmux)
 automake_sources(FIXEDPOINT_SOURCES ${TOP}/lib/fixedpoint/Makefile.am ${TOP}/lib/fixedpoint)
 
-set(WARMUX_INDEX_SERVER "")
+set(WARMUX_INDEX_SERVER "index.warmux.net")
 set(WARMUX_META_URL "")
 configure_file(${TOP}/lib/warmux/include/WARMUX_net_defaults.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/include/WARMUX_net_defaults.h @ONLY)

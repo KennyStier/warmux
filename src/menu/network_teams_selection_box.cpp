@@ -36,8 +36,9 @@
 #include "team/team.h"
 #include "tool/string_tools.h"
 
-NetworkTeamsSelectionBox::NetworkTeamsSelectionBox(const Point2i &_size, bool w_border) :
-  TeamsSelectionBox(_size, true, w_border)
+NetworkTeamsSelectionBox::NetworkTeamsSelectionBox(const Point2i &_size, bool w_border,
+                                                   bool compact) :
+  TeamsSelectionBox(_size, true, w_border, compact)
 {
   local_teams_nb->SetMaxValue(GameMode::GetInstance()->GetMaxTeamsPerNetworkPlayer());
 
@@ -73,7 +74,7 @@ Widget* NetworkTeamsSelectionBox::ClickUp(const Point2i &mousePosition, uint but
       if (teams_selections[i]->Contains(mousePosition) &&
           teams_selections[i]->IsLocal()) {
         Widget * at = teams_selections[i];
-        Rectanglei r(at->GetPosition(), Point2i(38,38));
+        Rectanglei r = teams_selections[i]->LogoRect();
 
         if (r.Contains(mousePosition)) {
           if (button == Mouse::BUTTON_LEFT() || button == WX_BUTTON_WHEELDOWN) {
@@ -83,10 +84,7 @@ Widget* NetworkTeamsSelectionBox::ClickUp(const Point2i &mousePosition, uint but
           }
           return at;
         } else {
-          Rectanglei r2(teams_selections.at(i)->GetPositionX(),
-                        teams_selections.at(i)->GetPositionY() + 39,
-                        38,
-                        30);
+          Rectanglei r2 = teams_selections[i]->PlayerTypeRect();
           if (r2.Contains(mousePosition)) {
             teams_selections[i]->SwitchPlayerType();
             return at;

@@ -759,12 +759,21 @@ bool WSocket::IsReady(int timeout) const
 const std::string WSocket::GetAddress()
 {
   ASSERT(socket != NULL);
-  // Resolve the address only once,
+  // Format the address only once,
   // as this method get called by some debug logging code quite often.
   if (!address_field_valid) {
     IPaddress* ip = SDLNet_TCP_GetPeerAddress(socket);
-    address = SDLNet_TryToResolveIP(ip);
+    const unsigned char* b = (const unsigned char*)&ip->host;
+    char buf[16];
+    snprintf(buf, sizeof(buf), "%u.%u.%u.%u", b[0], b[1], b[2], b[3]);
+    address = buf;
     address_field_valid = true;
   }
   return address;
+}
+
+const std::string WSocket::GetHostName()
+{
+  ASSERT(socket != NULL);
+  return SDLNet_TryToResolveIP(SDLNet_TCP_GetPeerAddress(socket));
 }

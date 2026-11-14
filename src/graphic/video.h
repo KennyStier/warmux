@@ -146,6 +146,7 @@ public:
   void Flip(void);
   // Show the last uploaded frame again (after an expose or resize)
   void Present(void);
+  void DebugScreenshot();
 
   // Convert between window pixels and game (logical) coordinates
   Point2i WindowToGame(int x, int y) const;

@@ -77,6 +77,9 @@ Client::Client(int client_fd, unsigned int & ip)
 
   handshake_done = false;
   is_hosting = false;
+  port = 0;
+  nb_players = 0;
+  max_players = 0;
   Host(client_fd, ip);
 
   DPRINT(MSG, "Client: Creation of client(%d, %d)\n", client_fd, ip);
@@ -228,11 +231,16 @@ bool Client::HandleMsg(enum IndexServerMsg msg_id)
       break;
 
     case TS_MSG_GET_LIST:
+    case TS_MSG_GET_LIST_V2:
       if (is_hosting) {
         r = false;
       } else {
-        r = SendList();
+        r = SendList(msg_id == TS_MSG_GET_LIST_V2);
       }
+      break;
+
+    case TS_MSG_PLAYERS:
+      r = is_hosting && ReceivePlayers();
       break;
 
     default:
@@ -307,7 +315,21 @@ bool Client::RejectBadVersion()
   return false;
 }
 
-bool Client::SendList()
+bool Client::ReceivePlayers()
+{
+  int nb, max;
+  if (!ReceiveInt(nb) || !ReceiveInt(max))
+    return false;
+  // Keep it sane: it is only shown in the list
+  if (nb < 0 || max < 0 || nb > 999 || max > 999)
+    return false;
+  nb_players = nb;
+  max_players = max;
+  DPRINT(MSG, "game %s: %d/%d players", options.GetGameName().c_str(), nb, max);
+  return true;
+}
+
+bool Client::SendList(bool with_players)
 {
   DPRINT(MSG, "Sending list...");
 
@@ -339,6 +361,9 @@ bool Client::SendList()
 	return false;
       if (!SendStr(client->second->options.GetGameName()))
 	  return false;
+      if (with_players && (!SendInt(client->second->nb_players)
+                           || !SendInt(client->second->max_players)))
+        return false;
     }
   }
 
@@ -353,6 +378,8 @@ bool Client::SendList()
     if (!SendInt(client->second.options.UsePassword()))
       return false;
     if (!SendStr(client->second.options.GetGameName()))
+      return false;
+    if (with_players && (!SendInt(0) || !SendInt(0)))
       return false;
   }
 

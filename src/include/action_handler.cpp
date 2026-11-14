@@ -85,7 +85,7 @@ static void FAIL_IF_GAMEMASTER(Action *a)
             "Game Master received an action (%s) that is normally sent only by the game master only to a client,"
             " we are going to force disconnection of evil client: %s",
             ActionHandler::GetInstance()->GetActionName(a->GetType()).c_str(),
-            a->GetCreator()->ToString().c_str());
+            a->GetCreator()->ToLogString().c_str());
 
     a->GetCreator()->ForceDisconnection();
   }
@@ -282,7 +282,7 @@ static void DisconnectOnError(enum net_error error)
 static void Error_in_Network_Check_Phase2(Action *a, enum net_error error)
 {
   std::string str = Format(_("Error initializing network: Client %s does not agree with you!! - %s"),
-                           a->GetCreator()->GetAddress().c_str(),
+                           a->GetCreator()->ToString().c_str(),
                            NetErrorId_2_String(error).c_str());
   std::cerr << str << std::endl;
   DisconnectOnError(error);
@@ -950,7 +950,7 @@ static void Action_Network_Ping(Action */*a*/)
 
 static void _Info_ConnectHost(const std::string& host_info)
 {
-  // For translators: extended in "<nickname> (<host>) just connected
+  // For translators: extended in "<nickname> just connected
   std::string msg = Format(_("%s just connected"), host_info.c_str());
   std::cerr << msg.c_str() << std::endl;
 

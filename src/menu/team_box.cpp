@@ -22,6 +22,7 @@
 #include "ai/ai_stupid_player.h"
 #include "graphic/video.h"
 #include "gui/button.h"
+#include "gui/flat_widgets.h"
 #include "gui/label.h"
 #include "gui/picture_widget.h"
 #include "gui/spin_button_picture.h"
@@ -35,14 +36,31 @@
 #include "team/custom_teams_list.h"
 #include "tool/resource_manager.h"
 
-TeamBox::TeamBox(const std::string& _player_name, const Point2i& _size) :
+// Logo (38) + player type icon (30) + padding
+int TeamBox::CompactHeight()
+{
+  return Flat::S(38) + 2 + Flat::S(30) + 2 * Flat::Unit();
+}
+
+// Cards scale their pictures with the menu (see Flat::Scale())
+PictureWidget::ScalingType TeamBox::PictureType() const
+{
+  return compact ? PictureWidget::FIT_SCALING : PictureWidget::NO_SCALING;
+}
+
+TeamBox::TeamBox(const std::string& _player_name, const Point2i& _size, bool _compact) :
   HBox(_size.y, false, false, false),
-  ai_name(NO_AI_NAME)
+  ai_name(NO_AI_NAME),
+  dark_theme(false),
+  compact(_compact)
 {
   associated_team = NULL;
 
-  SetMargin(2);
-  SetNoBorder();
+  SetMargin(compact ? Flat::Unit() : 2);
+  if (compact)
+    Widget::SetBorder(transparent_color, Flat::Unit()); // padding
+  else
+    SetNoBorder();
   Widget::SetBackgroundColor(transparent_color);
 
   Profile *res = GetResourceManager().LoadXMLProfile("graphism.xml", false);
@@ -52,7 +70,9 @@ TeamBox::TeamBox(const std::string& _player_name, const Point2i& _size) :
   tmp_logo_box->SetMargin(1);
   tmp_logo_box->SetNoBorder();
 
-  team_logo = new PictureWidget(Point2i(38, 38));
+  const int logo = compact ? Flat::S(38) : 38;
+  const int type_h = compact ? Flat::S(30) : 30;
+  team_logo = new PictureWidget(Point2i(logo, logo));
   tmp_logo_box->AddWidget(team_logo);
 
   player_local_ai_surf = GetResourceManager().LoadImage(res, "menu/player_local_ai");
@@ -60,33 +80,39 @@ TeamBox::TeamBox(const std::string& _player_name, const Point2i& _size) :
   player_remote_ai_surf = GetResourceManager().LoadImage(res, "menu/player_remote_ai");
   player_remote_human_surf = GetResourceManager().LoadImage(res, "menu/player_remote_human");
 
-  player_type =  new PictureWidget(Point2i(38, 30));
-  player_type->SetSurface(player_local_ai_surf);
+  player_type =  new PictureWidget(Point2i(logo, type_h));
+  player_type->SetSurface(player_local_ai_surf, PictureType());
   tmp_logo_box->AddWidget(player_type);
 
   AddWidget(tmp_logo_box);
 
   /********    Center box: team name, commander   *********/
-  int width = _size.x - (2*2+(38+2*2)+(110+2*2));
+  int width = compact ? _size.x - 2 * Flat::Unit() - logo - 4 - Flat::Unit()
+                      : _size.x - (2*2+(38+2*2)+(110+2*2));
   Box * tmp_player_box = new VBox(_size.y, false, false, false);
-  tmp_player_box->SetMargin(0);
+  tmp_player_box->SetMargin(compact ? 2 : 0);
   tmp_player_box->SetNoBorder();
 
   previous_player_name = "team";
   team_name = new Label(previous_player_name, width,
-                        Font::FONT_MEDIUM, Font::FONT_BOLD);
+                        compact ? Flat::F(Font::FONT_MEDIUM) : Font::FONT_MEDIUM, Font::FONT_BOLD);
   tmp_player_box->AddWidget(team_name);
 
   /********    Names: "Head commander" + text/custom team    *******/
-  tmp_player_box->AddWidget(new Label(_("Head commander"), width,
-                                      Font::FONT_SMALL, Font::FONT_BOLD));
+  if (compact) {
+    commander_label = NULL; // the name field speaks for itself
+  } else {
+    commander_label = new Label(_("Head commander"), width,
+                                Font::FONT_SMALL, Font::FONT_BOLD);
+    tmp_player_box->AddWidget(commander_label);
+  }
 
   custom_team_list = GetCustomTeamsList().GetList();
   custom_team_current_id = 0;
 
   if (custom_team_list.empty()) {
     player_name = new TextBox(_player_name, width,
-                              Font::FONT_SMALL, Font::FONT_BOLD);
+                              compact ? Flat::F(Font::FONT_SMALL) : Font::FONT_SMALL, Font::FONT_BOLD);
     tmp_player_box->AddWidget(player_name);
 
     next_custom_team = NULL;
@@ -108,6 +134,16 @@ TeamBox::TeamBox(const std::string& _player_name, const Point2i& _size) :
     tmp_name_box->AddWidget(next_custom_team);
     tmp_player_box->AddWidget(tmp_name_box);
   }
+  if (compact) {
+    player_name->SetBorder(Color(255, 255, 255, 50), 1);
+    nb_characters = new FlatStepper(_("Characters"), width, 6, 1, 1, 10);
+    tmp_player_box->AddWidget(nb_characters);
+    tmp_player_box->Pack(); // boxes measure their children before packing them
+    AddWidget(tmp_player_box);
+    tmp_logo_box->Pack();
+    Pack();
+    return;
+  }
   AddWidget(tmp_player_box);
 
 
@@ -115,6 +151,28 @@ TeamBox::TeamBox(const std::string& _player_name, const Point2i& _size) :
   nb_characters = new SpinButtonWithPicture(_("Number of characters"), "menu/ico_play",
                                             Point2i(110, 120), 6, 1, 1, 10);
   AddWidget(nb_characters);
+}
+
+Rectanglei TeamBox::LogoRect() const
+{
+  return Rectanglei(team_logo->GetPosition(), team_logo->GetSize());
+}
+
+Rectanglei TeamBox::PlayerTypeRect() const
+{
+  return Rectanglei(player_type->GetPosition(), player_type->GetSize());
+}
+
+void TeamBox::RedrawBackground(const Rectanglei &rect) const
+{
+  if (!compact) {
+    HBox::RedrawBackground(rect);
+    return;
+  }
+  if (ct)
+    ct->RedrawBackground(rect);
+  if (IsVisible())
+    Flat::RedrawRounded(*this, rect, Flat::Unit(), Flat::INSET);
 }
 
 void TeamBox::ClearTeam()
@@ -240,18 +298,27 @@ void TeamBox::SetTeam(Team& _team, bool read_team_values)
   associated_team = &_team;
 
   if (_team.IsRemote()) {
-    team_name->SetFont(dark_gray_color, Font::FONT_MEDIUM, Font::FONT_BOLD, false);
+    team_name->SetFont(dark_theme ? Color(180, 192, 210, 255) : dark_gray_color,
+                       compact ? Flat::F(Font::FONT_MEDIUM) : Font::FONT_MEDIUM,
+                       Font::FONT_BOLD, false);
 
     // translators: this is the team listing and will expand in a context like "OOo team - Remote"
-    team_name->SetText(Format(_("%s Team - Remote"), _team.GetName().c_str()));
+    team_name->SetText(compact ? Format(_("%s Team"), _team.GetName().c_str())
+                               : Format(_("%s Team - Remote"), _team.GetName().c_str()));
+    if (compact)
+      static_cast<FlatStepper*>(nb_characters)->SetEnabled(false);
 
     if (previous_custom_team) {
       previous_custom_team->SetVisible(false);
       next_custom_team->SetVisible(false);
     }
   } else {
-    team_name->SetFont(primary_red_color, Font::FONT_MEDIUM, Font::FONT_BOLD, true);
+    team_name->SetFont(dark_theme ? white_color : primary_red_color,
+                       compact ? Flat::F(Font::FONT_MEDIUM) : Font::FONT_MEDIUM,
+                       Font::FONT_BOLD, true);
     team_name->SetText(Format(_("%s Team"), _team.GetName().c_str()));
+    if (compact)
+      static_cast<FlatStepper*>(nb_characters)->SetEnabled(true);
 
     if (previous_custom_team) {
       previous_custom_team->SetVisible(true);
@@ -259,7 +326,7 @@ void TeamBox::SetTeam(Team& _team, bool read_team_values)
     }
   }
   UpdatePlayerType();
-  team_logo->SetSurface(_team.GetFlag());
+  team_logo->SetSurface(_team.GetFlag(), PictureType());
 
   if (read_team_values) {
     player_name->SetText(_team.GetPlayerName());
@@ -284,15 +351,15 @@ void TeamBox::UpdatePlayerType()
   bool is_human = ai_name == NO_AI_NAME;
   if (associated_team->IsLocal()) {
     if (is_human) {
-      player_type->SetSurface(player_local_human_surf);
+      player_type->SetSurface(player_local_human_surf, PictureType());
     } else {
-      player_type->SetSurface(player_local_ai_surf);
+      player_type->SetSurface(player_local_ai_surf, PictureType());
     }
   } else {
     if (is_human) {
-      player_type->SetSurface(player_remote_human_surf);
+      player_type->SetSurface(player_remote_human_surf, PictureType());
     } else {
-      player_type->SetSurface(player_remote_ai_surf);
+      player_type->SetSurface(player_remote_ai_surf, PictureType());
     }
   }
 }
@@ -355,4 +422,15 @@ void TeamBox::SwitchPlayerType()
   if (Network::GetInstance()->IsConnected()) {
     ValidOptions();
   }
+}
+
+void TeamBox::SetDarkTheme()
+{
+  dark_theme = true;
+  team_name->SetColor(white_color);
+  if (commander_label)
+    commander_label->SetColor(Color(180, 192, 210, 255));
+  if (!compact)
+    static_cast<SpinButtonWithPicture*>(nb_characters)->SetLabelColor(Color(180, 192, 210, 255));
+  NeedRedrawing();
 }

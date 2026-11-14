@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <vector>
 #include <sstream>
@@ -101,7 +102,8 @@ void LanResponder::Close()
   socket = NULL;
 }
 
-void LanResponder::Poll(const std::string &game_name, int tcp_port, bool passworded)
+void LanResponder::Poll(const std::string &game_name, int tcp_port, bool passworded,
+                        int nb_players, int max_players)
 {
   if (!socket)
     return;
@@ -116,7 +118,9 @@ void LanResponder::Poll(const std::string &game_name, int tcp_port, bool passwor
     std::ostringstream reply;
     reply << LAN_MAGIC << "\nGAME\n" << Constants::WARMUX_VERSION << "\n"
           << tcp_port << "\n" << (passworded ? 1 : 0) << "\n"
-          << game_name.substr(0, 200) << "\n";
+          << game_name.substr(0, 200) << "\n"
+          // Since 12.0.2; older versions read only the lines above
+          << nb_players << "\n" << max_players << "\n";
     // Straight back to the sender's address and port
     SetData(packet, reply.str());
     SDLNet_UDP_Send(socket, -1, packet);
@@ -175,6 +179,10 @@ std::list<GameServerInfo> LanDiscovery::Search(uint wait_ms)
       info.port = l[3];
       info.passworded = (l[4] == "1");
       info.game_name = l[5];
+      if (l.size() >= 8) {
+        info.nb_players = atoi(l[6].c_str());
+        info.max_players = atoi(l[7].c_str());
+      }
 
       bool known = false;
       for (std::list<GameServerInfo>::const_iterator it = games.begin();

@@ -35,13 +35,15 @@
 
 #include "include/action_handler.h"
 #include "network/network_server.h"
+#include <WARMUX_index_server.h>
 #include "tool/string_tools.h"
 
 //-----------------------------------------------------------------------------
 
 NetworkServer::NetworkServer(const std::string& game_name, const std::string& password) :
   Network(game_name, password),
-  port(0)
+  port(0),
+  reported_players(-1)
 {
 #ifdef LOG_NETWORK
   fin = open("./network_server.in", O_CREAT | O_TRUNC | O_WRONLY | O_SYNC, S_IRUSR | S_IWUSR | S_IRGRP);
@@ -96,8 +98,16 @@ void NetworkServer::WaitActionSleep()
 {
   if (server_socket.IsConnected()) {
     // Let LAN players find the game while it is still in the lobby
-    if (GetState() == WNet::NETWORK_MENU_INIT || GetState() == WNet::NETWORK_MENU_OK)
-      lan.Poll(GetGameName(), port, !GetPassword().empty());
+    if (GetState() == WNet::NETWORK_MENU_INIT || GetState() == WNet::NETWORK_MENU_OK) {
+      lan.Poll(GetGameName(), port, !GetPassword().empty(),
+               NbPlayersInGame(), MaxPlayersInGame());
+
+      // Keep the player count in the online list up to date
+      if (reported_players != NbPlayersInGame()) {
+        reported_players = NbPlayersInGame();
+        IndexServer::GetInstance()->SendPlayers(reported_players, MaxPlayersInGame());
+      }
+    }
 
 
     // Check for an incoming connection
@@ -156,6 +166,7 @@ connection_state_t NetworkServer::StartServer(const std::string &net_port, uint 
     return CONN_REJECTED;
   }
 
+  reported_players = -1;
   lan.Open();
   NetworkThread::Start();
 

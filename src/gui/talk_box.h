@@ -36,10 +36,13 @@ class TalkBox : public VBox
 {
   MsgBox* msg_box;
   TextBox* line_to_send_tbox;
-  Button* send_txt_bt;
+  Widget* send_txt_bt;
 
 public:
   TalkBox(const Point2i& size, Font::font_size_t font_size, Font::font_style_t font_style);
+  // Flat look (see gui/flat_widgets.h): no frame, padded input, "Send" button
+  TalkBox(const Point2i& size, Font::font_size_t font_size, Font::font_style_t font_style,
+          bool flat);
   virtual ~TalkBox(void) {}
 
   void NewMessage(const std::string &msg, const Color& color = white_color);

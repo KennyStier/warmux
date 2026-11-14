@@ -1520,7 +1520,7 @@ Optional Packages:
                           ${datadir}/font/Ubuntu-R.ttf)
   --with-index-server=HOST:PORT
                           index server to contact directly for internet games
-                          (default: none)
+                          (default: index.warmux.net, "no" to disable)
   --with-meta-url=URL     base URL publishing server_list and last version
                           (default: none)
   --with-libcurl=DIR      look for the curl library in DIR
@@ -10523,7 +10523,7 @@ if test ${with_index_server+y}
 then :
   withval=$with_index_server; WARMUX_INDEX_SERVER="$withval"
 else case e in #(
-  e) WARMUX_INDEX_SERVER="" ;;
+  e) WARMUX_INDEX_SERVER="index.warmux.net" ;;
 esac
 fi
 

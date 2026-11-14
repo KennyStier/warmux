@@ -49,6 +49,7 @@ class SpinButtonWithPicture : public AbstractSpinButton
                         int value, int step,
                         int min_value, int max_value);
   virtual ~SpinButtonWithPicture();
+  void SetLabelColor(const Color &c);
 
   // From Widget
   virtual void Pack();

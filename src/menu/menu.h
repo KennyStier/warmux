@@ -56,6 +56,8 @@ public:
                 const xmlNode * rootMenuNode);
 
   void Run(bool skip=false);
+  // The menu closed because the window was resized (see RebuildOnResize())
+  bool ClosedForResize() const { return closed_for_resize; }
   virtual void RedrawBackground(const Rectanglei& rect) const;
   virtual void RedrawMenu();
 
@@ -92,6 +94,7 @@ protected:
   Button *b_cancel;
   Button *b_ok;
   bool close_menu;
+  bool closed_for_resize;
   Point2i last_mouse_position;
   /* Actions buttons  */
   HBox *actions_buttons;

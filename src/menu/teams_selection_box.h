@@ -32,14 +32,20 @@ class TeamBox;
 
 const uint MAX_NB_TEAMS=8;
 
+class AbstractSpinButton;
+
 class TeamScrollBox : public ScrollBox
 {
   // We need a real copy around for when we get destroyed
   std::vector<TeamBox*> teams;
   // Number of teams to be displayed
   uint  count;
+  // Teams side by side, in rows of `cols`
+  uint  cols;
+  std::vector<HBox*> rows;
+  void EmptyList();
 public:
-  TeamScrollBox(const std::vector<TeamBox*>& teams, const Point2i &size);
+  TeamScrollBox(const std::vector<TeamBox*>& teams, const Point2i &size, uint cols = 1);
   ~TeamScrollBox();
   void SetNbTeams(uint nb);
 };
@@ -51,11 +57,15 @@ class TeamsSelectionBox : public HBox
 {
 protected:
   TeamScrollBox* list_box;
-  SpinButtonWithPicture *local_teams_nb;
+  AbstractSpinButton *local_teams_nb;
+  bool compact;
   std::vector<TeamBox*> teams_selections;
 
 public:
-  TeamsSelectionBox(const Point2i &size, bool network, bool w_border);
+  // White text, for dark backgrounds
+  void SetDarkTheme();
+  // compact: teams as cards in a grid, with a small "- n +" for their number
+  TeamsSelectionBox(const Point2i &size, bool network, bool w_border, bool compact = false);
 
   virtual void Draw(const Point2i &mousePosition);
 

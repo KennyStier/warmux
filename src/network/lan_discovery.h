@@ -54,7 +54,8 @@ public:
   bool Open();
   void Close();
   // Answer any waiting probes (non-blocking; call regularly)
-  void Poll(const std::string &game_name, int tcp_port, bool passworded);
+  void Poll(const std::string &game_name, int tcp_port, bool passworded,
+            int nb_players, int max_players);
 };
 
 namespace LanDiscovery

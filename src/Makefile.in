@@ -151,9 +151,10 @@ am__warmux_SOURCES_DIST = ai/ai_command.cpp ai/ai_command.h \
 	gui/check_box.cpp gui/check_box.h gui/combo_box.cpp \
 	gui/combo_box.h gui/container.h gui/energy_bar.cpp \
 	gui/energy_bar.h gui/figure_widget.cpp gui/figure_widget.h \
-	gui/file_list_box.cpp gui/file_list_box.h gui/graph_canvas.cpp \
-	gui/graph_canvas.h gui/label.cpp gui/label.h gui/msg_box.cpp \
-	gui/msg_box.h gui/null_widget.h gui/picture_text_cbox.cpp \
+	gui/file_list_box.cpp gui/flat_widgets.cpp gui/flat_widgets.h \
+	gui/file_list_box.h gui/graph_canvas.cpp gui/graph_canvas.h \
+	gui/label.cpp gui/label.h gui/msg_box.cpp gui/msg_box.h \
+	gui/null_widget.h gui/picture_text_cbox.cpp \
 	gui/picture_text_cbox.h gui/picture_widget.cpp \
 	gui/picture_widget.h gui/progress_bar.cpp gui/progress_bar.h \
 	gui/question.cpp gui/question.h gui/scroll_box.cpp \
@@ -298,13 +299,14 @@ am_warmux_OBJECTS = ai_command.$(OBJEXT) ai_idea.$(OBJEXT) \
 	horizontal_box.$(OBJEXT) box.$(OBJEXT) button.$(OBJEXT) \
 	button_text.$(OBJEXT) check_box.$(OBJEXT) combo_box.$(OBJEXT) \
 	energy_bar.$(OBJEXT) figure_widget.$(OBJEXT) \
-	file_list_box.$(OBJEXT) graph_canvas.$(OBJEXT) label.$(OBJEXT) \
-	msg_box.$(OBJEXT) picture_text_cbox.$(OBJEXT) \
-	picture_widget.$(OBJEXT) progress_bar.$(OBJEXT) \
-	question.$(OBJEXT) scroll_box.$(OBJEXT) select_box.$(OBJEXT) \
-	spin_button.$(OBJEXT) spin_button_picture.$(OBJEXT) \
-	tabs.$(OBJEXT) talk_box.$(OBJEXT) text_box.$(OBJEXT) \
-	torus_cache.$(OBJEXT) widget.$(OBJEXT) widget_list.$(OBJEXT) \
+	file_list_box.$(OBJEXT) flat_widgets.$(OBJEXT) \
+	graph_canvas.$(OBJEXT) label.$(OBJEXT) msg_box.$(OBJEXT) \
+	picture_text_cbox.$(OBJEXT) picture_widget.$(OBJEXT) \
+	progress_bar.$(OBJEXT) question.$(OBJEXT) scroll_box.$(OBJEXT) \
+	select_box.$(OBJEXT) spin_button.$(OBJEXT) \
+	spin_button_picture.$(OBJEXT) tabs.$(OBJEXT) \
+	talk_box.$(OBJEXT) text_box.$(OBJEXT) torus_cache.$(OBJEXT) \
+	widget.$(OBJEXT) widget_list.$(OBJEXT) \
 	action_handler.$(OBJEXT) constant.$(OBJEXT) cursor.$(OBJEXT) \
 	game_msg.$(OBJEXT) interface.$(OBJEXT) joystick.$(OBJEXT) \
 	keyboard.$(OBJEXT) loading_screen.$(OBJEXT) \
@@ -411,30 +413,30 @@ am__depfiles_remade = ./$(DEPDIR)/abstract_spin_button.Po \
 	./$(DEPDIR)/explosion_smoke.Po ./$(DEPDIR)/fading_text.Po \
 	./$(DEPDIR)/figure_widget.Po ./$(DEPDIR)/file_list_box.Po \
 	./$(DEPDIR)/fire.Po ./$(DEPDIR)/flamethrower.Po \
-	./$(DEPDIR)/font.Po ./$(DEPDIR)/footbomb.Po ./$(DEPDIR)/fps.Po \
-	./$(DEPDIR)/game.Po ./$(DEPDIR)/game_blitz.Po \
-	./$(DEPDIR)/game_classic.Po ./$(DEPDIR)/game_menu.Po \
-	./$(DEPDIR)/game_mode.Po ./$(DEPDIR)/game_mode_editor.Po \
-	./$(DEPDIR)/game_msg.Po ./$(DEPDIR)/gnu.Po \
-	./$(DEPDIR)/graph_canvas.Po ./$(DEPDIR)/grapple.Po \
-	./$(DEPDIR)/grenade.Po ./$(DEPDIR)/grid_box.Po \
-	./$(DEPDIR)/ground.Po ./$(DEPDIR)/ground_particles.Po \
-	./$(DEPDIR)/gun.Po ./$(DEPDIR)/help_menu.Po \
-	./$(DEPDIR)/horizontal_box.Po ./$(DEPDIR)/ill_bubble.Po \
-	./$(DEPDIR)/interface.Po ./$(DEPDIR)/jetpack.Po \
-	./$(DEPDIR)/joystick.Po ./$(DEPDIR)/jukebox.Po \
-	./$(DEPDIR)/keyboard.Po ./$(DEPDIR)/label.Po \
-	./$(DEPDIR)/lan_discovery.Po ./$(DEPDIR)/loading_screen.Po \
-	./$(DEPDIR)/lowgrav.Po ./$(DEPDIR)/magic_star.Po \
-	./$(DEPDIR)/main.Po ./$(DEPDIR)/main_menu.Po \
-	./$(DEPDIR)/man_machine_interface.Po ./$(DEPDIR)/map.Po \
-	./$(DEPDIR)/map_selection_box.Po ./$(DEPDIR)/maps_list.Po \
-	./$(DEPDIR)/medkit.Po ./$(DEPDIR)/member.Po \
-	./$(DEPDIR)/menu.Po ./$(DEPDIR)/mine.Po ./$(DEPDIR)/mouse.Po \
-	./$(DEPDIR)/mouse_cursor.Po ./$(DEPDIR)/move_intention.Po \
-	./$(DEPDIR)/movement.Po ./$(DEPDIR)/msg_box.Po \
-	./$(DEPDIR)/net_error_msg.Po ./$(DEPDIR)/network.Po \
-	./$(DEPDIR)/network_client.Po \
+	./$(DEPDIR)/flat_widgets.Po ./$(DEPDIR)/font.Po \
+	./$(DEPDIR)/footbomb.Po ./$(DEPDIR)/fps.Po ./$(DEPDIR)/game.Po \
+	./$(DEPDIR)/game_blitz.Po ./$(DEPDIR)/game_classic.Po \
+	./$(DEPDIR)/game_menu.Po ./$(DEPDIR)/game_mode.Po \
+	./$(DEPDIR)/game_mode_editor.Po ./$(DEPDIR)/game_msg.Po \
+	./$(DEPDIR)/gnu.Po ./$(DEPDIR)/graph_canvas.Po \
+	./$(DEPDIR)/grapple.Po ./$(DEPDIR)/grenade.Po \
+	./$(DEPDIR)/grid_box.Po ./$(DEPDIR)/ground.Po \
+	./$(DEPDIR)/ground_particles.Po ./$(DEPDIR)/gun.Po \
+	./$(DEPDIR)/help_menu.Po ./$(DEPDIR)/horizontal_box.Po \
+	./$(DEPDIR)/ill_bubble.Po ./$(DEPDIR)/interface.Po \
+	./$(DEPDIR)/jetpack.Po ./$(DEPDIR)/joystick.Po \
+	./$(DEPDIR)/jukebox.Po ./$(DEPDIR)/keyboard.Po \
+	./$(DEPDIR)/label.Po ./$(DEPDIR)/lan_discovery.Po \
+	./$(DEPDIR)/loading_screen.Po ./$(DEPDIR)/lowgrav.Po \
+	./$(DEPDIR)/magic_star.Po ./$(DEPDIR)/main.Po \
+	./$(DEPDIR)/main_menu.Po ./$(DEPDIR)/man_machine_interface.Po \
+	./$(DEPDIR)/map.Po ./$(DEPDIR)/map_selection_box.Po \
+	./$(DEPDIR)/maps_list.Po ./$(DEPDIR)/medkit.Po \
+	./$(DEPDIR)/member.Po ./$(DEPDIR)/menu.Po ./$(DEPDIR)/mine.Po \
+	./$(DEPDIR)/mouse.Po ./$(DEPDIR)/mouse_cursor.Po \
+	./$(DEPDIR)/move_intention.Po ./$(DEPDIR)/movement.Po \
+	./$(DEPDIR)/msg_box.Po ./$(DEPDIR)/net_error_msg.Po \
+	./$(DEPDIR)/network.Po ./$(DEPDIR)/network_client.Po \
 	./$(DEPDIR)/network_connection_menu.Po \
 	./$(DEPDIR)/network_local.Po ./$(DEPDIR)/network_menu.Po \
 	./$(DEPDIR)/network_server.Po \
@@ -779,9 +781,10 @@ warmux_SOURCES = ai/ai_command.cpp ai/ai_command.h ai/ai_idea.cpp \
 	gui/check_box.cpp gui/check_box.h gui/combo_box.cpp \
 	gui/combo_box.h gui/container.h gui/energy_bar.cpp \
 	gui/energy_bar.h gui/figure_widget.cpp gui/figure_widget.h \
-	gui/file_list_box.cpp gui/file_list_box.h gui/graph_canvas.cpp \
-	gui/graph_canvas.h gui/label.cpp gui/label.h gui/msg_box.cpp \
-	gui/msg_box.h gui/null_widget.h gui/picture_text_cbox.cpp \
+	gui/file_list_box.cpp gui/flat_widgets.cpp gui/flat_widgets.h \
+	gui/file_list_box.h gui/graph_canvas.cpp gui/graph_canvas.h \
+	gui/label.cpp gui/label.h gui/msg_box.cpp gui/msg_box.h \
+	gui/null_widget.h gui/picture_text_cbox.cpp \
 	gui/picture_text_cbox.h gui/picture_widget.cpp \
 	gui/picture_widget.h gui/progress_bar.cpp gui/progress_bar.h \
 	gui/question.cpp gui/question.h gui/scroll_box.cpp \
@@ -1063,6 +1066,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file_list_box.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fire.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/flamethrower.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/flat_widgets.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/font.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/footbomb.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fps.Po@am__quote@ # am--include-marker
@@ -1866,6 +1870,20 @@ file_list_box.obj: gui/file_list_box.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui/file_list_box.cpp' object='file_list_box.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o file_list_box.obj `if test -f 'gui/file_list_box.cpp'; then $(CYGPATH_W) 'gui/file_list_box.cpp'; else $(CYGPATH_W) '$(srcdir)/gui/file_list_box.cpp'; fi`
+
+flat_widgets.o: gui/flat_widgets.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT flat_widgets.o -MD -MP -MF $(DEPDIR)/flat_widgets.Tpo -c -o flat_widgets.o `test -f 'gui/flat_widgets.cpp' || echo '$(srcdir)/'`gui/flat_widgets.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/flat_widgets.Tpo $(DEPDIR)/flat_widgets.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui/flat_widgets.cpp' object='flat_widgets.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o flat_widgets.o `test -f 'gui/flat_widgets.cpp' || echo '$(srcdir)/'`gui/flat_widgets.cpp
+
+flat_widgets.obj: gui/flat_widgets.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT flat_widgets.obj -MD -MP -MF $(DEPDIR)/flat_widgets.Tpo -c -o flat_widgets.obj `if test -f 'gui/flat_widgets.cpp'; then $(CYGPATH_W) 'gui/flat_widgets.cpp'; else $(CYGPATH_W) '$(srcdir)/gui/flat_widgets.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/flat_widgets.Tpo $(DEPDIR)/flat_widgets.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui/flat_widgets.cpp' object='flat_widgets.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o flat_widgets.obj `if test -f 'gui/flat_widgets.cpp'; then $(CYGPATH_W) 'gui/flat_widgets.cpp'; else $(CYGPATH_W) '$(srcdir)/gui/flat_widgets.cpp'; fi`
 
 graph_canvas.o: gui/graph_canvas.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT graph_canvas.o -MD -MP -MF $(DEPDIR)/graph_canvas.Tpo -c -o graph_canvas.o `test -f 'gui/graph_canvas.cpp' || echo '$(srcdir)/'`gui/graph_canvas.cpp
@@ -4301,6 +4319,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/file_list_box.Po
 	-rm -f ./$(DEPDIR)/fire.Po
 	-rm -f ./$(DEPDIR)/flamethrower.Po
+	-rm -f ./$(DEPDIR)/flat_widgets.Po
 	-rm -f ./$(DEPDIR)/font.Po
 	-rm -f ./$(DEPDIR)/footbomb.Po
 	-rm -f ./$(DEPDIR)/fps.Po
@@ -4548,6 +4567,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/file_list_box.Po
 	-rm -f ./$(DEPDIR)/fire.Po
 	-rm -f ./$(DEPDIR)/flamethrower.Po
+	-rm -f ./$(DEPDIR)/flat_widgets.Po
 	-rm -f ./$(DEPDIR)/font.Po
 	-rm -f ./$(DEPDIR)/footbomb.Po
 	-rm -f ./$(DEPDIR)/fps.Po

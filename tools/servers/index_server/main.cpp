@@ -109,6 +109,8 @@ void parseArgs(int argc, char *argv[])
 
 int main(int argc, char* argv[])
 {
+  // One line at a time, so logs (e.g. the systemd journal) are up to date
+  setvbuf(stdout, NULL, _IOLBF, 0);
   parseArgs(argc, argv);
 
   config.Load(config_file);

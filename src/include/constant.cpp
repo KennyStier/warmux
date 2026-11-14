@@ -27,7 +27,7 @@ const std::string Constants::ENV_DATADIR = "WARMUX_DATADIR";
 const std::string Constants::ENV_LOCALEDIR = "WARMUX_LOCALEDIR";
 const std::string Constants::ENV_FONT_PATH = "WARMUX_FONT_PATH";
 
-const std::string Constants::WEB_SITE = "github.com/KennyStier/warmux";
+const std::string Constants::WEB_SITE = "warmux.net";
 const std::string Constants::BUG_TRACKER = "https://github.com/KennyStier/warmux/issues";
 
 // Size min/max of the map (pixels)

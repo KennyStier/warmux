@@ -22,6 +22,7 @@
 #include <algorithm>
 
 #include "menu/map_selection_box.h"
+#include "gui/flat_widgets.h"
 #include "graphic/video.h"
 #include "game/config.h"
 #include "gui/button.h"
@@ -322,4 +323,15 @@ void MapSelectionBox::Pack()
 {
   VBox::Pack();
   ChangeMapCallback();
+}
+
+void MapSelectionBox::SetDarkTheme()
+{
+  map_name_label->SetFont(white_color, Flat::F(Font::FONT_MEDIUM), Font::FONT_BOLD, false);
+  map_author_label->SetFont(Color(180, 192, 210, 255), Flat::F(Font::FONT_SMALL),
+                            Font::FONT_BOLD, false);
+  // Taller text: the labels must grow with it before the next Pack()
+  map_name_label->SetSize(map_name_label->GetSizeX(), map_name_label->GetHeight());
+  map_author_label->SetSize(map_author_label->GetSizeX(), map_author_label->GetHeight());
+  NeedRedrawing();
 }

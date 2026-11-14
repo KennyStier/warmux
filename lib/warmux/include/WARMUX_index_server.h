@@ -39,6 +39,10 @@ class GameServerInfo
   std::string dns_address;
   std::string game_name;
   bool        passworded;
+  int         nb_players;  // players in the game, including the host
+  int         max_players; // 0 if unknown
+
+  GameServerInfo() : passworded(false), nb_players(0), max_players(0) { }
 };
 
 #define INDEX_SERVER_BUFFER_LENGTH   1500
@@ -58,6 +62,12 @@ class IndexServer : public Singleton<IndexServer>
 
   // If we are a server, tell if we are visible on internet
   bool hidden_server;
+
+  // Our game is in the list (SendServerStatus succeeded); player counts
+  // given before that are kept and sent once it is
+  bool registered;
+  int pending_players, pending_max;
+  bool __SendPlayers(int nb_players, int max_players);
 
   std::string supported_versions;
 
@@ -110,6 +120,8 @@ public:
 
   // Notify the top server we are hosting a game
   bool SendServerStatus(const std::string& game_name, bool passwd, int port);
+  // Update the player count shown in the online list (hosting only)
+  void SendPlayers(int nb_players, int max_players);
 
   // returns a list of game servers
   std::list<GameServerInfo> GetHostList(bool symbolic_name

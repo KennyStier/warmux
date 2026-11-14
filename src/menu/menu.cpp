@@ -47,6 +47,8 @@
 Menu::Menu(const std::string& bg, t_action _actions)
   : actions(_actions)
   , selected_widget(NULL)
+  , close_menu(false)
+  , closed_for_resize(false)
 {
   close_menu = false ;
   Surface& window = GetMainWindow();
@@ -93,6 +95,7 @@ Menu::Menu(void)
   , b_cancel(NULL)
   , b_ok(NULL)
   , close_menu(false)
+  , closed_for_resize(false)
   , actions_buttons(NULL)
 {
 }
@@ -500,8 +503,10 @@ void Menu::Run(bool skip_menu)
     // Poll and treat events
     HandleEvents();
 
-    if (RebuildOnResize() && AppWarmux::GetInstance()->video->HasPendingResize())
+    if (RebuildOnResize() && AppWarmux::GetInstance()->video->HasPendingResize()) {
       close_menu = true;
+      closed_for_resize = true;
+    }
 
     // Avoid to calculate redraw menu when comming back for closing.
     if (!close_menu) {

@@ -71,7 +71,10 @@ public:
   void ForceDisconnection() { force_disconnection_called = true; }
   bool MustBeDisconnected() { return force_disconnection_called; }
 
+  // Nicknames, as shown to players (never the address)
   const std::string ToString() const;
+  // Nicknames and IP address, for logs only
+  const std::string ToLogString() const;
   std::vector<uint>& GetAvailableMaps() { return maps; };
 
   static std::vector<uint> GetCommonMaps(const std::list<DistantComputer*>&);

@@ -155,8 +155,12 @@ const std::string DistantComputer::ToString() const
   std::string str = nicknames[0];
   for (uint i=1; i<nicknames.size(); i++)
     str += ", " + nicknames[i];
-  str += " (" + GetAddress() + ")";
   return str;
+}
+
+const std::string DistantComputer::ToLogString() const
+{
+  return ToString() + " (" + GetAddress() + ")";
 }
 
 std::vector<uint> DistantComputer::GetCommonMaps(const std::list<DistantComputer*>& cpu)

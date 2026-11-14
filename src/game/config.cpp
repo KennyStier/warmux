@@ -147,7 +147,7 @@ Config::Config()
   , m_network_client_port(WARMUX_NETWORK_PORT)
   , m_network_server_game_name("Warmux party")
   , m_network_server_port(WARMUX_NETWORK_PORT)
-  , m_network_server_public(true)
+  , m_network_server_public(false)
 
 #ifdef HAVE_HANDHELD
   , quality(QUALITY_16BPP)
@@ -549,7 +549,8 @@ void Config::LoadXml(const xmlNode *xml)
     if ((sub_elem = XmlReader::GetMarker(elem, "as_server"))) {
       XmlReader::ReadString(sub_elem, "game_name", m_network_server_game_name);
       XmlReader::ReadString(sub_elem, "port", m_network_server_port);
-      XmlReader::ReadBool(sub_elem, "public", m_network_server_public);
+      // "public" is not read back: listing a game on the internet is chosen
+      // each time the game is started, as it needs port forwarding
     }
 
     //=== personal teams used in last network game ===

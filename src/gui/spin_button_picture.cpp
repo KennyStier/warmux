@@ -156,3 +156,9 @@ void SpinButtonWithPicture::ValueHasChanged()
   txt_value_white->SetText(s);
   RecreateTorus();
 }
+
+void SpinButtonWithPicture::SetLabelColor(const Color &c)
+{
+  txt_label->SetColor(c);
+  NeedRedrawing();
+}

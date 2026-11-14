@@ -48,7 +48,7 @@ prepare() {
 
 build() {
   cd warmux
-  # To make clients find your own lobby by default, add:
+  # Clients find the lobby at index.warmux.net by default; to use another:
   #   --with-index-server=your.host[:9997]
   ./configure --prefix=/usr --enable-servers
   make

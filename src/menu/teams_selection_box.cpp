@@ -25,6 +25,9 @@
 #include "menu/teams_selection_box.h"
 #include "menu/team_box.h"
 #include "gui/grid_box.h"
+#include "gui/button.h"
+#include "gui/flat_widgets.h"
+#include "tool/resource_manager.h"
 #include "gui/label.h"
 #include "gui/scroll_box.h"
 #include "gui/null_widget.h"
@@ -38,20 +41,40 @@
 
 #include <iostream>
 
-TeamScrollBox::TeamScrollBox(const std::vector<TeamBox*>& teams, const Point2i &size)
+TeamScrollBox::TeamScrollBox(const std::vector<TeamBox*>& teams, const Point2i &size, uint _cols)
   : ScrollBox(size)
   , teams(teams)
   , count(2)
+  , cols(_cols)
 {
+  if (cols > 1) {
+    Widget::SetBorder(transparent_color, 0);
+    vbox->SetMargin(Flat::Unit());
+    count = 0;
+    return;
+  }
   // SetNbTeams not called immediately
   AddWidget(teams[0]);
   AddWidget(teams[1]);
 }
 
+// Take the teams out of the list without deleting them (only the rows)
+void TeamScrollBox::EmptyList()
+{
+  if (rows.empty()) {
+    vbox->Empty();
+    return;
+  }
+  for (uint i = 0; i < rows.size(); i++)
+    rows[i]->Empty();
+  vbox->Clear();
+  rows.clear();
+}
+
 TeamScrollBox::~TeamScrollBox()
 {
   // Don't let the vbox delete the items, we're doing it ourselves
-  vbox->Empty();
+  EmptyList();
 
   // Destroy widgets
   for (uint i=0; i<teams.size() ; i++)
@@ -64,15 +87,28 @@ void TeamScrollBox::SetNbTeams(uint nb)
 {
   // Reset the list and readd the widget
   count = 0;
-  vbox->Empty();
+  EmptyList();
 
+  HBox *row = NULL;
   for (uint i = 0; count < nb; i++) {
     ASSERT(i < teams.size());
 
     // It is easy to have hole in the selection
     // with network game
     if (teams[i]->GetTeam()) {
-      AddWidget(teams[i]);
+      if (cols <= 1) {
+        AddWidget(teams[i]);
+      } else {
+        if (!row || row->WidgetCount() >= cols) {
+          row = new HBox(0, false, false, false);
+          row->SetNoBorder();
+          row->SetMargin(Flat::Unit());
+          rows.push_back(row);
+          AddWidget(row);
+        }
+        row->AddWidget(teams[i]);
+        row->Pack();
+      }
       count++;
     }
   }
@@ -82,12 +118,50 @@ void TeamScrollBox::SetNbTeams(uint nb)
   NeedRedrawing();
 }
 
-TeamsSelectionBox::TeamsSelectionBox(const Point2i &_size, bool network, bool w_border) :
-  HBox(_size.y, w_border, false)
+TeamsSelectionBox::TeamsSelectionBox(const Point2i &_size, bool network, bool w_border,
+                                     bool _compact) :
+  HBox(_size.y, w_border, false),
+  compact(_compact)
 {
   if (!w_border)
     SetNoBorder();
   SetMargin(0);
+
+  if (compact) {
+    const int u = Flat::Unit();
+    VBox *column = new VBox(_size.x, false, false, false);
+    column->SetNoBorder();
+    column->SetMargin(u);
+
+    local_teams_nb = new FlatStepper(network ? _("Teams on this device") : _("Number of teams"),
+                                     std::min(_size.x, Flat::S(320)), network ? 0 : 2, 1,
+                                     network ? 0 : 2, MAX_NB_TEAMS);
+    column->AddWidget(local_teams_nb);
+
+    // As many cards per row as fit, leaving room for the scroll bar
+    Profile *res = GetResourceManager().LoadXMLProfile("graphism.xml", false);
+    Button scroll_button(res, "menu/up");
+    const int avail = _size.x - scroll_button.GetSizeX();
+    const int min_card = Flat::S(236);
+    const int nb_cols = std::max(1, (avail + u) / (min_card + u));
+    const int card_w = (avail - (nb_cols - 1) * u) / nb_cols;
+
+    for (uint i = 0; i < MAX_NB_TEAMS; i++) {
+      std::string player_name = Format("%s %d", _("Player"), i + 1);
+      teams_selections.push_back(new TeamBox(player_name,
+                                             Point2i(card_w, TeamBox::CompactHeight()), true));
+    }
+    list_box = new TeamScrollBox(teams_selections,
+                                 Point2i(_size.x, _size.y - local_teams_nb->GetSizeY() - u),
+                                 nb_cols);
+    list_box->SetNbTeams(0);
+    column->AddWidget(list_box);
+    column->Pack();
+    AddWidget(column);
+
+    GetTeamsList().full_list.sort(compareTeams);
+    return;
+  }
 
   // How many teams ?
   VBox *tmp = new VBox(120, false, false, true);
@@ -154,7 +228,9 @@ TeamsSelectionBox::TeamsSelectionBox(const Point2i &_size, bool network, bool w_
 
 void TeamsSelectionBox::Draw(const Point2i& mousePosition)
 {
-  if (list_box)
+  if (compact)
+    WidgetList::Draw(mousePosition);
+  else if (list_box)
     list_box->Draw(mousePosition);
 }
 
@@ -204,7 +280,7 @@ Widget* LocalTeamsSelectionBox::ClickUp(const Point2i &mousePosition, uint butto
 
       if (teams_selections[i]->Contains(mousePosition)) {
         Widget * at = teams_selections[i];
-        Rectanglei r(at->GetPosition(), Point2i(38, 38));
+        Rectanglei r = teams_selections[i]->LogoRect();
 
         // Validate where the click really landed
         if (r.Contains(mousePosition)) {
@@ -215,8 +291,7 @@ Widget* LocalTeamsSelectionBox::ClickUp(const Point2i &mousePosition, uint butto
           }
           return at;
         } else {
-          Rectanglei r2(at->GetPositionX(), at->GetPositionY() + 39,
-                        38, 30);
+          Rectanglei r2 = teams_selections[i]->PlayerTypeRect();
           if (r2.Contains(mousePosition)) {
             teams_selections[i]->SwitchPlayerType();
             return at;
@@ -356,4 +431,15 @@ void LocalTeamsSelectionBox::ValidTeamsSelection()
 
     GetTeamsList().ChangeSelection(selection);
   }
+}
+
+void TeamsSelectionBox::SetDarkTheme()
+{
+  if (!compact)
+    static_cast<SpinButtonWithPicture*>(local_teams_nb)->SetLabelColor(Color(180, 192, 210, 255));
+  if (list_box)
+    list_box->Widget::SetBorder(transparent_color, 0);
+  for (uint i = 0; i < teams_selections.size(); i++)
+    teams_selections[i]->SetDarkTheme();
+  NeedRedrawing();
 }

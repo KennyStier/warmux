@@ -35,7 +35,8 @@ TextBox::TextBox(const std::string &label, uint width,
   Label(label, 0, fsize, fstyle,
         white_color, Text::ALIGN_LEFT_TOP, true),
   max_nb_chars(0),
-  cursor_pos(label.size())
+  cursor_pos(label.size()),
+  cursor_only_focused(false)
 {
   size.x = width;
   Widget::SetBorder(defaultOptionColorRect, 1);
@@ -46,7 +47,8 @@ TextBox::TextBox(Profile * profile,
                  const xmlNode * textBoxNode) :
   Label(profile, textBoxNode),
   max_nb_chars(0),
-  cursor_pos(0)
+  cursor_pos(0),
+  cursor_only_focused(false)
 {
 }
 
@@ -126,7 +128,8 @@ void TextBox::Draw(const Point2i & mousePosition)
   if (!wlr.GetSizeX() || !wlr.GetSizeY())
     return;
 
-  DrawCursor(position, cursor_pos, wlr.GetSizeX());
+  if (!cursor_only_focused || HasFocus())
+    DrawCursor(position, cursor_pos, wlr.GetSizeX());
   Label::Draw(mousePosition);
 
   // Restore initial clip rectangle

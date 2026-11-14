@@ -14,89 +14,35 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  ******************************************************************************
- * Network connection menu: this menu allows the user to choose between
- * hosting a game or connecting to a server.
+ * The Network Game menu (see network_connection_menu.h)
  *****************************************************************************/
+
+#include <algorithm>
+#include <SDL_thread.h>
 #include "game/config.h"
 #include "graphic/video.h"
-#include "gui/button.h"
-#include "gui/box.h"
-#include "gui/vertical_box.h"
-#include "gui/check_box.h"
-#include "gui/msg_box.h"
+#include "gui/flat_widgets.h"
+#include "gui/question.h"
+#include "gui/label.h"
 #include "gui/null_widget.h"
 #include "gui/picture_widget.h"
-#include "gui/select_box.h"
-#include "gui/tabs.h"
+#include "gui/scroll_box.h"
 #include "gui/text_box.h"
 #include "include/app.h"
 #include "include/constant.h"
+#include "network/lan_discovery.h"
 #include "network/net_error_msg.h"
 #include "menu/network_connection_menu.h"
 #include "menu/network_menu.h"
 #include "team/teams_list.h"
-#include "tool/resource_manager.h"
 #include "tool/string_tools.h"
-#include "network/lan_discovery.h"
-#include "interface/mouse.h"
 
-class GameInfoBox : public HBox
-{
-public:
-  bool password;
-  std::string port, ip_address;
-  GameInfoBox(uint width, bool pwd, const std::string& ip,
-              const std::string& port, const std::string& name)
-    : HBox(width, false, false, false)
-    , password(pwd)
-    , port(port)
-    , ip_address(ip)
-  {
-    if (pwd) {
-      AddWidget(new PictureWidget(Point2i(16, 16), "menu/password_lock",
-                                  PictureWidget::FIT_SCALING));
-    } else {
-      AddWidget(new NullWidget(Point2i(16, 16)));
-    }
-    width -= 20;
-    AddWidget(new Label(ip, 0.3f*width));
-    AddWidget(new Label(port, 0.2f*width));
-    AddWidget(new Label(name, 0.5f*width));
-    SetNoBorder();
-    Pack();
-  }
-};
+// How long to wait between two searches for games
+#define SEARCH_INTERVAL_MS 2500
 
-class GameListBox : public SelectBox
-{
-public:
-  GameListBox(const Point2i &size) : SelectBox(size, false) { }
-  void Select(uint index) { SelectBox::Select(index); }
-  // A click on a game selects it (never deselects: clicking the game that
-  // was picked automatically would otherwise unpick it, and OK would then
-  // use the manual address), and counts as a click on the list itself so
-  // double-clicks are recognised
-  virtual Widget *ClickUp(const Point2i &mousePosition, uint button)
-  {
-    int item = MouseIsOnWhichItem(mousePosition);
-    if (item != -1 && Mouse::IS_CLICK_BUTTON(button)) {
-      if (item != GetSelectedItem())
-        Select(item);
-      ScrollBox::ClickUp(mousePosition, button);
-      return this;
-    }
-    return SelectBox::ClickUp(mousePosition, button);
-  }
-  void AddItem(bool selected, bool pwd, const std::string& ip_address,
-               const std::string& port, const std::string& name)
-  {
-    AddWidgetItem(selected, new GameInfoBox(size.x-10, pwd, ip_address, port, name));
-  }
-  const std::string& GetAddress() { return ((GameInfoBox*)GetSelectedWidget())->ip_address; }
-  const std::string& GetPort() { return ((GameInfoBox*)GetSelectedWidget())->port; }
-};
+// --- Searching for games, in a thread ----------------------------------------
 
 struct shared_net_info {
   SDL_Thread* thread_refresh;
@@ -119,16 +65,22 @@ static void InitNetInfo()
   net_info.finished = true;
 }
 
-static void CleanNetInfo()
+// Wait for a running search to end
+static void WaitForSearch()
 {
-  // Let a running search finish first: it takes the lock when it is done,
-  // so holding (or destroying) the lock while waiting for it would hang
   int status;
   if (net_info.thread_refresh)
     SDL_WaitThread(net_info.thread_refresh, &status);
-  SDL_DestroySemaphore(net_info.lock);
   net_info.thread_refresh = NULL;
   net_info.finished = true;
+}
+
+static void CleanNetInfo()
+{
+  // The search takes the lock when it is done: it must not be held (or
+  // destroyed) while waiting for it
+  WaitForSearch();
+  SDL_DestroySemaphore(net_info.lock);
   net_info.lst_games.clear();
   net_info.lan_games.clear();
 }
@@ -141,8 +93,6 @@ static int RefreshNetInfo(void *)
   std::list<GameServerInfo> lan = LanDiscovery::Search();
   SDL_SemWait(net_info.lock);
   net_info.lan_games = lan;
-  net_info.lst_games.clear();
-  net_info.index_conn_state = CONNECTED;
   net_info.searching_index = true;
   net_info.todisplay = true;
   SDL_SemPost(net_info.lock);
@@ -173,304 +123,372 @@ static int RefreshNetInfo(void *)
   net_info.finished = true;
   SDL_SemPost(net_info.lock);
 
-  // make sure the list will be updated right now
   Menu::WakeUpOnCallback();
-
   MSG_DEBUG("network.refresh_games_list", "End");
   return 0;
 }
 
-#define TAB_MANUAL_ID   "TAB_manual"
-#define TAB_CLIENT_ID   "TAB_client"
-#define TAB_SERVER_ID   "TAB_server"
-
-NetworkConnectionMenu::NetworkConnectionMenu(network_menu_action_t action) :
-  Menu("menu/bg_network", vOkCancel)
+// Wakes the menu up regularly, so the list refreshes without any input
+static Uint32 SDLCALL WakeUp(Uint32 interval, void *)
 {
-  Profile *res = GetResourceManager().LoadXMLProfile("graphism.xml",false);
+  Menu::WakeUpOnCallback();
+  return interval;
+}
 
-  uint max_width = 0.95f*GetMainWindow().GetWidth();
-  uint offset    = (GetMainWindow().GetWidth() - max_width)/2;
-  uint width     = max_width - 10;
+// --- The list of games ----------------------------------------------------
 
-  /* Tabs */
-  tabs = new MultiTabs(Point2i(max_width,
-                               GetMainWindow().GetHeight()-140));
-  tabs->SetPosition(offset, offset);
-
-  // #############################
-  /* client connection related widgets */
-  Box * cl_connection_box = new VBox(W_UNDEF, false, false, false);
-  cl_connection_box->SetNoBorder();
-  tabs->AddNewTab(TAB_CLIENT_ID, _("Connect to game"), cl_connection_box);
-
-  // Public battles
-  Box * cl_tmp_box = new HBox(W_UNDEF, false, false, false);
-  cl_tmp_box->SetMargin(0);
-  cl_tmp_box->SetNoBorder();
-
-  cl_refresh_net_games = new Button(res, "menu/refresh_small", false);
-  cl_tmp_box->AddWidget(cl_refresh_net_games);
-  refresh_net_games_label = new Label(_("Public battles"), width - cl_refresh_net_games->GetSizeX(),
-                                      Font::FONT_MEDIUM, Font::FONT_BOLD, c_red,
-                                      Text::ALIGN_LEFT_TOP, true);
-  cl_tmp_box->AddWidget(refresh_net_games_label);
-  cl_connection_box->AddWidget(cl_tmp_box);
-
-  cl_net_games_lst = new GameListBox(Point2i(width, 30));
-  cl_connection_box->AddWidget(cl_net_games_lst);
-
-  // Server password
-  cl_tmp_box = new HBox(W_UNDEF, false, false, false);
-  cl_tmp_box->SetMargin(0);
-  cl_tmp_box->SetNoBorder();
-
-  cl_tmp_box->AddWidget(new Label(_("Password:"), width/4));
-  cl_net_server_pwd = new PasswordBox("", (3*width)/4);
-  cl_tmp_box->AddWidget(cl_net_server_pwd);
-
-  cl_connection_box->AddWidget(cl_tmp_box);
-
-  // #############################
-  // Manual connection
-  Box *manual_connection_box;
-  if (GetMainWindow().GetHeight() < 480) {
-    manual_connection_box = new VBox(W_UNDEF, false, false, false);
-    manual_connection_box->SetNoBorder();
-    tabs->AddNewTab(TAB_MANUAL_ID, _("Manual connection"), manual_connection_box);
-  } else {
-    cl_connection_box->AddWidget(new Label(_("Manual connection"), width,
-                                           Font::FONT_MEDIUM, Font::FONT_BOLD, c_red,
-                                           Text::ALIGN_LEFT_TOP, true));
-    manual_connection_box = cl_connection_box;
+class GameListBox : public ScrollBox
+{
+public:
+  GameListBox(const Point2i &size)
+    : ScrollBox(size, false, false)
+  {
+    Widget::SetBorder(transparent_color, 0);
+    vbox->SetMargin(Flat::Unit());
   }
+  // Rows fill the list, leaving room for the scroll bar
+  int RowWidth() const { return size.x - scrollbar_width; }
+};
 
-  // Server address
-  cl_tmp_box = new HBox(W_UNDEF, false, false, false);
-  cl_tmp_box->SetMargin(0);
-  cl_tmp_box->SetNoBorder();
+static std::string DefaultPort()
+{
+  return int2str(WARMUX_NETWORK_PORT_INT);
+}
 
-  cl_tmp_box->AddWidget(new Label(_("Server address:"), width/4));
-  cl_server_address = new TextBox(Config::GetInstance()->GetNetworkClientHost(), (3*width)/4);
-  cl_tmp_box->AddWidget(cl_server_address);
+// "host" or "host:port" (IPv6 addresses, with several colons, have no port)
+static void SplitAddress(const std::string &text, std::string &host, std::string &port)
+{
+  std::string s = text;
+  s.erase(0, s.find_first_not_of(" \t"));
+  s.erase(s.find_last_not_of(" \t") + 1);
+  host = s;
+  port = DefaultPort();
+  std::string::size_type colon = s.rfind(':');
+  if (colon != std::string::npos && s.find(':') == colon) {
+    host = s.substr(0, colon);
+    if (colon + 1 < s.size())
+      port = s.substr(colon + 1);
+  }
+}
 
-  manual_connection_box->AddWidget(cl_tmp_box);
+// --- The menu ---------------------------------------------------------------
 
-  // Server port
-  cl_tmp_box = new HBox(W_UNDEF, false, false, false);
-  cl_tmp_box->SetMargin(0);
-  cl_tmp_box->SetNoBorder();
+static Label *Caption(const std::string &text, uint width)
+{
+  return new Label(text, width, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::TEXT_DIM);
+}
 
-  cl_tmp_box->AddWidget(new Label(_("Port:"), width/4));
-  cl_port_number = new TextBox(Config::GetInstance()->GetNetworkClientPort(), (3*width)/4);
-  cl_tmp_box->AddWidget(cl_port_number);
+static Label *Title(const std::string &text, uint width)
+{
+  return new Label(text, width, Flat::F(Font::FONT_MEDIUM), Font::FONT_BOLD, Flat::TEXT);
+}
 
-  manual_connection_box->AddWidget(cl_tmp_box);
+NetworkConnectionMenu::NetworkConnectionMenu(network_menu_action_t _action)
+  : Menu("menu/bg_network", vNo)
+  , action(_action)
+  , refresh_timer(0)
+  , last_search_end(0)
+{
+  const Surface &window = GetMainWindow();
+  const int W = window.GetWidth(), H = window.GetHeight();
+  const int u = Flat::Unit();
+  const int margin = 2 * u;
+  // Less padding in short windows, so Host and Join fit stacked
+  const int pad = H < 700 ? 3 * u / 2 : 2 * u;
+  const int button_h = Flat::ButtonHeight();
 
-  // Server password
-  cl_tmp_box = new HBox(W_UNDEF, false, false, false);
-  cl_tmp_box->SetMargin(0);
-  cl_tmp_box->SetNoBorder();
+  // Everything sits in one block, centred, no bigger than it needs to be.
+  // Host and Join are stacked on the right, or side by side when the window
+  // is too short for that (phones in landscape)
+  const bool three_columns = H < 640 && W >= 900;
+  const int block_w = std::min(W - 2 * margin, Flat::S(three_columns ? 1240 : 1040));
+  const int right_w = three_columns ? (block_w - 4 * u) / 3
+                                    : std::min(Flat::S(380), block_w * 45 / 100);
+  const int left_w = three_columns ? right_w : block_w - right_w - 2 * u;
+  const int inner_r = right_w - 2 * pad;
+  const int inner_l = left_w - 2 * pad;
 
-  cl_tmp_box->AddWidget(new Label(_("Password:"), width/4));
-  cl_server_pwd = new PasswordBox("", (3*width)/4);
-  cl_tmp_box->AddWidget(cl_server_pwd);
+  Label *title = new Label(_("Network game"), block_w / 2, Flat::F(Font::FONT_BIG), Font::FONT_BOLD,
+                           Flat::TEXT, Text::ALIGN_LEFT_TOP, true);
+  back = new FlatButton(_("Back"), Point2i(12 * u, button_h), FlatButton::DARK);
+  const int header_h = std::max(title->GetSizeY(), button_h);
 
-  manual_connection_box->AddWidget(cl_tmp_box);
+  // ---- Host a game ----
+  FlatPanel *host = new FlatPanel(right_w, pad, u);
+  host->AddWidget(Title(_("Host a game"), inner_r));
+  host->AddWidget(Caption(_("Game name"), inner_r));
+  host_name = new TextBox(Config::GetInstance()->GetNetworkServerGameName(), 0,
+                          Flat::F(Font::FONT_MEDIUM));
+  host_name->SetMaxNbChars(20);
+  host->AddWidget(new FlatField(host_name, inner_r));
+  host->AddWidget(Caption(_("Password (optional)"), inner_r));
+  host_pwd = new PasswordBox("", 0, Flat::F(Font::FONT_MEDIUM));
+  host_pwd->SetMaxNbChars(15);
+  host->AddWidget(new FlatField(host_pwd, inner_r));
+  host_public = new FlatToggle(_("List it on the internet"), inner_r,
+                               Config::GetInstance()->GetNetworkServerPublic(), true);
+  host->AddWidget(host_public);
+  host_start = new FlatButton(_("Start hosting"), Point2i(inner_r, button_h),
+                              FlatButton::PRIMARY);
+  host->AddWidget(host_start);
+  host->Pack();
 
-  // #############################
-  /* server connection related widgets */
-  Box * srv_connection_box = new VBox(W_UNDEF, false, false, false);
-  srv_connection_box->SetNoBorder();
+  // ---- Join by address ----
+  FlatPanel *join = new FlatPanel(right_w, pad, u);
+  join->AddWidget(Title(_("Join by address"), inner_r));
+  std::string address = Config::GetInstance()->GetNetworkClientHost();
+  if (!address.empty() && Config::GetInstance()->GetNetworkClientPort() != DefaultPort())
+    address += ":" + Config::GetInstance()->GetNetworkClientPort();
+  join->AddWidget(Caption(_("Address, or address:port"), inner_r));
+  join_address = new TextBox(address, 0, Flat::F(Font::FONT_MEDIUM));
+  join->AddWidget(new FlatField(join_address, inner_r));
+  join->AddWidget(Caption(_("Password, if the game has one"), inner_r));
+  join_pwd = new PasswordBox("", 0, Flat::F(Font::FONT_MEDIUM));
+  join->AddWidget(new FlatField(join_pwd, inner_r));
+  join_go = new FlatButton(_("Join"), Point2i(inner_r, button_h));
+  join->AddWidget(join_go);
+  join_hint = new Label(" ", inner_r, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::WARN);
+  join->AddWidget(join_hint);
+  join->Pack();
 
-  // Server port
-  Box * srv_tmp_box = new HBox(W_UNDEF, false, false, false);
-  srv_tmp_box->SetMargin(0);
-  srv_tmp_box->SetNoBorder();
+  // ---- Games: as tall as the right column, within the window ----
+  const int right_h = three_columns ? std::max(host->GetSizeY(), join->GetSizeY())
+                                    : host->GetSizeY() + 2 * u + join->GetSizeY();
+  const int avail_h = H - 2 * margin - header_h - 2 * u;
+  const int block_h = std::min(std::max(right_h, (three_columns ? 6 : 12) * button_h), avail_h);
+  FlatPanel *left = new FlatPanel(left_w, pad, u);
+  Label *games_title = Title(_("Games"), inner_l);
+  left->AddWidget(games_title);
+  games_status = Caption(_("Looking for games on your network..."), inner_l);
+  left->AddWidget(games_status);
+  int list_h = block_h - 2 * pad - games_title->GetSizeY() - games_status->GetSizeY() - 2 * u;
+  games = new GameListBox(Point2i(inner_l, std::max(list_h, 3 * button_h)));
+  left->AddWidget(games);
 
-  srv_tmp_box->AddWidget(new Label(_("Port:"), width/4));
-  srv_port_number = new TextBox(Config::GetInstance()->GetNetworkServerPort(), (3*width)/4);
-  srv_tmp_box->AddWidget(srv_port_number);
-
-  srv_connection_box->AddWidget(srv_tmp_box);
-
-  // Game name
-  srv_tmp_box = new HBox(W_UNDEF, false, false, false);
-  srv_tmp_box->SetMargin(0);
-  srv_tmp_box->SetNoBorder();
-
-  srv_tmp_box->AddWidget(new Label(_("Game name:"), width/4));
-  srv_game_name = new TextBox(Config::GetInstance()->GetNetworkServerGameName(), (3*width)/4);
-  srv_game_name->SetMaxNbChars(15);
-  srv_tmp_box->AddWidget(srv_game_name);
-
-  srv_connection_box->AddWidget(srv_tmp_box);
-
-  // Server password
-  srv_tmp_box = new HBox(W_UNDEF, false, false, false);
-  srv_tmp_box->SetMargin(0);
-  srv_tmp_box->SetNoBorder();
-
-  srv_tmp_box->AddWidget(new Label(_("Password:"), width/4));
-  srv_game_pwd = new PasswordBox("", (3*width)/4);
-  srv_game_pwd->SetMaxNbChars(15);
-  srv_tmp_box->AddWidget(srv_game_pwd);
-
-  srv_connection_box->AddWidget(srv_tmp_box);
-
-  // Available on internet ?
-  srv_internet_server = new CheckBox(_("Server available on Internet"), width,
-                                     Config::GetInstance()->GetNetworkServerPublic());
-  srv_connection_box->AddWidget(srv_internet_server);
-
-  tabs->AddNewTab(TAB_SERVER_ID, _("Host a game"), srv_connection_box);
-
-  // #############################
-  widgets.AddWidget(tabs);
+  // ---- Place the block ----
+  const int x0 = (W - block_w) / 2;
+  const int y0 = std::max(margin, (H - header_h - 2 * u - block_h) / 2);
+  title->SetPosition(x0, y0 + (header_h - title->GetSizeY()) / 2);
+  back->SetPosition(x0 + block_w - back->GetSizeX(), y0 + (header_h - button_h) / 2);
+  const int top = y0 + header_h + 2 * u;
+  left->SetPosition(x0, top);
+  if (three_columns) {
+    host->SetPosition(x0 + left_w + 2 * u, top);
+    join->SetPosition(x0 + block_w - right_w, top);
+  } else {
+    host->SetPosition(x0 + block_w - right_w, top);
+    join->SetPosition(x0 + block_w - right_w, top + host->GetSizeY() + 2 * u);
+  }
+  widgets.AddWidget(title);
+  widgets.AddWidget(back);
+  widgets.AddWidget(left);
+  widgets.AddWidget(host);
+  widgets.AddWidget(join);
   widgets.Pack();
 
-  // Optimize height of public net games table
-  uint net_games_lst_width = tabs->GetSizeX() - 2*(cl_connection_box->GetPositionX()-tabs->GetPositionX());
-  uint net_games_lst_height = cl_net_games_lst->GetSizeY() +
-    (tabs->GetPositionY() + tabs->GetSizeY()) -
-    (cl_connection_box->GetPositionY() + cl_connection_box->GetSizeY()) - 10;
-  cl_net_games_lst->SetSize(net_games_lst_width, net_games_lst_height);
-
-  // Warning about experimental networking
-  Point2i msg_box_pos(offset, tabs->GetPositionY() + tabs->GetSizeY() + 10);
-  Point2i msg_box_size(max_width,
-                       GetMainWindow().GetHeight() - 50 - msg_box_pos.y);
-
-  msg_box = new MsgBox(msg_box_size, Font::FONT_SMALL, Font::FONT_BOLD);
-  msg_box->SetPosition(msg_box_pos);
-
-  widgets.AddWidget(msg_box);
-  widgets.Pack();
-
-  msg_box->NewMessage(_("Have a good game!"));
-  msg_box->NewMessage(""); // Skip a line
-
-  //Double click
-  m_last_click_on_games_lst = 0;
-  m_Double_click_interval = 400;
   // ************************************************************************
   InitNetInfo();
-
-  switch (action) {
-  case NET_HOST:
-    tabs->SelectTab(1);
-    break;
-  case NET_CONNECT:
-    tabs->SelectTab(0);
-    ThreadRefreshList();
-    break;
-  default:
-    ThreadRefreshList();
-    break;
-  }
+  refresh_timer = SDL_AddTimer(1000, WakeUp, NULL);
+  ThreadRefreshList();
 }
 
 NetworkConnectionMenu::~NetworkConnectionMenu()
 {
+  if (refresh_timer)
+    SDL_RemoveTimer(refresh_timer);
   CleanNetInfo();
 }
 
-void NetworkConnectionMenu::OnClickUp(const Point2i &mousePosition, int button)
+void NetworkConnectionMenu::ThreadRefreshList()
 {
-  Widget* w = widgets.ClickUp(mousePosition, button);
+  SDL_SemWait(net_info.lock);
+  bool running = net_info.thread_refresh && !net_info.finished;
+  SDL_SemPost(net_info.lock);
+  if (running)
+    return;
 
-  if (w == cl_refresh_net_games || w == refresh_net_games_label)
-    ThreadRefreshList();
-
-  if (w == cl_server_address || w == cl_port_number || w == cl_server_pwd)
-    cl_net_games_lst->Deselect();
-
-  //Hack to handle Double click
-  if (w == cl_net_games_lst)
-  {
-    if (m_last_click_on_games_lst + m_Double_click_interval > SDL_GetTicks()) {
-      if (cl_net_games_lst->GetSelectedItem() == -1) {
-        cl_net_games_lst->Select(cl_net_games_lst->MouseIsOnWhichItem(mousePosition));
-      }
-      signal_ok();
-    }
-    else
-    {
-      m_last_click_on_games_lst = SDL_GetTicks();
-    }
-  }
+  WaitForSearch(); // collect the previous, finished thread
+  net_info.finished = false;
+  net_info.thread_refresh = SDL_CreateThread(RefreshNetInfo, "net-info", NULL);
 }
 
-void NetworkConnectionMenu::__RefreshList()
+// Show the results of the last search, rebuilding the list if it changed
+void NetworkConnectionMenu::ShowGames()
 {
   SDL_SemWait(net_info.lock);
   if (!net_info.todisplay) {
     SDL_SemPost(net_info.lock);
     return;
   }
-
   net_info.todisplay = false;
-
-  // Save the currently selected address
-  int current = cl_net_games_lst->GetSelectedItem();
-  if (current == -1)
-    current = 0;
-
-  // Empty the list:
-  cl_net_games_lst->Clear();
-
-  // Messages rather than pop-ups: the list refreshes on its own
-  if (!net_info.searching_index) {
-    if (net_info.index_conn_state != CONNECTED)
-      msg_box->NewMessage(_("Error: Unable to contact the index server to search for an internet game"), c_red);
-    if (net_info.lan_games.empty() && net_info.lst_games.empty())
-      msg_box->NewMessage(_("Sorry, currently, no game is waiting for players"));
-  }
-
-  std::list<GameServerInfo>::iterator it;
-  for (it = net_info.lan_games.begin(); it != net_info.lan_games.end(); ++it)
-    cl_net_games_lst->AddItem(false, it->passworded, it->ip_address,
-                              it->port, it->game_name);
-  for (it = net_info.lst_games.begin(); it != net_info.lst_games.end(); ++it)
-    cl_net_games_lst->AddItem(false, it->passworded, it->ip_address,
-                              it->port, it->game_name);
+  std::list<GameServerInfo> lan = net_info.lan_games;
+  std::list<GameServerInfo> online = net_info.lst_games;
+  bool searching = net_info.searching_index;
   SDL_SemPost(net_info.lock);
 
-  if (cl_net_games_lst->Size()) {
-    if (current+1 > cl_net_games_lst->Size()) {
-      current = 0;
-    }
-    cl_net_games_lst->Select(current);
-  }
+  if (!searching)
+    last_search_end = SDL_GetTicks();
 
-  cl_net_games_lst->Pack();
+  // Games as one list, LAN first
+  std::vector<GameServerInfo> all(lan.begin(), lan.end());
+  size_t nb_lan = all.size();
+  all.insert(all.end(), online.begin(), online.end());
+
+  size_t n = all.size();
+  if (n == 0)
+    games_status->SetText(searching && shown_games.empty()
+                          ? _("Looking for games on your network...")
+                          : _("No games found yet. Host one, or join by address."));
+  else
+    games_status->SetText(Format(ngettext("%i game found", "%i games found", (int)n), (int)n));
+
+  std::vector<std::string> keys;
+  for (size_t i = 0; i < n; i++)
+    keys.push_back(all[i].ip_address + ":" + all[i].port + "/" + all[i].game_name
+                   + (all[i].passworded ? "/p" : "") + (i < nb_lan ? "/l" : "")
+                   + Format("/%d/%d", all[i].nb_players, all[i].max_players));
+  if (keys == shown_games)
+    return;
+  shown_games = keys;
+
+  // Rebuild the rows
+  games->Clear();
+  join_buttons.clear();
+
+  const int u = Flat::Unit();
+  const int row_w = games->RowWidth();
+  const int pad = u;
+  const int join_w = 9 * u;
+  const int join_h = Flat::ButtonHeight() - u / 2;
+  const int icon = 2 * u;
+  const int count_w = 6 * u;
+  const int text_w = row_w - 2 * pad - join_w - icon - count_w - 3 * u;
+
+  for (size_t i = 0; i < n; i++) {
+    const GameServerInfo &g = all[i];
+    FlatRow *row = new FlatRow(0, pad, u);
+
+    if (g.passworded)
+      row->AddWidget(new PictureWidget(Point2i(icon, icon), "menu/password_lock",
+                                       PictureWidget::FIT_SCALING));
+    else
+      row->AddWidget(new NullWidget(Point2i(icon, icon)));
+
+    VBox *text = new VBox(text_w, false, false, false);
+    text->SetNoBorder();
+    text->SetMargin(0);
+    text->AddWidget(new Label(g.game_name, text_w, Flat::F(Font::FONT_MEDIUM), Font::FONT_BOLD,
+                              Flat::TEXT));
+    std::string where = (i < nb_lan) ? _("LAN") : _("Online");
+    std::string host = (i >= nb_lan && !g.dns_address.empty()) ? g.dns_address : g.ip_address;
+    if (g.port != DefaultPort())
+      host += ":" + g.port;
+    text->AddWidget(new Label(where + "  \xC2\xB7  " + host, text_w, Flat::F(Font::FONT_SMALL),
+                              Font::FONT_BOLD, i < nb_lan ? Flat::ACCENT : Flat::TEXT_DIM));
+    text->Pack(); // boxes measure their children before packing them
+    row->AddWidget(text);
+
+    // Players: "3/8", or nothing for hosts that do not say
+    const bool full = g.max_players > 0 && g.nb_players >= g.max_players;
+    VBox *count = new VBox(count_w, false, false, false);
+    count->SetNoBorder();
+    count->SetMargin(0);
+    if (g.max_players > 0) {
+      count->AddWidget(new Label(Format("%d/%d", g.nb_players, g.max_players), count_w,
+                                 Flat::F(Font::FONT_MEDIUM), Font::FONT_BOLD,
+                                 full ? Flat::WARN : Flat::TEXT, Text::ALIGN_RIGHT_TOP));
+      count->AddWidget(new Label(full ? _("full") : _("players"), count_w,
+                                 Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::TEXT_DIM,
+                                 Text::ALIGN_RIGHT_TOP));
+    } else {
+      count->AddWidget(new NullWidget(Point2i(count_w, 1)));
+    }
+    count->Pack();
+    row->AddWidget(count);
+
+    FlatButton *join = new FlatButton(_("Join"), Point2i(join_w, join_h), FlatButton::PRIMARY);
+    join->SetEnabled(!full);
+    row->AddWidget(join);
+    join_buttons[join] = g;
+
+    row->Pack();
+    games->AddWidget(row);
+  }
+  games->Pack();
+  games->NeedRedrawing();
+
 }
 
-void NetworkConnectionMenu::ThreadRefreshList()
+void NetworkConnectionMenu::Draw(const Point2i &/*mousePosition*/)
 {
+  ShowGames();
+
+  // Search again a little after the last search ended
   SDL_SemWait(net_info.lock);
-
-  if (net_info.thread_refresh != NULL) {
-    // Check if the thread finished
-    if (net_info.finished) {
-      int status;
-      SDL_WaitThread(net_info.thread_refresh, &status);
-    } else {
-      MSG_DEBUG("network.refresh_games_list", "A thread is already running");
-      SDL_SemPost(net_info.lock);
-      return;
-    }
-  }
+  bool finished = net_info.finished;
   SDL_SemPost(net_info.lock);
-
-  net_info.finished = false;
-  net_info.thread_refresh = SDL_CreateThread(RefreshNetInfo, "net-info", NULL);
+  if (finished && SDL_GetTicks() - last_search_end > SEARCH_INTERVAL_MS)
+    ThreadRefreshList();
 }
 
 void NetworkConnectionMenu::HandleEvent(const SDL_Event& evnt)
 {
-  __RefreshList();
+  ShowGames();
   Menu::HandleEvent(evnt);
+}
+
+void NetworkConnectionMenu::OnClickUp(const Point2i &mousePosition, int button)
+{
+  Widget *w = widgets.ClickUp(mousePosition, button);
+  if (!w)
+    return;
+
+  if (w == back) {
+    mouse_cancel();
+  } else if (w == host_public) {
+    if (host_public->InfoClicked()) {
+      std::string port = Config::GetInstance()->GetNetworkServerPort();
+      if (port.empty())
+        port = DefaultPort();
+      Question info;
+      // (no empty lines: an empty line of text cannot be drawn)
+      info.Set(Format(_("Anyone online can find your game, but can join only if your "
+                        "router forwards TCP port %s to this device.\n"
+                        "Public Battle needs no port forwarding."),
+                      port.c_str()), true, 0);
+      info.Ask();
+      Menu::RedrawMenu();
+      return;
+    }
+    // Kept for this session, so a resize (which rebuilds the menu) keeps it
+    Config::GetInstance()->SetNetworkServerPublic(host_public->GetValue());
+  } else if (w == host_start) {
+    if (Host())
+      PlayNetworkGame();
+  } else if (w == join_go) {
+    if (JoinAddress())
+      PlayNetworkGame();
+  } else {
+    std::map<FlatButton*, GameServerInfo>::iterator it =
+      join_buttons.find(static_cast<FlatButton*>(w));
+    if (it == join_buttons.end())
+      return;
+    GameServerInfo game = it->second;  // the list may be rebuilt meanwhile
+    if (game.passworded && join_pwd->GetPassword().empty()) {
+      // Ask for the password on the Join by address panel
+      join_address->SetText(game.port == DefaultPort() ? game.ip_address
+                                                       : game.ip_address + ":" + game.port);
+      join_hint->SetText(Format(_("\"%s\" needs a password: type it, then press Join."),
+                                game.game_name.c_str()));
+      widgets.SetFocusOn(join_pwd);
+#ifdef ANDROID
+      SDL_StartTextInput();
+#endif
+      return;
+    }
+    if (JoinGame(game, join_pwd->GetPassword()))
+      PlayNetworkGame();
+  }
 }
 
 void NetworkConnectionMenu::DisplayNetError(connection_state_t conn)
@@ -490,164 +508,138 @@ void NetworkConnectionMenu::DisplayNetError(connection_state_t conn)
   Menu::DisplayError(error_msg);
 }
 
-bool NetworkConnectionMenu::HostingServer(const std::string& port,
-                                          const std::string& game_name,
-                                          const std::string& password,
-                                          bool internet)
+bool NetworkConnectionMenu::Host()
 {
-  bool r = false;
-  int net_port;
+  // Hack: force loading of teams before creating threads.
+  GetTeamsList();
+  WaitForSearch(); // the search uses the index server too
+
+  std::string name = host_name->GetText();
+  if (name.empty())
+    name = _("Warmux party");
+  const std::string port = Config::GetInstance()->GetNetworkServerPort();
+  const bool internet = host_public->GetValue();
   connection_state_t conn;
+  int net_port;
+
+  Config::GetInstance()->SetNetworkServerGameName(name);
+  Config::GetInstance()->SetNetworkServerPublic(internet);
 
   if (!internet)
     IndexServer::GetInstance()->SetHiddenServer();
-
-  if (internet) {
-    SDL_SemWait(net_info.lock);
-
+  else {
     conn = IndexServer::GetInstance()->Connect(Constants::WARMUX_VERSION);
     if (conn != CONNECTED) {
       DisplayNetError(conn);
-      msg_box->NewMessage(_("Error: Unable to contact the index server to host a game"), c_red);
-      goto out;
+      return false;
     }
   }
 
-  conn = Network::ServerStart(port, game_name, password);
+  conn = Network::ServerStart(port, name, host_pwd->GetPassword());
   if (conn != CONNECTED) {
     DisplayNetError(conn);
-    goto out;
-  }
-
-  r = str2int(port, net_port);
-  if (false == r) {
-    DisplayNetError(CONN_BAD_PORT);
-    goto out;
-  }
-
-  if (internet) {
-    r = IndexServer::GetInstance()->SendServerStatus(game_name, password != "", net_port);
-    if (false == r) {
-      DisplayNetError(CONN_BAD_PORT);
-      msg_box->NewMessage(Format(_("Error: Your server is not reachable from the internet. Check your firewall configuration: TCP Port %s must accept connections from the outside. If you are not directly connected to the internet, check your router configuration: TCP Port %s must be forwarded on your computer."), port.c_str(), port.c_str()),
-                          c_red);
-      goto out;
-    }
-  }
-
-  if (!Network::GetInstance()->IsConnected()) {
-    msg_box->NewMessage(_("Error: Unable to start the server"), c_red);
-    goto out;
-  }
-  r = true;
-
- out:
-  if (internet)
-    SDL_SemPost(net_info.lock);
-  return r;
-}
-
-bool NetworkConnectionMenu::ConnectToClient(const std::string& srv_address,
-                                            const std::string& port,
-                                            const std::string& passwd)
-{
-  bool r = true;
-
-  connection_state_t conn = Network::ClientStart(srv_address, port, passwd);
-  if (!Network::IsConnected() || conn != CONNECTED) {
-    DisplayNetError(conn);
-
-    // translators: %s:%s will expand to something like "example.org:9999"
-    msg_box->NewMessage(Format(_("Error: Unable to connect to %s:%s"),
-                               srv_address.c_str(), port.c_str()), c_red);
-    r = false;
-  }
-  return r;
-}
-
-bool NetworkConnectionMenu::signal_ok()
-{
-  bool r = false;
-  std::list<GameServerInfo> lst;
-
-  // Hack: force loading of teams before creating threads.
-  GetTeamsList();
-
-  // Which tab is displayed ?
-  std::string id = tabs->GetCurrentTabId();
-
-  if (id == TAB_SERVER_ID) {
-    // Hosting your own server
-    r = HostingServer(srv_port_number->GetText(),
-                      srv_game_name->GetText(),
-                      srv_game_pwd->GetPassword(),
-                      srv_internet_server->GetValue());
-    if (!r)
-      goto out;
-
-    // Remember the parameters
-    Config::GetInstance()->SetNetworkServerPort(srv_port_number->GetText());
-    Config::GetInstance()->SetNetworkServerGameName(srv_game_name->GetText());
-    Config::GetInstance()->SetNetworkServerPublic(srv_internet_server->GetValue());
-
-  } else if (id == TAB_CLIENT_ID) { // Direct connexion to a server
-
-    if (cl_net_games_lst->GetSelectedItem() != -1) {
-      // Connect to an internet game!
-      r = ConnectToClient(cl_net_games_lst->GetAddress(),
-                          cl_net_games_lst->GetPort(),
-                          cl_net_server_pwd->GetPassword());
-      if (!r)
-        goto out;
-
-    } else if (!cl_server_address->GetText().empty()) {
-      r = ConnectToClient(cl_server_address->GetText(),
-                          cl_port_number->GetText(),
-                          cl_server_pwd->GetPassword());
-      if (!r)
-        goto out;
-
-      // Remember the parameters
-      Config::GetInstance()->SetNetworkClientHost(cl_server_address->GetText());
-      Config::GetInstance()->SetNetworkClientPort(cl_port_number->GetText());
-    } else
-      goto out;
-  } else if (id == TAB_MANUAL_ID) {
-    if (!cl_server_address->GetText().empty()) {
-      r = ConnectToClient(cl_server_address->GetText(),
-                          cl_port_number->GetText(),
-                          cl_server_pwd->GetPassword());
-      if (!r)
-        goto out;
-
-      // Remember the parameters
-      Config::GetInstance()->SetNetworkClientHost(cl_server_address->GetText());
-      Config::GetInstance()->SetNetworkClientPort(cl_port_number->GetText());
-    }
-  }
-
-  if (Network::IsConnected()) {
-    play_ok_sound();
-
-    // run the network menu ! :-)
-    NetworkMenu nm;
-    Network::GetInstance()->network_menu = &nm;
-    nm.Run();
-    Network::GetInstance()->network_menu = NULL;
-    IndexServer::GetInstance()->Disconnect();
-
-    Network::Disconnect();
-
-    // Don't go back to main menu after playing
-    Menu::RedrawMenu();
-    ThreadRefreshList();
-
     return false;
   }
 
- out:
+  if (!str2int(port, net_port)) {
+    DisplayNetError(CONN_BAD_PORT);
+    Network::Disconnect();
+    return false;
+  }
+
+  if (internet && !IndexServer::GetInstance()->SendServerStatus(name, !host_pwd->GetPassword().empty(), net_port)) {
+    Menu::DisplayError(Format(_("Your game is not reachable from the internet: TCP port %s "
+                                "must accept connections (check your firewall, and your "
+                                "router's port forwarding)."), port.c_str()));
+    Network::Disconnect();
+    return false;
+  }
+
+  return Network::GetInstance()->IsConnected();
+}
+
+bool NetworkConnectionMenu::Connect(const std::string& address, const std::string& port,
+                                    const std::string& password)
+{
+  // Hack: force loading of teams before creating threads.
+  GetTeamsList();
+  WaitForSearch();
+
+  join_hint->SetText(" ");
+  connection_state_t conn = Network::ClientStart(address, port, password);
+  if (Network::IsConnected() && conn == CONNECTED)
+    return true;
+
+  if (conn == CONN_WRONG_PASSWORD) {
+    join_hint->SetText(password.empty() ? _("This game needs a password.")
+                                        : _("Wrong password."));
+    join_address->SetText(port == DefaultPort() ? address : address + ":" + port);
+    widgets.SetFocusOn(join_pwd);
+  } else {
+    DisplayNetError(conn);
+    // translators: %s:%s will expand to something like "example.org:9999"
+    join_hint->SetText(Format(_("Unable to connect to %s:%s"), address.c_str(), port.c_str()));
+  }
   Network::Disconnect();
-  return r;
+  return false;
+}
+
+bool NetworkConnectionMenu::JoinGame(const GameServerInfo &game, const std::string &password)
+{
+  return Connect(game.ip_address, game.port, password);
+}
+
+bool NetworkConnectionMenu::JoinAddress()
+{
+  std::string host, port;
+  SplitAddress(join_address->GetText(), host, port);
+  if (host.empty()) {
+    join_hint->SetText(_("Type the address of the computer hosting the game."));
+    widgets.SetFocusOn(join_address);
+    return false;
+  }
+  if (!Connect(host, port, join_pwd->GetPassword()))
+    return false;
+
+  Config::GetInstance()->SetNetworkClientHost(host);
+  Config::GetInstance()->SetNetworkClientPort(port);
+  return true;
+}
+
+void NetworkConnectionMenu::PlayNetworkGame()
+{
+  play_ok_sound();
+
+  NetworkMenu nm;
+  Network::GetInstance()->network_menu = &nm;
+  nm.Run();
+  Network::GetInstance()->network_menu = NULL;
+  IndexServer::GetInstance()->Disconnect();
+  Network::Disconnect();
+
+  // Back here: the window may have been resized, the list is out of date
+  join_pwd->SetText("");
+  join_hint->SetText(" ");
+  shown_games.clear();
+  Menu::RedrawMenu();
+  last_search_end = 0;
+  ThreadRefreshList();
+}
+
+// Enter, or the --server / --client command line options
+bool NetworkConnectionMenu::signal_ok()
+{
+  network_menu_action_t start = action;
+  action = NET_NOTHING;
+
+  bool join = (start == NET_CONNECT) || join_address->HasFocus() || join_pwd->HasFocus();
+  bool host = (start == NET_HOST) || host_name->HasFocus() || host_pwd->HasFocus();
+
+  if (join && JoinAddress())
+    PlayNetworkGame();
+  else if (host && !join && Host())
+    PlayNetworkGame();
+  return false; // stay in this menu
 }
 
 bool NetworkConnectionMenu::signal_cancel()

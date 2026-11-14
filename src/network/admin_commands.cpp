@@ -36,14 +36,11 @@ static void PrintHelp()
   app->ReceiveMsgCallback(msg, light_gray_color);
   msg = "list: " + std::string(_("Lists the connected players"));
   app->ReceiveMsgCallback(msg, light_gray_color);
-  msg = "address: " + std::string(_("Shows the designated player address"));
-  app->ReceiveMsgCallback(msg, light_gray_color);
 }
 
 typedef enum
 {
-  USER_KICK,
-  USER_ADDRESS
+  USER_KICK
 } UserCommandType;
 
 static void UserCommand(const std::string& nick, UserCommandType type)
@@ -64,9 +61,6 @@ static void UserCommand(const std::string& nick, UserCommandType type)
       case USER_KICK:
         (*cpu)->ForceDisconnection();
         msg = std::string(Format(_("%s kicked from game"), nick.c_str()));
-        break;
-      case USER_ADDRESS:
-        msg = std::string(Format(_("%s has address %s"), nick.c_str(), (*cpu)->GetAddress().c_str()));
         break;
       default:
         msg = std::string(_("Unknown command of type %i"), type);
@@ -113,9 +107,6 @@ void ProcessCommand(const std::string & cmd)
   } else if (!cmd.compare(0, 6, "/kick ")) {
     std::string nick = cmd.substr(6, cmd.size() - 6);
     UserCommand(nick, USER_KICK);
-  } else if (!cmd.compare(0, 9, "/address ")) {
-    std::string nick = cmd.substr(9, cmd.size() - 9);
-    UserCommand(nick, USER_ADDRESS);
   } else if (!cmd.compare(0, 5, "/list")) {
     ListPlayers();
   } else {
