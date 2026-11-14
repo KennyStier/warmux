@@ -33,4 +33,4 @@ Both run as sandboxed systemd services with throwaway users
 accepts; add new versions there when releasing. The dedicated game server
 only accepts clients of its own version, so rebuild it on each release.
 
-Check: `warmux-list-games -n 12.0.1` should list "Public Battle".
+Check: `warmux-list-games -n 12.0.2` should list "Public Battle".

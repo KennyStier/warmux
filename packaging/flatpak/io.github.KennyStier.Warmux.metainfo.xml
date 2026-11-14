@@ -39,6 +39,18 @@
     <control>gamepad</control>
   </supports>
   <releases>
+    <release version="12.0.2" date="2026-11-14">
+      <description>
+        <p>Online play and a new Network Game menu:</p>
+        <ul>
+          <li>Public Battle: a game server that is always open, no port forwarding needed</li>
+          <li>Games on the local network are found automatically</li>
+          <li>Redesigned Network Game menu and lobby, scaling with the window</li>
+          <li>Player counts in the game list</li>
+          <li>Players no longer see each other's IP address</li>
+        </ul>
+      </description>
+    </release>
     <release version="12.0.1" date="2026-11-12">
       <description>
         <p>Windows and Android ports, smoother and sharper graphics:</p>
