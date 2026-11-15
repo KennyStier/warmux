@@ -19,7 +19,7 @@ warmux.net {
 	@releases path /latest.json /testing.json
 	handle @releases {
 		root * /var/lib/warmux-web
-		header Cache-Control "public, max-age=300"
+		header Cache-Control "no-cache"
 		file_server
 	}
 
