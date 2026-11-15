@@ -190,8 +190,11 @@ void TeamEnergy::Move()
     if (!move_start_time)
       move_start_time = global_time->Read();
 
-    dx = 0.5f*bar_spacing*(new_rank - rank)*(global_time->Read() - move_start_time) / MOVE_DURATION;
-    dy = 0.5f*height*(rank-new_rank) * sin((global_time->Read() - move_start_time)*M_PI/MOVE_DURATION);
+    // Signed: ranks are unsigned, and a bar moving the other way made the
+    // difference wrap around (the bar flew off screen while moving)
+    int ranks = (int)new_rank - (int)rank;
+    dx = 0.5f*bar_spacing*ranks*(global_time->Read() - move_start_time) / MOVE_DURATION;
+    dy = -0.5f*height*ranks * sin((global_time->Read() - move_start_time)*M_PI/MOVE_DURATION);
 
     // End of movement ?
     if( ((long)global_time->Read() - (long)move_start_time) > (long)MOVE_DURATION)

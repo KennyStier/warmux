@@ -100,11 +100,27 @@ two players join a lobby and are dropped from it (neither may crash),
 then a whole two-player game must start, be listed as in progress, and
 end. Run it locally with `sh .github/ci-network-test.sh`.
 
-**Memory check (AddressSanitizer)** runs the same test with the game and
-servers built with AddressSanitizer (`NETTEST_SANITIZE=1`), so using freed
-memory fails even when a normal build happens not to crash (on phones it
-does). Locally: `NETTEST_SANITIZE=1 sh .github/ci-network-test.sh` (builds
-in `_asantest/`).
+**Memory check (sanitizers)** runs the same test with the game and
+servers built with AddressSanitizer and UndefinedBehaviorSanitizer
+(`NETTEST_SANITIZE=1`), so using freed memory or undefined behaviour fails
+even when a normal build happens not to crash (on phones it does), then
+the random-input test below for six short rounds. Locally:
+`NETTEST_SANITIZE=1 sh .github/ci-network-test.sh` (builds in
+`_asantest/`).
+
+**Random input**: `WARMUX_TEST_MONKEY=<seed>` makes the game tap, swipe,
+scroll, touch and press keys at random, all through the menus and into
+battles, printing each action (Quit is ignored meanwhile).
+`.github/ci-monkey-test.sh` runs it under the sanitizers for
+`MONKEY_ROUNDS` rounds of `MONKEY_SECONDS` with different seeds and window
+sizes; a failure prints the last actions and the seed to replay.
+
+**Long tests** (`.github/workflows/long-tests.yml`) run after each push to
+`dev` without blocking anything: 30 rounds of random input, and network
+games on bigger maps with more worms (`NETTEST_MAP`, `NETTEST_WORMS`,
+`NETTEST_DEATH`), all under the sanitizers. Its nightly schedule only
+works once the file is on `main` (GitHub runs schedules from the default
+branch). Run it by hand from the Actions tab.
 
 ## Testing a network game unattended
 

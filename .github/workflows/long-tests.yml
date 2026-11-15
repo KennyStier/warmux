@@ -1,0 +1,71 @@
+name: Long tests
+
+# Longer runs under AddressSanitizer and UndefinedBehaviorSanitizer than
+# the Build workflow can afford: many rounds of random input, and network
+# games on bigger maps with more worms. They don't block anything; a
+# failure shows up here (and GitHub emails it).
+#
+# GitHub runs scheduled workflows only from the default branch (main), so
+# the nightly run starts once this file is released; until then it runs
+# after each push to dev, and by hand (Actions > Long tests > Run workflow).
+on:
+  push:
+    branches: [dev]
+  schedule:
+    - cron: '30 6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: long-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DEPS: >-
+    build-essential autoconf automake gettext autopoint pkg-config
+    libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
+    libsdl2-net-dev libsdl2-gfx-dev libcurl4-openssl-dev libxml2-dev libpng-dev
+
+jobs:
+  random-input:
+    name: Random input (30 rounds)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends $DEPS
+      - uses: actions/checkout@v4
+      - run: autoreconf -fi && MONKEY_ROUNDS=30 MONKEY_SECONDS=75 MONKEY_SEED=${{ github.run_number }}000 sh .github/ci-monkey-test.sh
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: random-input-logs
+          path: _asantest/monkey/*.log
+
+  network:
+    name: Network game (${{ matrix.map }}, ${{ matrix.worms }} worms)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { map: wildwestdv, worms: 4, death: 240 }
+          - { map: space2, worms: 3, death: 180 }
+          - { map: urbanheights, worms: 6, death: 300 }
+          - { map: cheese, worms: 2, death: 150 }
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends $DEPS
+      - uses: actions/checkout@v4
+      - run: autoreconf -fi && sh .github/ci-network-test.sh
+        env:
+          NETTEST_SANITIZE: 1
+          NETTEST_MAP: ${{ matrix.map }}
+          NETTEST_WORMS: ${{ matrix.worms }}
+          NETTEST_DEATH: ${{ matrix.death }}
+          NETTEST_TIMEOUT: 2400
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: network-logs-${{ matrix.map }}
+          path: _asantest/run/*.log
