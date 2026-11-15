@@ -63,6 +63,14 @@ ScrollBox::ScrollBox(const Point2i & _size, bool force_widget_size, bool alterna
   WidgetList::AddWidget(m_down);
 }
 
+// Released elsewhere: stop following the finger
+void ScrollBox::CancelPress()
+{
+  start_drag_offset = NO_DRAG;
+  scroll_mode = SCROLL_MODE_NONE;
+  WidgetList::CancelPress();
+}
+
 Widget * ScrollBox::ClickUp(const Point2i & mousePosition, uint button)
 {
   ScrollMode old_mode = scroll_mode;

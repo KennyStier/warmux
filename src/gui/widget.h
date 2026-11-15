@@ -124,6 +124,9 @@ public:
 
   void SetContainer(Container * _ct) { ct = _ct; };
   Container * GetContainer() const { return ct; };
+  // A press that started on this widget was released somewhere else and
+  // isn't a click: forget any drag it started
+  virtual void CancelPress() {}
 
   // to manage browsing between the widgets with keyboard
   virtual Widget * GetFirstWidget() const { return NULL; };

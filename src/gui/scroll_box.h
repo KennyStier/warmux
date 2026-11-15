@@ -95,6 +95,7 @@ public:
     }
   }
   virtual size_t WidgetCount() const { return vbox->WidgetCount(); }
+  virtual void CancelPress();
   virtual void Empty() { offset = 0; vbox->Empty(); }
   virtual void Clear() { offset = 0; vbox->Clear(); }
 };

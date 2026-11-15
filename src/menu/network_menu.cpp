@@ -653,14 +653,18 @@ void NetworkMenu::HandleEvent(const SDL_Event& evnt)
       widgets.SendKey(evnt.key.keysym);
       break;
     }
+  } else if (evnt.type == SDL_MOUSEBUTTONDOWN) {
+    press_position = Point2i(evnt.button.x, evnt.button.y);
+    pressed = true;
   } else if (evnt.type == SDL_MOUSEBUTTONUP) {
 
     int x=0, y=0;
     GetGameMouseState(&x, &y);
     Point2i mousePosition(x, y);
 
-    if (leave->Contains(mousePosition))
+    if (PressedOn(leave, mousePosition))
       Menu::mouse_cancel();
+    pressed = false;
   }
 }
 

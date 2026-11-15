@@ -71,6 +71,9 @@ public:
   virtual void AddWidget(Widget* widget);
   virtual void RemoveWidget(Widget* w);
   virtual size_t WidgetCount() const { return widget_list.size(); }
+  virtual void CancelPress();
+  // The child widget at that point, or NULL
+  Widget* WidgetAt(const Point2i &pos) const;
   // Take the widgets out of the list without deleting them
   virtual void Empty();
   virtual void ForgetWidget(Widget *w);

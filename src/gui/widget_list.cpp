@@ -395,6 +395,20 @@ void WidgetList::Draw(const Point2i &mousePosition)
   UnsetClip(clip);
 }
 
+void WidgetList::CancelPress()
+{
+  for (wit w = widget_list.begin(); w != widget_list.end(); w++)
+    (*w)->CancelPress();
+}
+
+Widget* WidgetList::WidgetAt(const Point2i &pos) const
+{
+  for (std::list<Widget*>::const_iterator w=widget_list.begin(); w != widget_list.end(); w++)
+    if ((*w)->Contains(pos))
+      return *w;
+  return NULL;
+}
+
 Widget* WidgetList::ClickUp(const Point2i &mousePosition, uint button)
 {
   for (wit w=widget_list.begin(); w != widget_list.end(); w++) {

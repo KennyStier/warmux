@@ -49,6 +49,7 @@ Menu::Menu(const std::string& bg, t_action _actions)
   , selected_widget(NULL)
   , close_menu(false)
   , closed_for_resize(false)
+  , pressed(false)
 {
   close_menu = false ;
   Surface& window = GetMainWindow();
@@ -96,6 +97,7 @@ Menu::Menu(void)
   , b_ok(NULL)
   , close_menu(false)
   , closed_for_resize(false)
+  , pressed(false)
   , actions_buttons(NULL)
 {
 }
@@ -230,11 +232,21 @@ void Menu::mouse_cancel()
   }
 }
 
+bool Menu::ReleasedElsewhere(const Point2i &release) const
+{
+  return pressed && widgets.WidgetAt(press_position) != widgets.WidgetAt(release);
+}
+
+bool Menu::PressedOn(const Widget *w, const Point2i &release) const
+{
+  return w->Contains(release) && (!pressed || w->Contains(press_position));
+}
+
 bool Menu::BasicOnClickUp(const Point2i &mousePosition)
 {
-  if (b_ok &&  b_ok->Contains(mousePosition)) {
+  if (b_ok && PressedOn(b_ok, mousePosition)) {
     mouse_ok();
-  } else if (b_cancel && b_cancel->Contains(mousePosition)) {
+  } else if (b_cancel && PressedOn(b_cancel, mousePosition)) {
     mouse_cancel();
   } else {
     return false;
@@ -431,11 +443,24 @@ void Menu::HandleEvent(const SDL_Event& evnt)
   } else if (evnt.type == SDL_MOUSEBUTTONUP) {
     Point2i mousePosition(evnt.button.x, evnt.button.y);
 
-    if (!BasicOnClickUp(mousePosition)) {
+    if (Mouse::IS_CLICK_BUTTON(evnt.button.button) && ReleasedElsewhere(mousePosition)) {
+      // Not a click (a list being scrolled, a finger sliding off a button)
+      widgets.CancelPress();
+      pressed = false;
+    } else if (Mouse::IS_CLICK_BUTTON(evnt.button.button)) {
+      bool on_button = BasicOnClickUp(mousePosition);
+      pressed = false;
+      if (!on_button)
+        OnClickUp(mousePosition, evnt.button.button);
+    } else if (!BasicOnClickUp(mousePosition)) {
       OnClickUp(mousePosition, evnt.button.button);
     }
   } else if (evnt.type == SDL_MOUSEBUTTONDOWN) {
     Point2i mousePosition(evnt.button.x, evnt.button.y);
+    if (Mouse::IS_CLICK_BUTTON(evnt.button.button)) {
+      press_position = mousePosition;
+      pressed = true;
+    }
     OnClick(mousePosition, evnt.button.button);
   }
 }

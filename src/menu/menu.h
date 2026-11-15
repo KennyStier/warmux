@@ -96,6 +96,16 @@ protected:
   bool close_menu;
   bool closed_for_resize;
   Point2i last_mouse_position;
+  // Where the current press (mouse button or finger) started
+  Point2i press_position;
+  bool pressed;
+
+  // A release counts as a click only on the part of the menu where the
+  // press started: a finger scrolling a list that lifts over a button must
+  // not press it
+  bool ReleasedElsewhere(const Point2i &release) const;
+  // Whether a release there clicks w (the press started on it too)
+  bool PressedOn(const Widget *w, const Point2i &release) const;
   /* Actions buttons  */
   HBox *actions_buttons;
 
