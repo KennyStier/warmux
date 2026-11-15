@@ -1,0 +1,20 @@
+Categories:
+  - Games
+License: GPL-2.0-or-later
+AuthorName: Warmux contributors
+WebSite: https://warmux.net
+SourceCode: https://github.com/KennyStier/warmux
+IssueTracker: https://github.com/KennyStier/warmux/issues
+Changelog: https://github.com/KennyStier/warmux/releases
+
+Name: Warmux
+Summary: Turn-based artillery battles between free-software mascots
+Description: |-
+  Teams of free-software mascots (Tux, Gnu, Firefox, Wilber and friends)
+  take turns blasting each other across destructible 2D maps with bazookas,
+  grenades, baseball bats, ropes and plenty of other questionable equipment.
+
+  Play hot-seat on one device, against the computer, or online in Public
+  Battle with players on Android, Windows and Linux.
+
+  This is a maintained fork of Warmux 11.04, ported to SDL2.

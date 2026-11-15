@@ -2,9 +2,18 @@
 Description=Refresh the Warmux website's latest release list
 After=network-online.target
 Wants=network-online.target
+# Then bring the F-Droid repository up to date (even if one list failed)
+OnSuccess=warmux-fdroid.service
+OnFailure=warmux-fdroid.service
+# Right after GitHub's webhook, its API can still answer 404 for the new
+# release for a little while: try again
+StartLimitIntervalSec=15min
+StartLimitBurst=6
 
 [Service]
 Type=oneshot
+Restart=on-failure
+RestartSec=30s
 ExecStart=/usr/local/bin/warmux-latest
 User=warmux-web
 Group=warmux-web

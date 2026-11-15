@@ -27,7 +27,7 @@
                hint: "Unzip anywhere and run <code>warmux.exe</code>." };
     if (/-android\.apk$/.test(name))
       return { id: "android", order: 3, icon: "android", title: "Android", kind: "APK",
-               hint: "Allow your browser to install apps when Android asks." };
+               hint: "Allow your browser to install apps when Android asks. For automatic updates, add the <a href=\"https://warmux.net/fdroid/repo?fingerprint=9901EEE3C6D19DD79A3D131A9F96A2CC7E3328BF1A11914E357F9C7C7420925E\">Warmux F-Droid repository</a>." };
     if (/\.flatpak$/.test(name))
       return { id: "flatpak", order: 4, icon: "linux", title: "Linux (Flatpak)", kind: "Any distribution",
                hint: "Open it with your software center, or run <code>flatpak install --user ./" + name + "</code>" };

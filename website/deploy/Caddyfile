@@ -16,6 +16,19 @@ warmux.net {
 		reverse_proxy 127.0.0.1:9011
 	}
 
+	# The F-Droid repository (warmux-fdroid); only its repo/ folder is
+	# public, not the signing key next to it
+	# The repository's address, as shared, opens its page in a browser
+	redir /fdroid/repo /fdroid/repo/?{query}
+	handle_path /fdroid/* {
+		root * /var/lib/warmux-fdroid
+		@private not path /repo/*
+		respond @private 404
+		@index path /repo/entry.jar /repo/entry.json /repo/index* /repo/diff/*
+		header @index Cache-Control "no-cache"
+		file_server
+	}
+
 	@releases path /latest.json /testing.json
 	handle @releases {
 		root * /var/lib/warmux-web

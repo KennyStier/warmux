@@ -1,0 +1,34 @@
+[Unit]
+Description=Update the Warmux F-Droid repository from the latest builds
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/warmux-fdroid
+User=warmux-fdroid
+Group=warmux-fdroid
+Environment=HOME=/var/lib/warmux-fdroid
+WorkingDirectory=/var/lib/warmux-fdroid
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/warmux-fdroid
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+CapabilityBoundingSet=
+# Java (apksigner, for signing the index) needs a JIT
+MemoryDenyWriteExecute=no

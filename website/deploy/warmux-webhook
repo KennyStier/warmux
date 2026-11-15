@@ -54,8 +54,10 @@ class Hook(BaseHTTPRequestHandler):
             except (ValueError, AttributeError):
                 return self.reply(400)
             # "deleted" comes before every new testing build (the old one is
-            # removed first); the list keeps the last good release anyway
-            if action != "deleted":
+            # removed first; the list keeps the last good release anyway),
+            # and drafts are what gh makes while it uploads a release's files
+            draft = payload.get("release", {}).get("draft", False)
+            if action != "deleted" and not draft:
                 with open(TRIGGER, "w") as f:
                     f.write(action + " " + tag + "\n")
                 print("refresh: release %s %s" % (action, tag), file=sys.stderr)

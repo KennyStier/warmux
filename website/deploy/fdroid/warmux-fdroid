@@ -1,0 +1,61 @@
+#!/bin/sh
+# Keeps the F-Droid repository at https://warmux.net/fdroid/repo up to date:
+# downloads the Android APK of the latest release and of the testing
+# pre-release (from the lists warmux-latest just wrote), keeps the newest
+# few of each app, and has fdroidserver rebuild and sign the index when
+# something changed. Started after each warmux-latest run.
+set -eu
+DIR=/var/lib/warmux-fdroid
+SHARE=/usr/local/share/warmux-fdroid
+LISTS=/var/lib/warmux-web
+KEEP=3
+cd "$DIR"
+
+# Configuration and app descriptions come from the repository
+install -m600 "$SHARE/config.yml" config.yml
+rm -rf metadata && cp -r "$SHARE/metadata" metadata
+# fdroid copies the repository's icon (repo_icon) from here into repo/icons
+install -m644 "$SHARE/warmux.png" warmux.png
+
+# The signing key's password, made once
+if [ ! -s keypass ]; then
+  (umask 077; head -c 32 /dev/urandom | base64 | tr -d '/+=' > keypass)
+fi
+FDROID_KEY_PASS=$(cat keypass)
+export FDROID_KEY_PASS
+
+changed=no
+[ -f keystore.p12 ] || { fdroid update --create-key -q; changed=yes; }
+[ -f repo/entry.jar ] || changed=yes
+cmp -s warmux.png repo/icons/warmux.png || changed=yes
+
+for list in latest.json testing.json; do
+  [ -f "$LISTS/$list" ] || continue
+  for url in $(jq -r '.assets[] | select(.name | endswith("-android.apk")) | .url' "$LISTS/$list"); do
+    apk=$(basename "$url")
+    case "$apk" in *[!A-Za-z0-9._-]*) echo "odd file name: $apk" >&2; continue;; esac
+    [ -f "repo/$apk" ] && continue
+    echo "Downloading $apk"
+    curl -fsSL --max-time 600 -A "warmux.net-fdroid" -o "repo/.$apk.part" "$url"
+    mv "repo/.$apk.part" "repo/$apk"
+    changed=yes
+  done
+done
+
+# Keep the newest few APKs of each app
+prune() {  # pattern
+  ls -t repo/$1 2>/dev/null | tail -n +$((KEEP + 1)) | while read -r old; do
+    echo "Removing $old"
+    rm -f "$old"
+    echo yes > .pruned
+  done
+}
+rm -f .pruned
+prune 'warmux-testing-*-android.apk'
+prune 'warmux-[0-9]*-android.apk'
+[ -f .pruned ] && changed=yes && rm -f .pruned
+
+if [ $changed = yes ]; then
+  fdroid update -q --use-date-from-apk
+  echo "Index updated: $(ls repo/*.apk | xargs -n1 basename | tr '\n' ' ')"
+fi

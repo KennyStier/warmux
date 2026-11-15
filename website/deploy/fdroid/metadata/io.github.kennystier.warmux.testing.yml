@@ -1,0 +1,17 @@
+Categories:
+  - Games
+License: GPL-2.0-or-later
+AuthorName: Warmux contributors
+WebSite: https://warmux.net/testing/
+SourceCode: https://github.com/KennyStier/warmux/tree/dev
+IssueTracker: https://github.com/KennyStier/warmux/issues
+Changelog: https://github.com/KennyStier/warmux/releases/tag/testing
+
+Name: Warmux Testing
+Summary: 'The next Warmux, early: a build of every change'
+Description: |-
+  Builds of the version of Warmux being worked on, made every time it
+  changes. Expect bugs and the odd crash, and please report them.
+
+  Warmux Testing installs next to Warmux and keeps its own settings and
+  teams. It plays online only with other testing builds, in Testing Battle.
