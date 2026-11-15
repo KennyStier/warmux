@@ -16,6 +16,13 @@
 set -eu
 
 VERSION=${1:?usage: build-windows.sh <version> [output-dir]}
+# WARMUX_TESTING=1 builds "Warmux Testing": testing servers, own settings,
+# installed next to Warmux
+if [ "${WARMUX_TESTING:-0}" = 1 ]; then
+  APP_NAME="Warmux Testing"; BASE=warmux-testing; CONF_TESTING=--enable-testing
+else
+  APP_NAME="Warmux"; BASE=warmux; CONF_TESTING=
+fi
 OUT=$(realpath "${2:-.}")
 SRC=$(cd "$(dirname "$0")/../.." && pwd)
 HOST=x86_64-w64-mingw32
@@ -55,10 +62,10 @@ cd "$WORK/src"
 git clean -dfxq 2>/dev/null || true
 autoreconf -fi
 mkdir -p _win && cd _win
-mingw64-configure --disable-servers
+mingw64-configure --disable-servers $CONF_TESTING
 make -j"$JOBS"
 
-STAGE="$WORK/warmux-$VERSION-windows-x64"
+STAGE="$WORK/$BASE-$VERSION-windows-x64"
 mkdir -p "$STAGE"
 make install program_transform_name= bindir="$STAGE" pkgdatadir="$STAGE/data" \
      localedir="$STAGE/locale" datadir="$WORK/unused" mandir="$WORK/unused"
@@ -88,7 +95,7 @@ $HOST-strip --strip-unneeded "$STAGE"/*.dll
 
 cp "$SRC/COPYING" "$STAGE/COPYING.txt"
 cat > "$STAGE/README.txt" <<EOF
-Warmux $VERSION for Windows (64-bit)
+$APP_NAME $VERSION for Windows (64-bit)
 https://github.com/KennyStier/warmux
 
 Run warmux.exe. The folder can live anywhere; settings and saved teams
@@ -96,8 +103,8 @@ are kept in your user profile.
 EOF
 
 mkdir -p "$OUT"
-(cd "$WORK" && zip -qr9 "$OUT/warmux-$VERSION-windows-x64.zip" "$(basename "$STAGE")")
-echo "Built $OUT/warmux-$VERSION-windows-x64.zip"
+(cd "$WORK" && zip -qr9 "$OUT/$BASE-$VERSION-windows-x64.zip" "$(basename "$STAGE")")
+echo "Built $OUT/$BASE-$VERSION-windows-x64.zip"
 
 # --- Installer -------------------------------------------------------------
 # Uninstall list: every staged file, then folders deepest first (RMDir only
@@ -110,7 +117,7 @@ UNLIST="$WORK/uninstall.nsh"
 # NSIS needs a numeric x.y.z version
 NSIS_VERSION=$(echo "$VERSION" | sed -n 's/^\([0-9]*\.[0-9]*\.[0-9]*\).*/\1/p')
 makensis -V2 -DVERSION="${NSIS_VERSION:-0.0.0}" -DSTAGE="$STAGE" \
-  -DUNINSTALL_LIST="$UNLIST" \
-  -DOUTFILE="$OUT/warmux-$VERSION-windows-x64-setup.exe" \
+  -DAPP="$APP_NAME" -DUNINSTALL_LIST="$UNLIST" \
+  -DOUTFILE="$OUT/$BASE-$VERSION-windows-x64-setup.exe" \
   "$SRC/packaging/windows/warmux.nsi"
-echo "Built $OUT/warmux-$VERSION-windows-x64-setup.exe"
+echo "Built $OUT/$BASE-$VERSION-windows-x64-setup.exe"

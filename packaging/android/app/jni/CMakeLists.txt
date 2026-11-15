@@ -105,7 +105,17 @@ automake_sources(GAME_SOURCES ${TOP}/src/Makefile.am ${TOP}/src)
 automake_sources(LIBWARMUX_SOURCES ${TOP}/lib/warmux/Makefile.am ${TOP}/lib/warmux)
 automake_sources(FIXEDPOINT_SOURCES ${TOP}/lib/fixedpoint/Makefile.am ${TOP}/lib/fixedpoint)
 
-set(WARMUX_INDEX_SERVER "index.warmux.net")
+# Testing builds (-DWARMUX_TESTING=1): see --enable-testing in configure.ac
+if(NOT WARMUX_TESTING)
+  set(WARMUX_TESTING 0)
+endif()
+if(WARMUX_TESTING)
+  set(WARMUX_VERSION_SUFFIX "-testing")
+  set(WARMUX_INDEX_SERVER "index.warmux.net:9998")
+else()
+  set(WARMUX_VERSION_SUFFIX "")
+  set(WARMUX_INDEX_SERVER "index.warmux.net")
+endif()
 set(WARMUX_META_URL "")
 configure_file(${TOP}/lib/warmux/include/WARMUX_net_defaults.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/include/WARMUX_net_defaults.h @ONLY)

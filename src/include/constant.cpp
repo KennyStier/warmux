@@ -20,8 +20,9 @@
  *****************************************************************************/
 
 #include "constant.h"
+#include <WARMUX_version.h>
 
-const std::string Constants::WARMUX_VERSION = PACKAGE_VERSION;
+const std::string Constants::WARMUX_VERSION = WARMUX_FULL_VERSION;
 
 const std::string Constants::ENV_DATADIR = "WARMUX_DATADIR";
 const std::string Constants::ENV_LOCALEDIR = "WARMUX_LOCALEDIR";

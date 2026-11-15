@@ -23,6 +23,7 @@
 #include <WARMUX_error.h>
 #include <WARMUX_i18n.h>
 #include <WARMUX_index_server.h>
+#include <WARMUX_version.h>
 #include "config.h"
 #include "server.h"
 
@@ -391,7 +392,7 @@ bool GameServer::ConnectToIndexServer()
     return true;
   }
 
-  connection_state_t conn = IndexServer::GetInstance()->Connect(PACKAGE_VERSION);
+  connection_state_t conn = IndexServer::GetInstance()->Connect(WARMUX_FULL_VERSION);
   if (conn != CONNECTED) {
     if (conn == CONN_WRONG_VERSION) {
       fprintf(stderr,"%s\n", Format(_("Sorry, your version is not supported anymore. "

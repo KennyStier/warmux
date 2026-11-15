@@ -8,4 +8,9 @@
 /* Base URL publishing "server_list" and "last" */
 #define WARMUX_META_URL "@WARMUX_META_URL@"
 
+/* 1 for testing builds (--enable-testing), which add a suffix to the
+   version so they only play with each other */
+#define WARMUX_TESTING @WARMUX_TESTING@
+#define WARMUX_VERSION_SUFFIX "@WARMUX_VERSION_SUFFIX@"
+
 #endif

@@ -53,6 +53,7 @@
 #include <WARMUX_index_svr_msg.h>
 #include <WARMUX_network.h>
 #include <WARMUX_socket.h>
+#include <WARMUX_version.h>
 #include "extSDL_net.h"
 
 #ifdef LOG_NETWORK
@@ -64,7 +65,7 @@
 #endif
 //-----------------------------------------------------------------------------
 
-static const std::string WARMUX_VERSION = PACKAGE_VERSION;
+static const std::string WARMUX_VERSION = WARMUX_FULL_VERSION;
 
 bool WNet::sdlnet_initialized = false;
 

@@ -25,6 +25,7 @@
 #include <WARMUX_error.h>
 #include <WARMUX_i18n.h>
 #include <WARMUX_types.h>
+#include <WARMUX_version.h>
 
 #ifdef ANDROID
 #  include <android/log.h>
@@ -35,7 +36,7 @@
 #  include <unistd.h>
 #endif
 
-static const std::string WARMUX_VERSION = PACKAGE_VERSION;
+static const std::string WARMUX_VERSION = WARMUX_FULL_VERSION;
 
 void WakeUpDebugger()
 {

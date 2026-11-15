@@ -1,0 +1,43 @@
+[Unit]
+Description=Warmux testing index server (lists testing games)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/opt/warmux/testing/bin/warmux-index-server -f /etc/warmux/testing/index_server.conf
+StateDirectory=warmux-index-testing
+DynamicUser=yes
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+ProcSubset=pid
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+UMask=0077
+MemoryMax=128M
+TasksMax=32
+CPUQuota=50%
+LimitNOFILE=2048
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

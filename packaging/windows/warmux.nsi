@@ -15,7 +15,9 @@ RequestExecutionLevel admin
 !include "x64.nsh"
 !include "FileFunc.nsh"
 
-!define APP       "Warmux"
+!ifndef APP
+  !define APP     "Warmux"  ; "Warmux Testing" for testing builds
+!endif
 !define PUBLISHER "KennyStier and the Warmux team"
 !define HOMEPAGE  "https://github.com/KennyStier/warmux"
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP}"

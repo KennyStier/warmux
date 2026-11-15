@@ -1,0 +1,46 @@
+[Unit]
+Description=Warmux testing game server (Testing Battle, dev branch)
+After=network-online.target warmux-index-testing.service
+Wants=network-online.target
+
+[Service]
+# Register through the public address (not 127.0.0.1) so the lobby
+# lists an address players can reach
+Environment=WARMUX_INDEX_SERVER=index.warmux.net:9998
+ExecStart=/opt/warmux/testing/bin/warmux-server -f /etc/warmux/testing/game_server.conf
+StateDirectory=warmux-game-testing
+DynamicUser=yes
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+ProcSubset=pid
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+UMask=0077
+MemoryMax=128M
+TasksMax=32
+CPUQuota=50%
+LimitNOFILE=2048
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

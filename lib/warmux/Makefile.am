@@ -28,6 +28,7 @@ libwarmux_a_SOURCES = \
 	./include/WARMUX_socket.h \
 	./include/WARMUX_team_config.h \
 	./include/WARMUX_types.h \
+	./include/WARMUX_version.h \
 	./include/WARMUX_vector2.h \
 	./action/action.cpp \
 	./action/action_handler.cpp \

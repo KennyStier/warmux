@@ -4,3 +4,5 @@ packaging/arch/*
 !packaging/arch/PKGBUILD
 _flatpak/
 .flatpak-builder/
+packaging/flatpak/*.Testing.yml
+packaging/flatpak/*.Testing.metainfo.xml

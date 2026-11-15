@@ -12,7 +12,7 @@ dnl ========================================================================
 dnl = Require at least automake 2.52
 AC_PREREQ(2.52)
 
-AC_INIT([Warmux], [12.0.2], [https://github.com/KennyStier/warmux/issues], [warmux], [https://github.com/KennyStier/warmux])
+AC_INIT([Warmux], [12.0.3], [https://github.com/KennyStier/warmux/issues], [warmux], [https://github.com/KennyStier/warmux])
 AC_CONFIG_SRCDIR([src/main.cpp])
 
 dnl Detect the canonical host and target build environment
@@ -170,10 +170,29 @@ dnl project's own (index.warmux.net); the meta URL defaults to empty (disabled).
 dnl Either can also be overridden at runtime via the environment variable of
 dnl the same name.
 
+dnl Testing builds (from the dev branch) show up as their own app, keep
+dnl their own settings, and only meet other testing builds: their network
+dnl version is suffixed, and they use the testing index server.
+AC_ARG_ENABLE([testing],
+              [AS_HELP_STRING([--enable-testing],
+                              [build a testing version (separate settings, testing servers)])],
+              [], [enable_testing=no])
+if test "x$enable_testing" = "xyes"; then
+  WARMUX_TESTING=1
+  WARMUX_VERSION_SUFFIX="-testing"
+  default_index_server="index.warmux.net:9998"
+else
+  WARMUX_TESTING=0
+  WARMUX_VERSION_SUFFIX=""
+  default_index_server="index.warmux.net"
+fi
+AC_SUBST([WARMUX_TESTING])
+AC_SUBST([WARMUX_VERSION_SUFFIX])
+
 AC_ARG_WITH([index-server],
             [AS_HELP_STRING([--with-index-server=HOST[:PORT]],
-                            [index server to contact directly for internet games (default: index.warmux.net, "no" to disable)])],
-            [WARMUX_INDEX_SERVER="$withval"], [WARMUX_INDEX_SERVER="index.warmux.net"])
+                            [index server to contact directly for internet games (default: index.warmux.net, or index.warmux.net:9998 for testing builds; "no" to disable)])],
+            [WARMUX_INDEX_SERVER="$withval"], [WARMUX_INDEX_SERVER="$default_index_server"])
 test "x$WARMUX_INDEX_SERVER" = "xno" && WARMUX_INDEX_SERVER=""
 AC_SUBST([WARMUX_INDEX_SERVER])
 

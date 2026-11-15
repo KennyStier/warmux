@@ -38,6 +38,7 @@
 #endif
 
 #include <WARMUX_file_tools.h>
+#include <WARMUX_version.h>
 #include <WARMUX_team_config.h>
 
 #include "game/config.h"
@@ -206,7 +207,10 @@ Config::Config()
   ttf_filename = basepath + PATH_SEPARATOR FONT_FILE;
   font_dir     = data_dir + PATH_SEPARATOR "font" PATH_SEPARATOR;
 
-  personal_config_dir = GetHome() + PATH_SEPARATOR "Warmux" PATH_SEPARATOR;
+  // Testing builds keep their own settings (on Android they are also a
+  // separate app, with their own storage)
+  personal_config_dir = GetHome() + PATH_SEPARATOR + (WARMUX_TESTING ? "Warmux Testing" : "Warmux")
+                      + PATH_SEPARATOR;
   personal_data_dir = personal_config_dir;
 
 #else //Neither WIN32, ANDROID or __APPLE__
@@ -228,10 +232,11 @@ Config::Config()
   else
     personal_config_dir = c_config_dir;
 
-  // Settings used to live in "wormux", the game's name before Warmux
+  // Settings used to live in "wormux", the game's name before Warmux.
+  // Testing builds keep their own, and have nothing older to move.
   std::string old_config_dir = personal_config_dir + "/wormux/";
-  personal_config_dir += "/warmux/";
-  if (DoesFolderExist(old_config_dir) && !DoesFolderExist(personal_config_dir)) {
+  personal_config_dir += WARMUX_TESTING ? "/warmux-testing/" : "/warmux/";
+  if (!WARMUX_TESTING && DoesFolderExist(old_config_dir) && !DoesFolderExist(personal_config_dir)) {
     std::cout << "Moving " << old_config_dir << " to " << personal_config_dir << std::endl;
     Rename(old_config_dir, personal_config_dir);
   }
@@ -244,14 +249,14 @@ Config::Config()
 
   // Data used to live in "wormux", the game's name before Warmux
   std::string old_data_dir = personal_data_dir + "/wormux/";
-  personal_data_dir += "/warmux/";
-  if (DoesFolderExist(old_data_dir) && !DoesFolderExist(personal_data_dir)) {
+  personal_data_dir += WARMUX_TESTING ? "/warmux-testing/" : "/warmux/";
+  if (!WARMUX_TESTING && DoesFolderExist(old_data_dir) && !DoesFolderExist(personal_data_dir)) {
     std::cout << "Moving " << old_data_dir << " to " << personal_data_dir << std::endl;
     Rename(old_data_dir, personal_data_dir);
   }
 #endif
 
-  std::string old_dir = GetOldPersonalDir();
+  std::string old_dir = WARMUX_TESTING ? "" : GetOldPersonalDir();
   if (old_dir != "") {
     std::cout << "Moving " << old_dir << " to " << personal_data_dir << std::endl;
     if (old_dir != personal_data_dir)

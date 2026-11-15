@@ -6,6 +6,12 @@ plugins {
 def acVersion = (file('../../../configure.ac').text =~ /AC_INIT\(\s*\[?Warmux\]?\s*,\s*\[?([0-9.]+)/)[0][1]
 def parts = acVersion.tokenize('.').collect { it as int } + [0, 0, 0]
 
+// Testing builds (gradlew -Pwarmux.testing ...) are a separate app,
+// "Warmux Testing", installed next to the normal one. Their version code
+// is the CI build number, so each new testing build installs over the last.
+def testing = project.hasProperty('warmux.testing')
+def buildNumber = (System.getenv('WARMUX_BUILD_NUMBER') ?: '1') as int
+
 android {
     namespace 'io.github.kennystier.warmux'
     compileSdk 36
@@ -13,13 +19,16 @@ android {
 
     defaultConfig {
         applicationId 'io.github.kennystier.warmux'
+        if (testing)
+            applicationIdSuffix '.testing'
         minSdk 24
         targetSdk 36
-        versionName acVersion
-        versionCode parts[0] * 10000 + parts[1] * 100 + parts[2]
+        versionName testing ? "${acVersion}-testing.${buildNumber}" : acVersion
+        versionCode testing ? buildNumber : parts[0] * 10000 + parts[1] * 100 + parts[2]
+        manifestPlaceholders = [appLabel: testing ? 'Warmux Testing' : 'Warmux']
         externalNativeBuild {
             cmake {
-                arguments '-DANDROID_STL=c++_static'
+                arguments '-DANDROID_STL=c++_static', "-DWARMUX_TESTING=${testing ? 1 : 0}"
                 abiFilters 'arm64-v8a', 'x86_64'
             }
         }

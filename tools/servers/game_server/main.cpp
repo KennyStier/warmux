@@ -39,6 +39,7 @@
 #include <WARMUX_types.h>
 #include <WARMUX_config.h>
 #include <WARMUX_network.h>
+#include <WARMUX_version.h>
 #include <WARMUX_random.h>
 #include <WARMUX_socket.h>
 #include <WSERVER_config.h>
@@ -88,7 +89,7 @@ void parseArgs(int argc, char *argv[])
       exit(EXIT_SUCCESS);
       break;
     case 'v':
-      printf("Warmux game server version %s\n", PACKAGE_VERSION);
+      printf("Warmux game server version %s\n", WARMUX_FULL_VERSION);
       exit(EXIT_SUCCESS);
     case 'd':
       Env::Daemonize();
@@ -125,7 +126,7 @@ int main(int argc, char* argv[])
 {
   // One line at a time, so logs (e.g. the systemd journal) are up to date
   setvbuf(stdout, NULL, _IOLBF, 0);
-  DPRINT(INFO, "Warmux game server version %s", PACKAGE_VERSION);
+  DPRINT(INFO, "Warmux game server version %s", WARMUX_FULL_VERSION);
   DPRINT(INFO, "%s", wx_clock.DateStr());
 
   parseArgs(argc, argv);
