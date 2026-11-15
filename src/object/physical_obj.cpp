@@ -85,6 +85,12 @@ PhysicalObj::PhysicalObj(const std::string &name, const std::string &xml_config)
 PhysicalObj::~PhysicalObj()
 {
   MSG_DEBUG("physical.mem", "Destruction of %s", GetName().c_str());
+  // Objects are also deleted elsewhere than in ObjectsList::Refresh (weapons
+  // delete their projectiles), and the list of overlapping objects kept
+  // pointing to them; it was then read after they were freed
+  ObjectsList *objects = ObjectsList::GetExistingInstance();
+  if (objects)
+    objects->RemoveOverlappedObjectReference(this);
 }
 
 //---------------------------------------------------------------------------//

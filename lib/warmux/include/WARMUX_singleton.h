@@ -74,6 +74,8 @@ public:
   static const T& GetConstRef() { return *GetInstance(); }
 
   static void CleanUp() { if (singleton) delete singleton; }
+  // The instance if there is one, without making it (for destructors)
+  static T* GetExistingInstance() { return singleton; }
 };
 
 template<typename T>

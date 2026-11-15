@@ -137,27 +137,28 @@ void ObjectsList::FreeMem()
       delete(*object);
   }
   clear();
+  overlapped_objects.clear();
 }
 
 //-----------------------------------------------------------------------------
 
 void ObjectsList::RemoveOverlappedObjectReference(const PhysicalObj * obj)
 {
-  for (iterator it = overlapped_objects.begin(); it != overlapped_objects.end();) {
-
-    if ((*it)->GetOverlappingObject() == obj) {
-      MSG_DEBUG("lst_objects", "removing overlapse reference of \"%s\" (%p) in \"%s\"",
-                obj->GetName().c_str(), obj, (*it)->GetName().c_str());
-      (*it)->SetOverlappingObject(NULL);
-      it = overlapped_objects.erase(it);
-
-    } else if ((*it) == obj) {
-      MSG_DEBUG("lst_objects", "removing overlapse object of \"%s\" (%p)",
-                obj->GetName().c_str(), obj);
-      it = overlapped_objects.erase(it);
-    } else {
-      ++it;
-    }
+  // The objects overlapping obj stop doing so, and obj leaves the list.
+  // Collected first: SetOverlappingObject(NULL) removes the object from
+  // overlapped_objects itself, which invalidated the iterator of a loop
+  // erasing as it went.
+  std::list<PhysicalObj*> overlapping;
+  for (iterator it = overlapped_objects.begin(); it != overlapped_objects.end(); ++it) {
+    if (*it != obj && (*it)->GetOverlappingObject() == obj)
+      overlapping.push_back(*it);
+  }
+  overlapped_objects.remove(const_cast<PhysicalObj*>(obj));
+  for (iterator it = overlapping.begin(); it != overlapping.end(); ++it) {
+    MSG_DEBUG("lst_objects", "removing overlapse reference of \"%s\" (%p) in \"%s\"",
+              obj->GetName().c_str(), obj, (*it)->GetName().c_str());
+    (*it)->SetOverlappingObject(NULL);  // also takes it out of the list
+    overlapped_objects.remove(*it);
   }
 }
 

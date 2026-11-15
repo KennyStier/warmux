@@ -477,7 +477,10 @@ void OptionMenu::SaveOptions()
 
 #if ENABLE_NLS
   // Language
-  config->SetLanguage((const char*)lbox_languages->GetSelectedValue());
+  // (Nothing may be selected in the list)
+  const char *language = (const char*)lbox_languages->GetSelectedValue();
+  if (language)
+    config->SetLanguage(language);
 #endif
 
   // Controls
