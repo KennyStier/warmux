@@ -160,6 +160,8 @@ public:
 Surface& GetMainWindow();
 // SDL_GetMouseState() with the position converted to game coordinates
 Uint32 GetGameMouseState(int *x, int *y);
+// WARMUX_TEST_MONKEY=<seed>: random input everywhere (see video.cpp)
+void StartTestMonkey();
 void SwapWindowClip(Rectanglei& clip);
 
 #endif

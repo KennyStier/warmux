@@ -10,9 +10,9 @@
 #  2. A whole game, one worm each. Passes when the battle starts, is
 #     reported to the index server as in progress, and ends.
 #
-# NETTEST_SANITIZE=1 builds everything with AddressSanitizer (in
-# _asantest/ instead of _nettest/), and any memory error it reports fails
-# the test.
+# NETTEST_SANITIZE=1 builds everything with AddressSanitizer and
+# UndefinedBehaviorSanitizer (in _asantest/ instead of _nettest/), and any
+# memory error or undefined behaviour they report fails the test. NETTEST_BUILD_ONLY=1 only builds.
 set -eu
 
 TOP=$(cd "$(dirname "$0")/.." && pwd)
@@ -21,9 +21,14 @@ cd "$TOP"
 SANITIZE=${NETTEST_SANITIZE:-0}
 if [ "$SANITIZE" = 1 ]; then
   BUILD=_asantest
-  FLAGS="-g -O1 -fsanitize=address -fno-omit-frame-pointer"
+  # AddressSanitizer and UndefinedBehaviorSanitizer. Not "vptr" (the game
+  # is built without RTTI) nor "alignment" (SDL_net's own macros write
+  # unaligned on purpose); any other undefined behaviour stops the program
+  SAN="-fsanitize=address,undefined -fno-sanitize=vptr,alignment -fno-sanitize-recover=undefined"
+  FLAGS="-g -O1 $SAN -fno-omit-frame-pointer"
   # The old code leaks a lot on exit; only look for memory errors
   export ASAN_OPTIONS=detect_leaks=0:halt_on_error=1:print_summary=1
+  export UBSAN_OPTIONS=print_stacktrace=1
 else
   BUILD=_nettest
   FLAGS=""
@@ -34,13 +39,14 @@ W=$PWD
 if [ ! -x inst/bin/warmux ]; then
   if [ -n "$FLAGS" ]; then
     ../configure -q --prefix="$W/inst" --enable-servers \
-      CFLAGS="$FLAGS" CXXFLAGS="$FLAGS" LDFLAGS="-fsanitize=address"
+      CFLAGS="$FLAGS" CXXFLAGS="$FLAGS" LDFLAGS="$SAN"
   else
     ../configure -q --prefix="$W/inst" --enable-servers
   fi
   make -s -j"$(nproc)" >/dev/null
   make -s install >/dev/null
 fi
+[ "${NETTEST_BUILD_ONLY:-0}" = 1 ] && exit 0
 VERSION=$(sed -n "s/^PACKAGE_VERSION='\(.*\)'$/\1/p" config.log | head -1)
 SUFFIX=$(sed -n 's/^#define WARMUX_VERSION_SUFFIX "\(.*\)"$/\1/p' lib/warmux/include/WARMUX_net_defaults.h)
 echo "Testing version $VERSION$SUFFIX$([ "$SANITIZE" = 1 ] && echo ", with AddressSanitizer")"
@@ -81,9 +87,9 @@ trap cleanup EXIT
 asan_check() {
   bad=no
   for f in "$@"; do
-    if grep -aq "ERROR: AddressSanitizer" "$f"; then
-      echo "MEMORY ERROR in $f:" >&2
-      sed -n '/ERROR: AddressSanitizer/,/SUMMARY: AddressSanitizer/p' "$f" | head -60 >&2
+    if grep -aq "ERROR: AddressSanitizer\|runtime error:" "$f"; then
+      echo "MEMORY ERROR or undefined behaviour in $f:" >&2
+      grep -a -A30 "ERROR: AddressSanitizer\|runtime error:" "$f" | head -60 >&2
       bad=yes
     fi
   done

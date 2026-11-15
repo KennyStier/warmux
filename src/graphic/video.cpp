@@ -19,6 +19,9 @@
 
 #include <algorithm>
 #include <iostream>
+#include <cstdio>
+#include <cstdlib>
+#include <string>
 #include <SDL.h>
 #include <SDL_image.h>
 
@@ -785,8 +788,189 @@ bool Video::SaveScreenshot()
 }
 
 
+//-----------------------------------------------------------------------------
+// Developer aid: WARMUX_TEST_MONKEY=<seed> taps, swipes, scrolls, touches
+// and types at random, from an SDL timer, everywhere in the game (menus and
+// battles), to find crashes (run it with AddressSanitizer:
+// .github/ci-monkey-test.sh). Every event is printed ("monkey: ...") so a
+// crash can be traced back. It never sends SDL_QUIT, but may well find the
+// Quit button.
+//-----------------------------------------------------------------------------
+static SDL_TimerID monkey_timer = 0;
+static Uint32 monkey_rng = 1;
+static SDL_atomic_t monkey_x, monkey_y;   // the mouse, as far as the game knows
+static Uint32 monkey_window = 0;
+static int monkey_w = 0, monkey_h = 0;
+static int monkey_held = -1;  // index in monkey_keys
+static int monkey_held_ticks = 0;
+
+static const SDL_Keycode monkey_keys[] = {
+  SDLK_RETURN, SDLK_ESCAPE, SDLK_AC_BACK, SDLK_TAB, SDLK_SPACE, SDLK_BACKSPACE,
+  SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_PAGEUP, SDLK_PAGEDOWN,
+  SDLK_a, SDLK_b, SDLK_c, SDLK_e, SDLK_m, SDLK_p, SDLK_s, SDLK_t, SDLK_w, SDLK_z,
+  SDLK_1, SDLK_2, SDLK_3, SDLK_5, SDLK_9, SDLK_0,
+  SDLK_F1, SDLK_F2, SDLK_F3, SDLK_F5, SDLK_F7, SDLK_F9,
+  SDLK_LSHIFT, SDLK_LCTRL, SDLK_DELETE, SDLK_HOME, SDLK_END
+};
+static const int monkey_nkeys = sizeof(monkey_keys) / sizeof(monkey_keys[0]);
+// Looked up once on the main thread: SDL's keyboard functions aren't safe
+// to call from the timer's thread
+static SDL_Scancode monkey_scancodes[monkey_nkeys];
+static std::string monkey_key_names[monkey_nkeys];
+
+static Uint32 MonkeyRand(Uint32 n)
+{
+  // xorshift32: the same seed gives the same sequence of actions
+  monkey_rng ^= monkey_rng << 13;
+  monkey_rng ^= monkey_rng >> 17;
+  monkey_rng ^= monkey_rng << 5;
+  return n ? monkey_rng % n : 0;
+}
+
+static void MonkeyMouse(Uint32 type, int x, int y, Uint8 button)
+{
+  SDL_Event e;
+  SDL_memset(&e, 0, sizeof(e));
+  e.type = type;
+  if (type == SDL_MOUSEMOTION) {
+    e.motion.windowID = monkey_window;
+    e.motion.x = x;
+    e.motion.y = y;
+  } else {
+    e.button.windowID = monkey_window;
+    e.button.button = button;
+    e.button.state = (type == SDL_MOUSEBUTTONDOWN) ? SDL_PRESSED : SDL_RELEASED;
+    e.button.clicks = 1;
+    e.button.x = x;
+    e.button.y = y;
+  }
+  SDL_AtomicSet(&monkey_x, x);
+  SDL_AtomicSet(&monkey_y, y);
+  SDL_PushEvent(&e);
+}
+
+static void MonkeyKey(Uint32 type, int k)
+{
+  SDL_Keycode key = monkey_keys[k];
+  SDL_Event e;
+  SDL_memset(&e, 0, sizeof(e));
+  e.type = type;
+  e.key.windowID = monkey_window;
+  e.key.state = (type == SDL_KEYDOWN) ? SDL_PRESSED : SDL_RELEASED;
+  e.key.keysym.sym = key;
+  e.key.keysym.scancode = monkey_scancodes[k];
+  // (No SDL_TEXTINPUT: sdl2-compat crashes pushing one from another thread)
+  SDL_PushEvent(&e);
+}
+
+static void MonkeyFinger(Uint32 type, Sint64 finger, float x, float y)
+{
+  SDL_Event e;
+  SDL_memset(&e, 0, sizeof(e));
+  e.type = type;
+  e.tfinger.touchId = 1;
+  e.tfinger.fingerId = finger;
+  e.tfinger.x = x;
+  e.tfinger.y = y;
+  e.tfinger.pressure = (type == SDL_FINGERUP) ? 0.0f : 1.0f;
+  SDL_PushEvent(&e);
+}
+
+static Uint32 MonkeyTick(Uint32 /*interval*/, void * /*param*/)
+{
+  const int w = monkey_w, h = monkey_h;
+  int x = MonkeyRand(w), y = MonkeyRand(h);
+
+  // A key held down (charging a weapon, walking) is let go a bit later
+  if (monkey_held >= 0 && --monkey_held_ticks <= 0) {
+    printf("monkey: release %s\n", monkey_key_names[monkey_held].c_str());
+    MonkeyKey(SDL_KEYUP, monkey_held);
+    monkey_held = -1;
+  }
+
+  Uint32 r = MonkeyRand(100);
+  if (r < 35) {
+    printf("monkey: tap %d,%d\n", x, y);
+    MonkeyMouse(SDL_MOUSEMOTION, x, y, 0);
+    MonkeyMouse(SDL_MOUSEBUTTONDOWN, x, y, SDL_BUTTON_LEFT);
+    MonkeyMouse(SDL_MOUSEBUTTONUP, x, y, SDL_BUTTON_LEFT);
+  } else if (r < 45) {
+    int x2 = MonkeyRand(w), y2 = MonkeyRand(h);
+    printf("monkey: swipe %d,%d -> %d,%d\n", x, y, x2, y2);
+    MonkeyMouse(SDL_MOUSEBUTTONDOWN, x, y, SDL_BUTTON_LEFT);
+    for (int i = 1; i <= 4; i++)
+      MonkeyMouse(SDL_MOUSEMOTION, x + (x2 - x) * i / 4, y + (y2 - y) * i / 4, 0);
+    MonkeyMouse(SDL_MOUSEBUTTONUP, x2, y2, SDL_BUTTON_LEFT);
+  } else if (r < 52) {
+    int dy = MonkeyRand(2) ? 1 : -1;
+    printf("monkey: wheel %d at %d,%d\n", dy, x, y);
+    MonkeyMouse(SDL_MOUSEMOTION, x, y, 0);
+    SDL_Event e;
+    SDL_memset(&e, 0, sizeof(e));
+    e.type = SDL_MOUSEWHEEL;
+    e.wheel.windowID = monkey_window;
+    e.wheel.y = dy;
+    SDL_PushEvent(&e);
+  } else if (r < 56) {
+    printf("monkey: right click %d,%d\n", x, y);
+    MonkeyMouse(SDL_MOUSEBUTTONDOWN, x, y, SDL_BUTTON_RIGHT);
+    MonkeyMouse(SDL_MOUSEBUTTONUP, x, y, SDL_BUTTON_RIGHT);
+  } else if (r < 66) {
+    // Touch, as on phones (the battle's touch controls)
+    float fx = (float)x / w, fy = (float)y / h;
+    float fx2 = (float)MonkeyRand(w) / w, fy2 = (float)MonkeyRand(h) / h;
+    printf("monkey: touch %.2f,%.2f -> %.2f,%.2f\n", fx, fy, fx2, fy2);
+    MonkeyFinger(SDL_FINGERDOWN, 0, fx, fy);
+    MonkeyFinger(SDL_FINGERMOTION, 0, (fx + fx2) / 2, (fy + fy2) / 2);
+    MonkeyFinger(SDL_FINGERUP, 0, fx2, fy2);
+  } else if (r < 70) {
+    printf("monkey: move %d,%d\n", x, y);
+    MonkeyMouse(SDL_MOUSEMOTION, x, y, 0);
+  } else {
+    int k = MonkeyRand(monkey_nkeys);
+    if (monkey_held < 0 && MonkeyRand(4) == 0) {
+      monkey_held = k;
+      monkey_held_ticks = 2 + MonkeyRand(15);
+      printf("monkey: hold %s\n", monkey_key_names[k].c_str());
+      MonkeyKey(SDL_KEYDOWN, k);
+    } else {
+      printf("monkey: key %s\n", monkey_key_names[k].c_str());
+      MonkeyKey(SDL_KEYDOWN, k);
+      MonkeyKey(SDL_KEYUP, k);
+    }
+  }
+  fflush(stdout);
+  return 40 + MonkeyRand(120);  // ms to the next action
+}
+
+void StartTestMonkey()
+{
+  const char *seed = SDL_getenv("WARMUX_TEST_MONKEY");
+  if (!seed || monkey_timer)
+    return;
+  monkey_rng = (Uint32)strtoul(seed, NULL, 10) * 2654435761u + 1;
+  for (int k = 0; k < monkey_nkeys; k++) {
+    monkey_scancodes[k] = SDL_GetScancodeFromKey(monkey_keys[k]);
+    monkey_key_names[k] = SDL_GetKeyName(monkey_keys[k]);
+  }
+  SDL_Window *win = AppWarmux::GetInstance()->video->GetSDLWindow();
+  monkey_window = SDL_GetWindowID(win);
+  Point2i size = GetMainWindow().GetSize();
+  monkey_w = size.x;
+  monkey_h = size.y;
+  SDL_AtomicSet(&monkey_x, monkey_w / 2);
+  SDL_AtomicSet(&monkey_y, monkey_h / 2);
+  printf("monkey: seed %s, window %dx%d\n", seed, monkey_w, monkey_h);
+  monkey_timer = SDL_AddTimer(500, MonkeyTick, NULL);
+}
+
 Uint32 GetGameMouseState(int *x, int *y)
 {
+  if (monkey_timer) {  // the injected events don't move SDL's mouse
+    if (x) *x = SDL_AtomicGet(&monkey_x);
+    if (y) *y = SDL_AtomicGet(&monkey_y);
+    return 0;
+  }
   int wx, wy;
   Uint32 buttons = SDL_GetMouseState(&wx, &wy);
   Point2i p = AppWarmux::GetInstance()->video->WindowToGame(wx, wy);

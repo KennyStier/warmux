@@ -121,6 +121,7 @@ int AppWarmux::Main(void)
 #endif
 
   Action_Handler_Init();
+  StartTestMonkey();
 
   // Is a replay filename set so that we play it?
   if (!replay.empty()) {
@@ -195,7 +196,10 @@ int AppWarmux::Main(void)
         break;
       }
       case MainMenu::QUIT:
-        quit_game = true;
+        // The test monkey (WARMUX_TEST_MONKEY) finds Quit all the time;
+        // keep it exploring
+        if (!SDL_getenv("WARMUX_TEST_MONKEY"))
+          quit_game = true;
         break;
       default:
         break;
