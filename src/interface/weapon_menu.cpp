@@ -305,6 +305,8 @@ void WeaponsMenu::RefreshWeaponList()
     nb_weapon_type[i] = 0;
   weapons_menu->ResetTransformation();
   tools_menu->ResetTransformation();
+  // The items are deleted below: forget the one under the pointer
+  current_overfly_item = NULL;
   // Refreshing Weapons menu
 
   const std::vector<PolygonItem *>& weapons = weapons_menu->GetItem();

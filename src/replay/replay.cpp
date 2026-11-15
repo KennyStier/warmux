@@ -19,6 +19,7 @@
  * Replay engine for Wormux parading as network layer
  *****************************************************************************/
 
+#include <algorithm>
 #include "replay.h"
 
 #include <SDL_net.h>
@@ -194,9 +195,12 @@ void Replay::StoreAction(const Action* a)
   }
 
   size = a->GetSize();
-  // Enlarge buffer if it can't contain max packet size
-  if (MemUsed() > bufsize - size + 2)
-    ChangeBufsize(bufsize+30000);
+  // Enlarge the buffer if it can't take this action and the 2-byte repeat
+  // count written before it. (This was "> bufsize - size + 2": near the
+  // end of the buffer it wrote up to 4 bytes past it, corrupting the heap
+  // in long games.)
+  if (MemUsed() + 2 + size > bufsize)
+    ChangeBufsize(std::max(bufsize * 2, MemUsed() + 2 + size + 30000));
 
   if (type != Action::ACTION_GAME_CALCULATE_FRAME) {
     if (count) {
