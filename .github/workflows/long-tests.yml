@@ -1,8 +1,9 @@
 name: Long tests
 
 # Longer runs under AddressSanitizer and UndefinedBehaviorSanitizer than
-# the Build workflow can afford: many rounds of random input, and network
-# games on bigger maps with more worms. They don't block anything; a
+# the Build workflow can afford: many rounds of random input, network games
+# on bigger maps with more worms, and network trouble (players, the host and
+# the server dropping out mid-battle; lag and packet loss). They don't block anything; a
 # failure shows up here (and GitHub emails it).
 #
 # GitHub runs scheduled workflows only from the default branch (main), so
@@ -40,6 +41,26 @@ jobs:
         with:
           name: random-input-logs
           path: _asantest/monkey/*.log
+
+  disruption:
+    name: Network trouble (drop-outs, lag, packet loss)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends $DEPS
+      - uses: actions/checkout@v4
+      # A player, the host and the game server dropping out mid-battle, and
+      # a game with lag and packet loss (tc netem on the loopback)
+      - run: autoreconf -fi && sh .github/ci-disrupt-test.sh
+        env:
+          NETTEST_SANITIZE: 1
+          NETTEST_NETEM: 1
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: disruption-logs
+          path: _asantest/run/*.log
 
   network:
     name: Network game (${{ matrix.map }}, ${{ matrix.worms }} worms)

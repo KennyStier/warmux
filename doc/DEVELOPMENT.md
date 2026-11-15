@@ -115,10 +115,17 @@ battles, printing each action (Quit is ignored meanwhile).
 `MONKEY_ROUNDS` rounds of `MONKEY_SECONDS` with different seeds and window
 sizes; a failure prints the last actions and the seed to replay.
 
+**Network trouble**: `.github/ci-disrupt-test.sh` has a player drop out
+mid-battle and come back, the host drop out (another player must take
+over and the battle go on), the game server go away, and with
+`NETTEST_NETEM=1` plays a game with lag and packet loss (`tc netem` on the
+loopback, with sudo; its header shows how to do it without sudo). Anything
+crashing, a memory error or a desync fails.
+
 **Long tests** (`.github/workflows/long-tests.yml`) run after each push to
-`dev` without blocking anything: 30 rounds of random input, and network
-games on bigger maps with more worms (`NETTEST_MAP`, `NETTEST_WORMS`,
-`NETTEST_DEATH`), all under the sanitizers. Its nightly schedule only
+`dev` without blocking anything: 30 rounds of random input, network games
+on bigger maps with more worms (`NETTEST_MAP`, `NETTEST_WORMS`,
+`NETTEST_DEATH`) and network trouble, all under the sanitizers. Its nightly schedule only
 works once the file is on `main` (GitHub runs schedules from the default
 branch). Run it by hand from the Actions tab.
 
