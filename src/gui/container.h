@@ -26,11 +26,15 @@
 
 class Surface;
 
+class Widget;
+
 class Container
 {
  public:
   virtual ~Container() {};
   virtual void RedrawBackground(const Rectanglei& rect) const = 0;
+  // A widget inside is being deleted: drop any pointer kept to it
+  virtual void ForgetWidget(Widget * /*w*/) { }
 };
 
 #endif

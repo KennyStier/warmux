@@ -65,6 +65,15 @@ void WidgetList::Clear()
   Empty();
 }
 
+// Parent lists keep the focused descendant too, so pass it up
+void WidgetList::ForgetWidget(Widget *w)
+{
+  if (selected_widget == w)
+    selected_widget = NULL;
+  if (ct)
+    ct->ForgetWidget(w);
+}
+
 void WidgetList::DelFirstWidget()
 {
   delete widget_list.front();

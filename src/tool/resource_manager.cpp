@@ -46,9 +46,10 @@ ResourceManager::ResourceManager() : base_path("")
 
 ResourceManager::~ResourceManager()
 {
-  xmlCleanupParser();
+  // The documents first: libxml2 must still be set up to free them
   for (ProfileMap::iterator it = profiles.begin(); it != profiles.end(); ++it)
     delete it->second;
+  profiles.clear();
 }
 
 int ResourceManager::LoadInt(const Profile *profile, const std::string& resource_name) const

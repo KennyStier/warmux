@@ -78,7 +78,7 @@ public:
   Widget(const Point2i & size, bool clickable = true);
   Widget(Profile * profile,
          const xmlNode * widgetNode);
-  virtual ~Widget() { };
+  virtual ~Widget() { if (ct) ct->ForgetWidget(this); };
 
   void RedrawBackground(const Rectanglei& rect) const;
   void RedrawForeground() const;

@@ -25,6 +25,7 @@
 # include <signal.h>
 #endif
 #include <SDL.h>
+#include <libxml/parser.h>
 #include "game/config.h"
 #include "game/game.h"
 #include "game/game_time.h"
@@ -99,6 +100,8 @@ AppWarmux::~AppWarmux()
   ParticleEngine::FreeMem();
   Font::ReleaseInstances();
   BaseSingleton::ReleaseSingletons();
+  // Last, once no singleton holds an XML document any more
+  xmlCleanupParser();
   singleton = NULL;
 }
 

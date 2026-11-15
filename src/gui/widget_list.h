@@ -71,7 +71,8 @@ public:
   virtual void AddWidget(Widget* widget);
   virtual void RemoveWidget(Widget* w);
   virtual size_t WidgetCount() const { return widget_list.size(); }
-  virtual void Empty() { widget_list.clear(); }
+  virtual void Empty() { widget_list.clear(); selected_widget = NULL; }
+  virtual void ForgetWidget(Widget *w);
   virtual void Clear();
 
   // Navigate between widget with keyboard
