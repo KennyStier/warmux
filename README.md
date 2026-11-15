@@ -130,10 +130,10 @@ Key bindings refer to physical key positions (a US layout's positions), so
 on AZERTY and similar layouts letter bindings stay where a QWERTY user would
 expect them.
 
-Your settings live in `~/.config/wormux/` (a name from before the rename
-to Warmux, kept so existing setups keep working); replays, chat logs and
-custom teams/maps go in `~/.local/share/warmux/`. An older
-`~/.local/share/wormux/` is moved there on first start.
+Your settings live in `~/.config/warmux/`; replays, chat logs and custom
+teams/maps go in `~/.local/share/warmux/`. Folders from older versions,
+named `wormux` after the game's name before Warmux, are moved there on
+first start.
 
 ## Running your own servers
 

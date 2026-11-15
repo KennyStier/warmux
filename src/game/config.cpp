@@ -228,7 +228,13 @@ Config::Config()
   else
     personal_config_dir = c_config_dir;
 
-  personal_config_dir += "/wormux/";
+  // Settings used to live in "wormux", the game's name before Warmux
+  std::string old_config_dir = personal_config_dir + "/wormux/";
+  personal_config_dir += "/warmux/";
+  if (DoesFolderExist(old_config_dir) && !DoesFolderExist(personal_config_dir)) {
+    std::cout << "Moving " << old_config_dir << " to " << personal_config_dir << std::endl;
+    Rename(old_config_dir, personal_config_dir);
+  }
 
   if (c_data_dir == NULL) {
     personal_data_dir = GetHome() + "/.local/share";
