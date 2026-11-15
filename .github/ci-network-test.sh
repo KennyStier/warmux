@@ -7,8 +7,10 @@
 #     away, so both leave the lobby. Passes if neither crashes. The window
 #     is wide, so the team list lays out several cards per row, as on
 #     phones (leaving such a lobby used to crash).
-#  2. A whole game, one worm each. Passes when the battle starts, is
-#     reported to the index server as in progress, and ends.
+#  2. A whole game, one worm each on a small map by default
+#     (NETTEST_MAP, NETTEST_WORMS, NETTEST_DEATH change that). Passes when
+#     the battle starts, is reported to the index server as in progress,
+#     and ends.
 #
 # NETTEST_SANITIZE=1 builds everything with AddressSanitizer and
 # UndefinedBehaviorSanitizer (in _asantest/ instead of _nettest/), and any
@@ -22,9 +24,12 @@ SANITIZE=${NETTEST_SANITIZE:-0}
 if [ "$SANITIZE" = 1 ]; then
   BUILD=_asantest
   # AddressSanitizer and UndefinedBehaviorSanitizer. Not "vptr" (the game
-  # is built without RTTI) nor "alignment" (SDL_net's own macros write
-  # unaligned on purpose); any other undefined behaviour stops the program
-  SAN="-fsanitize=address,undefined -fno-sanitize=vptr,alignment -fno-sanitize-recover=undefined"
+  # is built without RTTI), "alignment" (SDL_net's own macros write
+  # unaligned on purpose) nor "shift-base" (the fixed-point maths shifts
+  # negative numbers left by design: defined since C++20, and the same on
+  # every compiler; rewriting it risks desyncs between versions). Any other
+  # undefined behaviour stops the program.
+  SAN="-fsanitize=address,undefined -fno-sanitize=vptr,alignment,shift-base -fno-sanitize-recover=undefined"
   FLAGS="-g -O1 $SAN -fno-omit-frame-pointer"
   # The old code leaks a lot on exit; only look for memory errors
   export ASAN_OPTIONS=detect_leaks=0:halt_on_error=1:print_summary=1
@@ -49,7 +54,7 @@ fi
 [ "${NETTEST_BUILD_ONLY:-0}" = 1 ] && exit 0
 VERSION=$(sed -n "s/^PACKAGE_VERSION='\(.*\)'$/\1/p" config.log | head -1)
 SUFFIX=$(sed -n 's/^#define WARMUX_VERSION_SUFFIX "\(.*\)"$/\1/p' lib/warmux/include/WARMUX_net_defaults.h)
-echo "Testing version $VERSION$SUFFIX$([ "$SANITIZE" = 1 ] && echo ", with AddressSanitizer")"
+echo "Testing version $VERSION$SUFFIX$([ "$SANITIZE" = 1 ] && echo ", with sanitizers")"
 
 rm -rf run && mkdir -p run/idx run/gs run/lobby
 cat > run/idx.conf <<EOF
@@ -79,6 +84,12 @@ EOF
 game_server_conf 3826 "Public Battle" "$W/run/gs" > run/gs.conf
 game_server_conf 3828 "Lobby Test" "$W/run/lobby" > run/lobby.conf
 
+# The game: map, worms per team, seconds before death mode (which takes
+# everyone down to 1 HP). The defaults make a short game.
+MAP=${NETTEST_MAP:-pumpkins}
+WORMS=${NETTEST_WORMS:-1}
+DEATH=${NETTEST_DEATH:-60}
+
 PIDS=""
 cleanup() { [ -n "$PIDS" ] && kill -9 $PIDS 2>/dev/null || true; }
 trap cleanup EXIT
@@ -104,10 +115,10 @@ player() {  # name team port autoplay log
   # takes everyone down to 1 HP) starts after a minute, so the battle ends
   # soon. On a random map the computer players can miss each other for
   # longer than the test allows.
-  printf '<?xml version="1.0" encoding="utf-8"?>\n<config><map>pumpkins</map><game_mode>ci_quick</game_mode><network><as_client><host>127.0.0.1</host><port>%s</port></as_client><local_teams><team_0><id>%s</id><player_name>%s</player_name><nb_characters>1</nb_characters><ai>default</ai></team_0></local_teams></network></config>\n' \
-    "$3" "$2" "$1" > "$H/config/warmux/config.xml"
+  printf '<?xml version="1.0" encoding="utf-8"?>\n<config><map>%s</map><game_mode>ci_quick</game_mode><network><as_client><host>127.0.0.1</host><port>%s</port></as_client><local_teams><team_0><id>%s</id><player_name>%s</player_name><nb_characters>%s</nb_characters><ai>default</ai></team_0></local_teams></network></config>\n' \
+    "$MAP" "$3" "$2" "$1" "$WORMS" > "$H/config/warmux/config.xml"
   mkdir -p "$H/data/warmux/game_mode"
-  sed -e 's|<duration_before_death_mode>[0-9]*<|<duration_before_death_mode>60<|' \
+  sed -e "s|<duration_before_death_mode>[0-9]*<|<duration_before_death_mode>$DEATH<|" \
       -e 's|<damage_per_turn_during_death_mode>[0-9]*<|<damage_per_turn_during_death_mode>30<|' \
       "$W/inst/share/warmux/game_mode/classic.xml" > "$H/data/warmux/game_mode/ci_quick.xml"
   if [ -n "$SUFFIX" ]; then
