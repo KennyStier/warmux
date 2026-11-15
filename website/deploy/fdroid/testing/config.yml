@@ -1,0 +1,25 @@
+# F-Droid repository with Warmux Testing, at
+# https://warmux.net/testing/fdroid/repo, made by warmux-fdroid with
+# fdroidserver. Installed as /var/lib/warmux-fdroid/testing/config.yml.
+repo_url: https://warmux.net/testing/fdroid/repo
+repo_name: Warmux Testing
+repo_icon: warmux.png
+repo_description: >-
+  Warmux Testing: a build of the next Warmux every time it changes,
+  straight from GitHub. Expect bugs, and please report them. It installs
+  next to Warmux.
+
+# warmux-fdroid keeps only the newest few APKs itself
+archive_older: 0
+
+# The signing key, shared with the stable repository: made on the server
+# by warmux-fdroid the first time; its password is in
+# /var/lib/warmux-fdroid/keypass (passed in the environment) and neither
+# leaves the server
+keystore: ../keystore.p12
+repo_keyalias: warmux
+keydname: CN=warmux.net, O=Warmux
+keystorepass:
+  env: FDROID_KEY_PASS
+keypass:
+  env: FDROID_KEY_PASS

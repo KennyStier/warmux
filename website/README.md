@@ -40,29 +40,35 @@ JSON, with the contents of `/etc/warmux/webhook-secret` as its secret.
 `/run/warmux-webhook/refresh`, which starts `warmux-latest.service`
 through `warmux-latest.path`. Its log: `journalctl -u warmux-webhook`.
 
-## F-Droid repository
+## F-Droid repositories
 
-`https://warmux.net/fdroid/repo` (fingerprint
-`9901EEE3C6D19DD79A3D131A9F96A2CC7E3328BF1A11914E357F9C7C7420925E`) offers
-Warmux and Warmux Testing, so Android players get updates from the F-Droid
-app. After every `warmux-latest` run, `warmux-fdroid` downloads the APKs of
-the latest release and the testing build, keeps the newest 3 of each, and
-has fdroidserver rebuild and sign the index. Its signing key and password
-are made on the server the first time, in `/var/lib/warmux-fdroid`, and
-never leave it; only `repo/` is served.
+Android players can get updates from the F-Droid app:
+
+| | Address | App |
+|---|---|---|
+| stable | `https://warmux.net/fdroid/repo` | Warmux (main page) |
+| testing | `https://warmux.net/testing/fdroid/repo` | Warmux Testing (testing page) |
+
+Both are signed with the same key, fingerprint
+`9901EEE3C6D19DD79A3D131A9F96A2CC7E3328BF1A11914E357F9C7C7420925E`. After
+every `warmux-latest` run, `warmux-fdroid` downloads the APK of the latest
+release and of the testing build, keeps the newest 3 of each, and has
+fdroidserver rebuild and sign the index that changed. The key and its
+password are made on the server the first time, in `/var/lib/warmux-fdroid`,
+and never leave it; only the `repo/` folders are served.
 
     apt install --no-install-recommends fdroidserver
     useradd --system --no-create-home --shell /usr/sbin/nologin warmux-fdroid
     install -d -o warmux-fdroid -g warmux-fdroid /var/lib/warmux-fdroid
     install -d /usr/local/share/warmux-fdroid
-    cp -r deploy/fdroid/metadata deploy/fdroid/config.yml /usr/local/share/warmux-fdroid/
+    cp -r deploy/fdroid/stable deploy/fdroid/testing /usr/local/share/warmux-fdroid/
     cp ../data/icon/warmux_512x512.png /usr/local/share/warmux-fdroid/warmux.png
     install -m755 deploy/fdroid/warmux-fdroid /usr/local/bin/
     install -m644 deploy/fdroid/warmux-fdroid.service /etc/systemd/system/
     systemctl daemon-reload; systemctl start warmux-fdroid
 
 Back up `/var/lib/warmux-fdroid/keystore.p12` and `keypass`: with a new
-key, everyone would have to add the repository again.
+key, everyone would have to add the repositories again.
 
 ## Publishing changes
 

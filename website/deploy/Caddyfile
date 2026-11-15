@@ -1,13 +1,20 @@
 # warmux.net: the website, with HTTPS certificates from Let's Encrypt
 # (Caddy gets and renews them on its own)
 
+# What both F-Droid repositories serve
+(fdroid_repo) {
+	@private not path /repo/*
+	respond @private 404
+	@index path /repo/entry.jar /repo/entry.json /repo/index* /repo/diff/*
+	header @index Cache-Control "no-cache"
+	file_server
+}
+
 warmux.net {
 	root * /var/www/warmux.net
 	encode zstd gzip
 	file_server
 
-	# The latest release and the testing pre-release, refreshed from
-	# GitHub by warmux-latest (on GitHub's webhook, and hourly)
 	# GitHub tells us when a release is published or changed
 	handle /hooks/release {
 		request_body {
@@ -16,19 +23,22 @@ warmux.net {
 		reverse_proxy 127.0.0.1:9011
 	}
 
-	# The F-Droid repository (warmux-fdroid); only its repo/ folder is
-	# public, not the signing key next to it
-	# The repository's address, as shared, opens its page in a browser
+	# The F-Droid repositories (warmux-fdroid): Warmux, and Warmux Testing.
+	# Only their repo/ folders are public, not the signing key above them.
+	# Their addresses, as shared, open the repository's page in a browser.
 	redir /fdroid/repo /fdroid/repo/?{query}
+	redir /testing/fdroid/repo /testing/fdroid/repo/?{query}
 	handle_path /fdroid/* {
-		root * /var/lib/warmux-fdroid
-		@private not path /repo/*
-		respond @private 404
-		@index path /repo/entry.jar /repo/entry.json /repo/index* /repo/diff/*
-		header @index Cache-Control "no-cache"
-		file_server
+		root * /var/lib/warmux-fdroid/stable
+		import fdroid_repo
+	}
+	handle_path /testing/fdroid/* {
+		root * /var/lib/warmux-fdroid/testing
+		import fdroid_repo
 	}
 
+	# The latest release and the testing pre-release, refreshed from
+	# GitHub by warmux-latest (on GitHub's webhook, and hourly)
 	@releases path /latest.json /testing.json
 	handle @releases {
 		root * /var/lib/warmux-web

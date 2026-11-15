@@ -15,7 +15,7 @@
   function describe(name) {
     if (/-android\.apk$/.test(name))
       return { id: "android", order: 1, icon: "android", title: "Android", kind: "APK",
-               hint: "Installs as <b>Warmux Testing</b>, next to Warmux. Allow your browser to install apps when Android asks. To get each new build automatically, add the <a href=\"https://warmux.net/fdroid/repo?fingerprint=9901EEE3C6D19DD79A3D131A9F96A2CC7E3328BF1A11914E357F9C7C7420925E\">Warmux F-Droid repository</a>." };
+               hint: "Installs as <b>Warmux Testing</b>, next to Warmux. Allow your browser to install apps when Android asks. To get each new build automatically, add the <a href=\"https://warmux.net/testing/fdroid/repo?fingerprint=9901EEE3C6D19DD79A3D131A9F96A2CC7E3328BF1A11914E357F9C7C7420925E\">Warmux Testing F-Droid repository</a>." };
     if (/-windows-x64-setup\.exe$/.test(name))
       return { id: "windows", order: 2, icon: "windows", title: "Windows", kind: "Installer",
                hint: "Installs as <b>Warmux Testing</b>. If Windows warns about an unknown publisher, choose <b>More info</b> then <b>Run anyway</b>." };
