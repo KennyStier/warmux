@@ -23,6 +23,8 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <WARMUX_base.h>
@@ -103,6 +105,8 @@ private:
   uint                m_current_turn;
   Text                waiting_for_network_text;
   WeaponsList *       weapons_list;
+  // Each team's health when the game started, by team id
+  std::map<std::string, uint> initial_energy;
 
   void Draw();        // Draw to screen
 
@@ -127,6 +131,9 @@ private:
   static void IgnorePendingInputEvents();
 
   void PingClient() const;
+  // How far the battle is, 0-100, and telling a dedicated server about it
+  int  ComputeProgress() const;
+  void ReportProgress() const;
 
   void CallDraw();
 

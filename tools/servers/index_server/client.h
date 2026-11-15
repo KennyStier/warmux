@@ -21,6 +21,7 @@
 #define CLIENT_H
 #include <netinet/in.h>
 #include <string>
+#include <vector>
 #include <WSERVER_index_msg.h>
 #include "net_data.h"
 
@@ -46,6 +47,7 @@ class Client : public NetData
   bool is_hosting;
   int port; // port number where a game is hosted
   int nb_players, max_players; // of the hosted game, 0/0 if not reported
+  std::vector<std::pair<int, int> > battles; // in progress: players, progress
 
   bool HandShake(const std::string & version);
   bool RegisterWarmuxServer();
@@ -54,8 +56,10 @@ class Client : public NetData
 
   bool SendSignature();
   bool RejectBadVersion();
-  bool SendList(bool with_players = false);
+  // version: 1 = TS_MSG_GET_LIST, 2 = adds players, 3 = adds battles
+  bool SendList(int version = 1);
   bool ReceivePlayers();
+  bool ReceiveBattles();
   void AddMeToClientsList(const std::string & version);
 
   // Tell other index server that a new warmux server just registered

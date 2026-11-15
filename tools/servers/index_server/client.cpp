@@ -232,15 +232,21 @@ bool Client::HandleMsg(enum IndexServerMsg msg_id)
 
     case TS_MSG_GET_LIST:
     case TS_MSG_GET_LIST_V2:
+    case TS_MSG_GET_LIST_V3:
       if (is_hosting) {
         r = false;
       } else {
-        r = SendList(msg_id == TS_MSG_GET_LIST_V2);
+        r = SendList(msg_id == TS_MSG_GET_LIST_V3 ? 3 :
+                     msg_id == TS_MSG_GET_LIST_V2 ? 2 : 1);
       }
       break;
 
     case TS_MSG_PLAYERS:
       r = is_hosting && ReceivePlayers();
+      break;
+
+    case TS_MSG_BATTLES:
+      r = is_hosting && ReceiveBattles();
       break;
 
     default:
@@ -329,8 +335,29 @@ bool Client::ReceivePlayers()
   return true;
 }
 
-bool Client::SendList(bool with_players)
+bool Client::ReceiveBattles()
 {
+  int n;
+  if (!ReceiveInt(n) || n < 0 || n > 8)
+    return false;
+  std::vector<std::pair<int, int> > lst;
+  while (n--) {
+    int players, progress;
+    if (!ReceiveInt(players) || !ReceiveInt(progress))
+      return false;
+    if (players < 0 || players > 999 || progress < 0 || progress > 100)
+      return false;
+    lst.push_back(std::make_pair(players, progress));
+  }
+  battles = lst;
+  DPRINT(MSG, "game %s: %zu battles in progress", options.GetGameName().c_str(), battles.size());
+  return true;
+}
+
+bool Client::SendList(int list_version)
+{
+  bool with_players = list_version >= 2;
+  bool with_battles = list_version >= 3;
   DPRINT(MSG, "Sending list...");
 
   int nb_s = 0;
@@ -364,6 +391,14 @@ bool Client::SendList(bool with_players)
       if (with_players && (!SendInt(client->second->nb_players)
                            || !SendInt(client->second->max_players)))
         return false;
+      if (with_battles) {
+        const std::vector<std::pair<int, int> >& b = client->second->battles;
+        if (!SendInt((int)b.size()))
+          return false;
+        for (size_t i = 0; i < b.size(); i++)
+          if (!SendInt(b[i].first) || !SendInt(b[i].second))
+            return false;
+      }
     }
   }
 
@@ -380,6 +415,8 @@ bool Client::SendList(bool with_players)
     if (!SendStr(client->second.options.GetGameName()))
       return false;
     if (with_players && (!SendInt(0) || !SendInt(0)))
+      return false;
+    if (with_battles && !SendInt(0))
       return false;
   }
 

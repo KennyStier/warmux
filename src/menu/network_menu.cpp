@@ -426,7 +426,8 @@ bool NetworkMenu::signal_ok()
     for (std::vector<Team*>::iterator team = GetTeamsList().playing_list.begin();
          team != GetTeamsList().playing_list.end();
          team++) {
-      if ((*team)->IsLocalHuman()) {
+      if ((*team)->IsLocalHuman()
+          || ((*team)->IsLocal() && SDL_getenv("WARMUX_TEST_AUTOPLAY"))) {
         found = true;
         break;
       }
@@ -528,6 +529,26 @@ void NetworkMenu::Draw(const Point2i& /*mousePosition*/)
     close_menu = true;
   ActionHandler * action_handler = ActionHandler::GetInstance();
   action_handler->ExecFrameLessActions();
+
+  std::vector<std::pair<std::string, Color> > early = AppWarmux::GetInstance()->TakeEarlyMessages();
+  for (size_t i = 0; i < early.size(); i++)
+    ReceiveMsgCallback(early[i].first, early[i].second);
+
+  // Developer aid: WARMUX_TEST_AUTOPLAY=1 hands our teams to the computer
+  // and keeps pressing Ready / Start, so network games can be tested
+  // without anyone at the keyboard
+  static Uint32 autoplay_next = 0;
+  static bool autoplay_ai = false;
+  if (SDL_getenv("WARMUX_TEST_AUTOPLAY") && SDL_GetTicks() > autoplay_next
+      && Network::GetInstance()->IsConnected()) {
+    autoplay_next = SDL_GetTicks() + 3000;
+    if (!autoplay_ai) {
+      team_box->SetLocalTeamsAI();
+      autoplay_ai = true;
+    } else {
+      mouse_ok();
+    }
+  }
 }
 
 void NetworkMenu::DelTeamCallback(const std::string& team_id)

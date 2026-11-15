@@ -130,6 +130,10 @@ public:
     ACTION_NETWORK_VERIFY_RANDOM_SYNC,
     ACTION_TIME_VERIFY_SYNC,
     // ########################################################
+    // Added in 12.0.3: the game master tells a dedicated game server how
+    // far the battle is (int percent), for the public games list. The
+    // server keeps it and does not forward it.
+    ACTION_GAME_PROGRESS,
   } Action_t;
 
 #pragma pack(push)  /* push current alignment to stack */

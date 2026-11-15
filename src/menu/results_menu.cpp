@@ -467,6 +467,17 @@ void ResultsMenu::Draw(const Point2i &/*mousePosition*/)
     ActionHandler * action_handler = ActionHandler::GetInstance();
     action_handler->ExecFrameLessActions();
   }
+
+  // Developer aid (see NetworkMenu::Draw): leave the results by themselves
+  static Uint32 autoplay_close = 0;
+  if (SDL_getenv("WARMUX_TEST_AUTOPLAY")) {
+    if (!autoplay_close)
+      autoplay_close = SDL_GetTicks() + 5000;
+    else if (SDL_GetTicks() > autoplay_close) {
+      autoplay_close = 0;
+      Menu::key_ok();
+    }
+  }
 }
 
 void ResultsMenu::ReceiveMsgCallback(const std::string& msg, const Color& color)

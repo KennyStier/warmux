@@ -23,9 +23,11 @@
 #include <list>
 #include <map>
 #include <string>
+#include <vector>
 
 #include <WARMUX_action.h>
 #include <WARMUX_distant_cpu.h>
+#include <WARMUX_index_server.h>
 #include <WARMUX_network.h>
 #include <WARMUX_socket.h>
 #include <WARMUX_singleton.h>
@@ -47,8 +49,12 @@ private:
   DistantComputer* waited;
   uint             start_waiting;
   bool             warned;
+  // How far the battle is, 0-100, as told by the game master
+  int              progress;
+  // Messages for players who just joined, sent once their lobby is open
+  // (the first thing they send): sooner, they would not see them
+  std::map<DistantComputer*, std::string> notices;
 
-  void SendAdminMessage(const std::string& message);
   void SendAction(const Action& a, DistantComputer* client, bool clt_as_rcver) const;
   void StartGame();
   void StopGame();
@@ -62,6 +68,10 @@ public:
   const std::string& GetPassword() const;
 
   void AddCpu(DistantComputer* cpu);
+  bool IsStarted() const { return game_started; }
+  int GetProgress() const { return progress; }
+  void SetNotice(DistantComputer* cpu, const std::string& msg) { notices[cpu] = msg; }
+  void SendAdminMessage(const std::string& message);
   std::list<DistantComputer*>::iterator CloseConnection(std::list<DistantComputer*>::iterator closed);
 
   std::list<DistantComputer*>& GetCpus() { return cpulist; }
@@ -119,6 +129,12 @@ private:
   // Players in the game that new players join, for the online list
   int reported_players;
   void ReportPlayers();
+  // Battles in progress, for the online list and the waiting players
+  bool battles_reported;
+  std::vector<BattleInfo> reported_battles;
+  std::map<uint, bool> was_started;
+  void ReportBattles();
+  std::string BattlesSummary() const;
 
 public:
   bool ServerStart(uint port, uint max_nb_games, uint max_nb_clients,

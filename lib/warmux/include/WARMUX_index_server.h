@@ -28,8 +28,20 @@
 #include <WARMUX_socket.h>
 #include <map>
 #include <list>
+#include <vector>
 #include <string>
 #include <utility>
+
+// A battle being played on a game server, shown in the list but not joinable
+struct BattleInfo
+{
+  int nb_players;
+  int progress; // 0-100
+
+  BattleInfo(int p = 0, int pr = 0) : nb_players(p), progress(pr) { }
+  bool operator==(const BattleInfo& o) const
+    { return nb_players == o.nb_players && progress == o.progress; }
+};
 
 class GameServerInfo
 {
@@ -41,6 +53,7 @@ class GameServerInfo
   bool        passworded;
   int         nb_players;  // players in the game, including the host
   int         max_players; // 0 if unknown
+  std::vector<BattleInfo> battles; // in progress on a game server
 
   GameServerInfo() : passworded(false), nb_players(0), max_players(0) { }
 };
@@ -68,6 +81,9 @@ class IndexServer : public Singleton<IndexServer>
   bool registered;
   int pending_players, pending_max;
   bool __SendPlayers(int nb_players, int max_players);
+  bool pending_battles_set;
+  std::vector<BattleInfo> pending_battles;
+  bool __SendBattles(const std::vector<BattleInfo>& battles);
 
   std::string supported_versions;
 
@@ -122,6 +138,9 @@ public:
   bool SendServerStatus(const std::string& game_name, bool passwd, int port);
   // Update the player count shown in the online list (hosting only)
   void SendPlayers(int nb_players, int max_players);
+  // Update the battles in progress shown in the online list (game servers)
+  void SendBattles(const std::vector<BattleInfo>& battles);
+  static const uint MAX_BATTLES = 8;
 
   // returns a list of game servers
   std::list<GameServerInfo> GetHostList(bool symbolic_name

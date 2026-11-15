@@ -75,6 +75,12 @@ enum IndexServerMsg
   TS_MSG_PLAYERS,        // A hosting game's player count: int players, int max (no answer)
   TS_MSG_GET_LIST_V2,    // Like TS_MSG_GET_LIST, each game followed by int players, int max
 
+  //********  Added in 12.0.3  ***********************************************************
+  TS_MSG_BATTLES,        // A game server's battles in progress: int count (0-8), then
+                         // per battle int players, int progress 0-100 (no answer)
+  TS_MSG_GET_LIST_V3,    // Like TS_MSG_GET_LIST_V2, each game then followed by its
+                         // battles, as in TS_MSG_BATTLES
+
   TS_LAST_MSG // Don't send this
 };
 

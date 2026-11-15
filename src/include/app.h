@@ -23,11 +23,13 @@
 #define APP_WARMUX_H
 
 #include <string>
+#include <utility>
+#include <vector>
 #include <WARMUX_base.h>
+#include "graphic/color.h"
 
 class Video;
 class Menu;
-class Color;
 union SDL_Event;
 
 class AppWarmux
@@ -46,11 +48,14 @@ private:
   void End() const;
 
   Menu* GetCurrentMenu() const { return menu; }
+  std::vector<std::pair<std::string, Color> > early_msgs;
 public:
   void SetCurrentMenu(Menu *_menu) { menu = _menu; }
   void RefreshDisplay();
   static void DisplayError(const std::string &msg);
   void ReceiveMsgCallback(const std::string& msg, const Color& color, bool in_game = false);
+  // Chat that came in while joining, before the game's lobby was shown
+  std::vector<std::pair<std::string, Color> > TakeEarlyMessages();
   static AppWarmux * GetInstance();
   ~AppWarmux();
   static void EmergencyExit();

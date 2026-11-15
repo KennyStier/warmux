@@ -27,7 +27,8 @@
 #include "server.h"
 
 NetworkGame::NetworkGame(const std::string& _game_name, const std::string& _password) :
-  game_name(_game_name), password(_password), game_started(false), selected_map("dummy")
+  game_name(_game_name), password(_password), game_started(false), selected_map("dummy"),
+  progress(0)
 {
   ResetWaiting();
 }
@@ -63,6 +64,7 @@ NetworkGame::CloseConnection(std::list<DistantComputer*>::iterator closed)
 
   start_waiting = SDL_GetTicks();
   it = cpulist.erase(closed);
+  notices.erase(host);
 
   DPRINT(INFO, "[Game %s] Client disconnected: %s - total: %zd", game_name.c_str(),
          host->ToLogString().c_str(), cpulist.size());
@@ -189,6 +191,7 @@ void NetworkGame::StartGame()
   }
 
   game_started = true;
+  progress = 0;
 }
 
 void NetworkGame::StopGame()
@@ -243,6 +246,24 @@ void NetworkGame::CheckWaited()
 void NetworkGame::ForwardPacket(const char *buffer, size_t len, DistantComputer* sender)
 {
   std::list<DistantComputer*>::iterator it;
+
+  if (Action::GetType(buffer) == Action::ACTION_GAME_PROGRESS) {
+    // For us only. Health can come back (medkits), but the bar shouldn't.
+    if (sender == cpulist.front() && game_started) {
+      Action a(buffer, sender);
+      int p = a.PopInt();
+      if (p >= 0 && p <= 100 && p > progress)
+        progress = p;
+    }
+    return;
+  }
+
+  std::map<DistantComputer*, std::string>::iterator notice = notices.find(sender);
+  if (notice != notices.end()) {
+    SendSingleAdminMessage(sender, notice->second);
+    notices.erase(notice);
+  }
+
   Action a(buffer, sender);
 
   if (Action::GetType(buffer) == Action::ACTION_NETWORK_CLIENT_CHANGE_STATE) {
@@ -306,7 +327,8 @@ GameServer::GameServer() :
   password(""),
   port(0),
   clients_socket_set(NULL),
-  reported_players(-1)
+  reported_players(-1),
+  battles_reported(false)
 {
 }
 
@@ -325,6 +347,7 @@ void GameServer::CreateGame(uint game_id)
 void GameServer::DeleteGame(std::map<uint, NetworkGame>::iterator gamelst_it)
 {
   DPRINT(INFO, "[Game %s] deleted", gamelst_it->second.GetName().c_str());
+  was_started.erase(gamelst_it->first);
   games.erase(gamelst_it);
 }
 
@@ -383,6 +406,7 @@ bool GameServer::ConnectToIndexServer()
   }
 
   reported_players = -1; // a new connection: send the count again
+  battles_reported = false;
   bool r = IndexServer::GetInstance()->SendServerStatus(game_name, password != "", port);
   if (!r) {
     char port_str[8];
@@ -411,6 +435,58 @@ bool GameServer::RefreshConnexionToIndexServer()
   ReportPlayers();
 
   return true;
+}
+
+// e.g. "a battle with 3 players (70% done)"
+std::string GameServer::BattlesSummary() const
+{
+  std::string s;
+  int n = 0;
+  std::map<uint, NetworkGame>::const_iterator it;
+  for (it = games.begin(); it != games.end(); ++it) {
+    if (!it->second.IsStarted())
+      continue;
+    if (n++)
+      s += ", ";
+    s += Format("a battle with %zd players (%d%% done)",
+                it->second.GetCpus().size(), it->second.GetProgress());
+  }
+  return s;
+}
+
+void GameServer::ReportBattles()
+{
+  std::vector<BattleInfo> battles;
+  std::map<uint, NetworkGame>::iterator it;
+  for (it = games.begin(); it != games.end(); ++it) {
+    bool started = it->second.IsStarted();
+    if (started && battles.size() < IndexServer::MAX_BATTLES)
+      battles.push_back(BattleInfo((int)it->second.GetCpus().size(),
+                                   it->second.GetProgress()));
+
+    // A battle just ended: its players are back choosing teams, with
+    // room for more. Tell the players waiting in other games.
+    bool &was = was_started[it->first];
+    if (was && !started && !it->second.GetCpus().empty()) {
+      DPRINT(INFO, "[Game %s] battle over, telling the waiting players",
+             it->second.GetName().c_str());
+      std::map<uint, NetworkGame>::iterator other;
+      for (other = games.begin(); other != games.end(); ++other) {
+        if (other != it && !other->second.IsStarted())
+          other->second.SendAdminMessage(Format(
+            "%s just finished and its %zd players are picking teams again."
+            " Leave and press Public Battle to join them.",
+            it->second.GetName().c_str(), it->second.GetCpus().size()));
+      }
+    }
+    was = started;
+  }
+
+  if (is_public && (!battles_reported || !(battles == reported_battles))) {
+    battles_reported = true;
+    reported_battles = battles;
+    IndexServer::GetInstance()->SendBattles(battles);
+  }
 }
 
 void GameServer::ReportPlayers()
@@ -537,6 +613,13 @@ void GameServer::WaitClients()
     DistantComputer* client = new DistantComputer(incoming, client_nickname, game_id, player_id);
     GetGame(game_id).AddCpu(client);
 
+    // Nobody else in the lobby doesn't mean nobody is playing
+    std::string battles = BattlesSummary();
+    if (!battles.empty())
+      GetGame(game_id).SetNotice(client, Format(
+        "Others are playing right now: %s. You'll get a message here when"
+        " it ends, so you can join them.", battles.c_str()));
+
     if (clients_socket_set->NbSockets() == clients_socket_set->MaxNbSockets())
       RejectIncoming();
   }
@@ -553,6 +636,7 @@ void GameServer::RunLoop()
       return;
     }
 
+    ReportBattles();
     WaitClients();
 
     int num_ready = clients_socket_set->CheckActivity(100);

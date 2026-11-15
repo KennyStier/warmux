@@ -120,6 +120,17 @@ public:
   virtual void Pack() { }
 };
 
+// A thin rounded bar filled to `percent`, centred in its height
+class FlatMeter : public Widget
+{
+  int percent;
+
+public:
+  FlatMeter(const Point2i &size, int percent) : Widget(size), percent(percent) { }
+  virtual void Draw(const Point2i &mousePosition);
+  virtual void Pack() { }
+};
+
 // A labelled on/off switch. With `info`, a round "i" follows the label: a
 // click on it does not switch, InfoClicked() tells the menu to explain.
 class FlatToggle : public Widget

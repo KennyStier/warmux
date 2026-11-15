@@ -374,3 +374,12 @@ void NetworkTeamsSelectionBox::UpdateNbTeams()
   // screen has been refreshed, because of the callbacks
   list_box->NeedRedrawing();
 }
+
+void NetworkTeamsSelectionBox::SetLocalTeamsAI()
+{
+  for (uint i = 0; i < teams_selections.size(); i++) {
+    TeamBox *box = teams_selections[i];
+    if (box->GetTeam() && box->IsLocal() && box->GetTeam()->IsHuman())
+      box->SwitchPlayerType();
+  }
+}

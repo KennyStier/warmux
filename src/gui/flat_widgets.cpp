@@ -390,3 +390,16 @@ Widget *FlatField::ClickUp(const Point2i &mousePosition, uint button)
   NeedRedrawing();
   return w ? w : box;
 }
+
+void FlatMeter::Draw(const Point2i &/*mousePosition*/)
+{
+  Surface &s = GetMainWindow();
+  int h = std::max(4, Flat::Unit());
+  Rectanglei track(position.x, position.y + (size.y - h) / 2, size.x, h);
+  Flat::RoundedBox(s, track, h / 2, Flat::PANEL);
+  int p = std::max(0, std::min(100, percent));
+  int w = track.GetSizeX() * p / 100;
+  if (w >= h) // narrower than its height, a rounded bar is just a blob
+    Flat::RoundedBox(s, Rectanglei(track.GetPositionX(), track.GetPositionY(), w, h), h / 2,
+                     Flat::PRIMARY);
+}

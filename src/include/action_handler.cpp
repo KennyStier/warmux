@@ -459,7 +459,11 @@ static void Action_ChatMessage(Action *a)
   // cpu is NULL on replay, so only log if !=NULL
   if (Replay::GetConstInstance()->IsPlaying())
     ChatLogger::GetInstance()->LogMessage(nickname+"> "+message);
-  AppWarmux::GetInstance()->ReceiveMsgCallback(nickname+"> "+message, color,
+  // Notices from a dedicated game server: it has no player, and marks them
+  std::string line = nickname + "> " + message;
+  if (!player && message.compare(0, 3, "***") == 0)
+    line = Format(_("Server: %s"), message.substr(3).c_str());
+  AppWarmux::GetInstance()->ReceiveMsgCallback(line, color,
                                                a->GetType() == Action::ACTION_CHAT_INGAME_MESSAGE);
 }
 
@@ -933,6 +937,11 @@ static void Action_Network_VerifyRandomSync(Action *a)
   }
 }
 
+// Only meant for dedicated game servers, which keep it to themselves
+static void Action_Game_Progress(Action * /*a*/)
+{
+}
+
 static void Action_Time_VerifySync(Action *a)
 {
   uint local_time = GameTime::GetInstance()->Read();
@@ -1193,6 +1202,7 @@ void Action_Handler_Init()
   ActionHandler::GetInstance()->Register(Action::ACTION_NETWORK_RANDOM_INIT, "NETWORK_random_init", &Action_Network_RandomInit);
   ActionHandler::GetInstance()->Register(Action::ACTION_NETWORK_VERIFY_RANDOM_SYNC, "NETWORK_verify_random_sync", &Action_Network_VerifyRandomSync);
   ActionHandler::GetInstance()->Register(Action::ACTION_TIME_VERIFY_SYNC, "TIME_verify_sync", &Action_Time_VerifySync);
+  ActionHandler::GetInstance()->Register(Action::ACTION_GAME_PROGRESS, "GAME_progress", &Action_Game_Progress);
   ActionHandler::GetInstance()->Register(Action::ACTION_INFO_CLIENT_DISCONNECT, "INFO_client_disconnect", &Action_Info_ClientDisconnect);
   ActionHandler::GetInstance()->Register(Action::ACTION_INFO_CLIENT_CONNECT, "INFO_client_connect", &Action_Info_ClientConnect);
 

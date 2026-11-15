@@ -312,6 +312,10 @@ void Game::InitTeams()
 
   GetTeamsList().InitEnergy();
 
+  initial_energy.clear();
+  FOR_EACH_TEAM(team)
+    initial_energy[(**team).GetId()] = (**team).ReadEnergy();
+
   // Randomize first player
   GetTeamsList().RandomizeFirstPlayer();
 
@@ -703,6 +707,54 @@ void Game::PingClient() const
   ActionHandler::GetInstance()->NewAction(a);
 }
 
+// The battle ends when one team is left, so progress is how much of their
+// starting health all the other teams have lost. The leader is whoever has
+// the most health right now; teams that left the game count as dead.
+int Game::ComputeProgress() const
+{
+  std::vector<uint> current, initial;
+  for (std::map<std::string, uint>::const_iterator it = initial_energy.begin();
+       it != initial_energy.end(); ++it) {
+    uint energy = 0;
+    FOR_EACH_TEAM(team) {
+      if ((**team).GetId() == it->first)
+        energy = (**team).ReadEnergy();
+    }
+    current.push_back(energy);
+    initial.push_back(it->second);
+  }
+  if (current.size() < 2)
+    return 0;
+
+  size_t leader = 0;
+  for (size_t i = 1; i < current.size(); i++)
+    if (current[i] > current[leader])
+      leader = i;
+
+  uint64_t left = 0, start = 0;
+  for (size_t i = 0; i < current.size(); i++) {
+    if (i == leader)
+      continue;
+    left += std::min(current[i], initial[i]); // medkits can go over the start
+    start += initial[i];
+  }
+  if (!start)
+    return 0;
+  return (int)(100 - (100 * left) / start);
+}
+
+// Only to a dedicated server: a hosting player is the server itself, and
+// its clients have nothing to do with the number
+void Game::ReportProgress() const
+{
+  Network *net = Network::GetInstance();
+  if (!net->IsClient() || !net->IsGameMaster())
+    return;
+  Action a(Action::ACTION_GAME_PROGRESS);
+  a.Push(ComputeProgress());
+  net->SendActionToAll(a);
+}
+
 // ####################################################################
 // ####################################################################
 
@@ -965,6 +1017,8 @@ void Game::MainLoop()
 
       if (time->Read() % 1000 == 20 && Network::GetInstance()->IsGameMaster())
         PingClient();
+      if (time->Read() % 5000 == 20)
+        ReportProgress();
     }
     StatStart("Game:RefreshInput()");
     RefreshInput();

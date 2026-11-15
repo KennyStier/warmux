@@ -347,6 +347,10 @@ void NetworkConnectionMenu::ShowGames()
     keys.push_back(all[i].ip_address + ":" + all[i].port + "/" + all[i].game_name
                    + (all[i].passworded ? "/p" : "") + (i < nb_lan ? "/l" : "")
                    + Format("/%d/%d", all[i].nb_players, all[i].max_players));
+  for (size_t i = 0; i < n; i++)
+    for (size_t b = 0; b < all[i].battles.size(); b++)
+      keys.push_back(Format("%zu/battle/%d/%d", i, all[i].battles[b].nb_players,
+                            all[i].battles[b].progress));
   if (keys == shown_games)
     return;
   shown_games = keys;
@@ -413,6 +417,31 @@ void NetworkConnectionMenu::ShowGames()
 
     row->Pack();
     games->AddWidget(row);
+
+    // Battles being played on this server: not joinable, but they show
+    // there are people around (and the lobby above is where to wait)
+    for (size_t b = 0; b < g.battles.size(); b++) {
+      const BattleInfo &battle = g.battles[b];
+      FlatRow *brow = new FlatRow(0, pad, u);
+      brow->AddWidget(new NullWidget(Point2i(icon, icon)));
+
+      VBox *btext = new VBox(text_w, false, false, false);
+      btext->SetNoBorder();
+      btext->SetMargin(0);
+      btext->AddWidget(new Label(_("Battle in progress"), text_w, Flat::F(Font::FONT_MEDIUM),
+                                 Font::FONT_BOLD, Flat::TEXT_DIM));
+      btext->AddWidget(new Label(Format(ngettext("%i player", "%i players", battle.nb_players),
+                                        battle.nb_players)
+                                 + "  \xC2\xB7  "
+                                 + Format(_("%i%% done"), battle.progress),
+                                 text_w, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD,
+                                 Flat::TEXT_DIM));
+      btext->Pack();
+      brow->AddWidget(btext);
+      brow->AddWidget(new FlatMeter(Point2i(count_w + u + join_w, join_h), battle.progress));
+      brow->Pack();
+      games->AddWidget(brow);
+    }
   }
   games->Pack();
   games->NeedRedrawing();

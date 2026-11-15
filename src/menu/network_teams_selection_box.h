@@ -55,5 +55,7 @@ public:
   Team * FindUnusedTeam(const std::string default_team_id);
   bool HasOpenTeamSlot();
   void RequestTeam();
+  // Developer aid (WARMUX_TEST_AUTOPLAY): let the computer play our teams
+  void SetLocalTeamsAI();
 };
 #endif

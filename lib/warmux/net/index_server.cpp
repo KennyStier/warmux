@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 #include <assert.h>
+#include <algorithm>
 #include <cstdlib>
 #include <time.h>
 #include <SDL_net.h>
@@ -36,7 +37,8 @@ IndexServer::IndexServer():
   hidden_server(false),
   registered(false),
   pending_players(-1),
-  pending_max(0)
+  pending_max(0),
+  pending_battles_set(false)
 {
   action_sem = SDL_CreateSemaphore(1);
   ASSERT(action_sem);
@@ -182,6 +184,7 @@ void IndexServer::__Disconnect()
 {
   registered = false;
   pending_players = -1;
+  pending_battles_set = false;
   if (hidden_server) {
     hidden_server = false;
     return;
@@ -359,6 +362,8 @@ bool IndexServer::SendServerStatus(const std::string& game_name, bool pwd, int p
   registered = true;
   if (pending_players >= 0 && !__SendPlayers(pending_players, pending_max))
     goto disconnect;
+  if (pending_battles_set && !__SendBattles(pending_battles))
+    goto disconnect;
 
   Unlock();
   return true;
@@ -395,6 +400,35 @@ void IndexServer::SendPlayers(int nb_players, int max_players)
   Unlock();
 }
 
+bool IndexServer::__SendBattles(const std::vector<BattleInfo>& battles)
+{
+  char buf[16 + 8 * MAX_BATTLES];
+  uint used = 0;
+  int n = (int)std::min(battles.size(), (size_t)MAX_BATTLES);
+  NewMsg(TS_MSG_BATTLES, buf, used);
+  used += WNet::Batch(buf+used, n);
+  for (int i = 0; i < n; i++) {
+    used += WNet::Batch(buf+used, battles[i].nb_players);
+    used += WNet::Batch(buf+used, battles[i].progress);
+  }
+  WNet::FinalizeBatch(buf, used);
+  return socket.SendBuffer(buf, used);
+}
+
+void IndexServer::SendBattles(const std::vector<BattleInfo>& battles)
+{
+  Lock();
+  if (!hidden_server && socket.IsConnected()) {
+    if (!registered) {
+      pending_battles = battles;
+      pending_battles_set = true;
+    } else if (!__SendBattles(battles)) {
+      __Disconnect();
+    }
+  }
+  Unlock();
+}
+
 std::list<GameServerInfo> IndexServer::GetHostList(bool symbolic_name)
 {
   std::list<GameServerInfo> lst;
@@ -403,7 +437,7 @@ std::list<GameServerInfo> IndexServer::GetHostList(bool symbolic_name)
   Lock();
 
   uint used = 0;
-  NewMsg(TS_MSG_GET_LIST_V2, buffer, used);
+  NewMsg(TS_MSG_GET_LIST_V3, buffer, used);
   if (!socket.IsConnected())
     goto out;
   SendMsg(socket, buffer, used);
@@ -445,6 +479,17 @@ std::list<GameServerInfo> IndexServer::GetHostList(bool symbolic_name)
     r = socket.ReceiveInt(game_server_info.max_players);
     if (!r)
       goto out;
+
+    int nb_battles;
+    r = socket.ReceiveInt(nb_battles);
+    if (!r || nb_battles < 0 || nb_battles > (int)MAX_BATTLES)
+      goto out;
+    while (nb_battles--) {
+      BattleInfo b;
+      if (!socket.ReceiveInt(b.nb_players) || !socket.ReceiveInt(b.progress))
+        goto out;
+      game_server_info.battles.push_back(b);
+    }
 
     unsigned char* str_ip = (unsigned char*)&ip.host;
     char formated_ip[16];

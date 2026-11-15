@@ -19,6 +19,7 @@
  * Message Box
  *****************************************************************************/
 
+#include <algorithm>
 #include "gui/msg_box.h"
 #include "gui/scroll_box.h"
 #include "gui/label.h"
@@ -40,24 +41,16 @@ MsgBox::~MsgBox()
 
 void MsgBox::NewMessage(const std::string &msg, const Color& color)
 {
-  bool del = false;
-
   if (WidgetCount() >= max_history+1) {
     // Remove first lines
     RemoveFirstWidget();
-    del = true;
   }
-  int max = GetMaxOffset();
-  Label *lbl = new Label(msg, size.x-10, font_size, font_style, color);
-
-  AddWidget(lbl);
-  if (!del) {
-    max += lbl->GetSizeY() + 2;
-  }
-  if (max > 0) {
-    offset = max;
-    NeedRedrawing();
-  }
-
+  AddWidget(new Label(msg, size.x-10, font_size, font_style, color));
   Pack();
+
+  // Show the newest line: scroll to the end, measured once the new line is
+  // in (guessing it beforehand scrolled past the end while all text fit)
+  offset = std::max(0, GetMaxOffset());
+  Pack();
+  NeedRedrawing();
 }

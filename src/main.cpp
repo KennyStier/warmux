@@ -46,6 +46,8 @@
 #include "menu/network_connection_menu.h"
 #include "menu/options_menu.h"
 #include "menu/replay_menu.h"
+#include "menu/network_menu.h"
+#include "network/network.h"
 #include "network/randomsync.h"
 #include "particles/particle.h"
 #include "interface/joystick.h"
@@ -284,9 +286,21 @@ void AppWarmux::ReceiveMsgCallback(const std::string& msg, const Color& color, b
       // Add message to chat session in Game
       Game::GetInstance()->chatsession.NewMessage(msg, color);
     }
+  } else if (Network::IsConnected()
+             && GetCurrentMenu() != (Menu*)Network::GetInstance()->network_menu) {
+    // Joining: the lobby is not shown yet, it will show this once it is
+    if (early_msgs.size() < 10)
+      early_msgs.push_back(std::make_pair(msg, color));
   } else if (GetCurrentMenu()) {
     GetCurrentMenu()->ReceiveMsgCallback(msg, color);
   }
+}
+
+std::vector<std::pair<std::string, Color> > AppWarmux::TakeEarlyMessages()
+{
+  std::vector<std::pair<std::string, Color> > msgs;
+  msgs.swap(early_msgs);
+  return msgs;
 }
 
 void AppWarmux::End() const
