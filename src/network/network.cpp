@@ -67,6 +67,7 @@
 #include "network/network_server.h"
 #include "network/chatlogger.h"
 //-----------------------------------------------------------------------------
+#include "game/config.h"
 #include "game/game_mode.h"
 #include "game/game.h"
 #include "graphic/video.h"
@@ -221,6 +222,19 @@ NetworkServer * Network::GetInstanceServer()
   return (NetworkServer*)singleton;
 }
 
+// The name other players see for us in the lobby: the player name of our
+// first network team, as typed in the team panel, else the system user
+// name. Android has no user name, so phone players all showed as
+// "Unnamed".
+static std::string LocalNickname()
+{
+  const std::list<ConfigTeam>& teams = Config::GetInstance()->AccessNetworkTeamsList();
+  for (std::list<ConfigTeam>::const_iterator it = teams.begin(); it != teams.end(); ++it)
+    if (!it->player_name.empty())
+      return it->player_name;
+  return Player::GetDefaultNickname();
+}
+
 Network::Network(const std::string& _game_name, const std::string& passwd) :
   cpu(),
   game_name(_game_name),
@@ -235,7 +249,7 @@ Network::Network(const std::string& _game_name, const std::string& passwd) :
   network_menu(NULL)
 {
   cpus_lock = SDL_CreateMutex();
-  player.SetNickname(Player::GetDefaultNickname());
+  player.SetNickname(LocalNickname());
   num_objects++;
 }
 //-----------------------------------------------------------------------------

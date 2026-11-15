@@ -497,7 +497,9 @@ bool WSocket::ReceiveBuffer_NoLock(void* data, size_t len)
     //                 Gentildemon.
 
     received = SDLNet_TCP_Recv(socket, data, len);
-    if (received <= 0) {
+    if (received == 0)  // the other side closed the connection
+      return false;
+    if (received < 0) {
       print_net_error("SDLNet_TCP_Recv");
       fprintf(stderr, "ERROR: SDLNet_TCP_Recv: %d\n", received);
       return false;

@@ -293,6 +293,7 @@ bool WNet::Server_HandShake(WSocket& client_socket,
                             bool client_will_be_master)
 {
   bool ret = false;
+  bool probe = false;
   std::string version;
   std::string _password;
 
@@ -300,9 +301,13 @@ bool WNet::Server_HandShake(WSocket& client_socket,
   if (!client_socket.AddToTmpSocketSet())
     goto error_no_socket_set;
 
-  // 1) Receive the version number
-  if (!client_socket.ReceiveStr(version, 40))
+  // 1) Receive the version number. Clients first connect and hang up
+  // without sending anything to check that the server is there
+  // (WNet::CheckHost); that is not a failed handshake.
+  if (!client_socket.ReceiveStr(version, 40)) {
+    probe = true;
     goto error;
+  }
 
   if (!client_socket.SendStr(WARMUX_VERSION))
     goto error;
@@ -350,7 +355,7 @@ bool WNet::Server_HandShake(WSocket& client_socket,
  error:
   client_socket.RemoveFromTmpSocketSet();
  error_no_socket_set:
-  if (!ret) {
+  if (!ret && !probe) {
     std::cerr << "Server: HandShake with client has failed!" << std::endl;
   }
   return ret;

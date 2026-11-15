@@ -116,6 +116,8 @@ std::string Player::GetDefaultNickname()
   DWORD size = 32;
   if (GetUserName(buffer, &size))
     nick = buffer;
+#elif defined(ANDROID)
+  nick = "Android";  // what the team panel suggests there too
 #else
   nick = getenv("USER");
 #endif
