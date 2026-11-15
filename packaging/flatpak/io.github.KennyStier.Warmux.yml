@@ -104,6 +104,10 @@ modules:
         mirror-urls:
           - https://downloads.sourceforge.net/project/sdl2gfx/SDL2_gfx-1.0.4.tar.gz
         sha256: 63e0e01addedc9df2f85b93a248f06e8a04affa014a835c2ea34bfe34e576262
+      # Its config.guess is from 2012 and doesn't know aarch64; use the SDK's
+      - type: shell
+        commands:
+          - cp -f /usr/share/automake-*/config.guess /usr/share/automake-*/config.sub .
 
   - name: warmux
     builddir: true
