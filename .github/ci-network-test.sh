@@ -60,10 +60,20 @@ for c in p1 p2; do
   H=$W/run/home_$c
   mkdir -p "$H/config/warmux" "$H/data" "$H/cache"
   team=beastie; [ $c = p2 ] && team=gnu
-  # One worm each, so the battle is short
-  printf '<?xml version="1.0" encoding="utf-8"?>\n<config><network><local_teams><team_0><id>%s</id><player_name>%s</player_name><nb_characters>1</nb_characters><ai>default</ai></team_0></local_teams></network></config>\n' \
+  # One worm each on a small map, and a game mode where death mode (which
+  # takes everyone down to 1 HP) starts after a minute, so the battle ends
+  # soon. On a random map the computer players can miss each other for
+  # longer than the test allows.
+  printf '<?xml version="1.0" encoding="utf-8"?>\n<config><map>pumpkins</map><game_mode>ci_quick</game_mode><network><local_teams><team_0><id>%s</id><player_name>%s</player_name><nb_characters>1</nb_characters><ai>default</ai></team_0></local_teams></network></config>\n' \
     $team $c > "$H/config/warmux/config.xml"
-  [ -n "$SUFFIX" ] && cp -r "$H/config/warmux" "$H/config/warmux$SUFFIX"
+  mkdir -p "$H/data/warmux/game_mode"
+  sed -e 's|<duration_before_death_mode>[0-9]*<|<duration_before_death_mode>60<|' \
+      -e 's|<damage_per_turn_during_death_mode>[0-9]*<|<damage_per_turn_during_death_mode>30<|' \
+      "$W/inst/share/warmux/game_mode/classic.xml" > "$H/data/warmux/game_mode/ci_quick.xml"
+  if [ -n "$SUFFIX" ]; then
+    cp -r "$H/config/warmux" "$H/config/warmux$SUFFIX"
+    cp -r "$H/data/warmux" "$H/data/warmux$SUFFIX"
+  fi
   env HOME="$H" XDG_CONFIG_HOME="$H/config" XDG_DATA_HOME="$H/data" XDG_CACHE_HOME="$H/cache" \
       SDL_VIDEODRIVER=offscreen SDL_AUDIODRIVER=dummy \
       WARMUX_INDEX_SERVER=127.0.0.1 WARMUX_TEST_AUTOPLAY=1 \
