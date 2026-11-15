@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Warmux Testing</title>
+  <meta name="description" content="Try the next version of Warmux before it is released: testing builds for Android, Windows and Linux, installed next to Warmux.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#9fc6dd">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/img/favicon-64.png" type="image/png" sizes="64x64">
+  <link rel="stylesheet" href="/assets/style.css">
+  <script src="/assets/testing.js" defer></script>
+</head>
+<body class="testing-page">
+
+<header class="testing-top">
+  <div class="sky" aria-hidden="true">
+    <div class="rays"></div>
+    <div class="sun"></div>
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+  </div>
+  <nav class="testing-nav"><a href="/">&larr; warmux.net</a></nav>
+  <div class="testing-hero">
+    <p class="testing-badge">Testing</p>
+    <h1>The next Warmux, <em>early</em></h1>
+    <p>Builds of the version being worked on, made every time it changes.
+       Play them, break them, and tell us what went wrong.</p>
+  </div>
+</header>
+
+<main class="meadow">
+  <section class="panel testing-warn">
+    <img src="/assets/img/w/mine_ico.png" alt="" width="48" height="48">
+    <div>
+      <h2>Not finished</h2>
+      <ul>
+        <li>Expect bugs and the odd crash. Your normal Warmux is not touched:
+            <b>Warmux Testing</b> installs next to it and keeps its own settings and teams.</li>
+        <li>It plays online only with other testing builds, in <b>Testing Battle</b>,
+            not with people on the released version.</li>
+        <li>Each new build replaces the last one here. Update when it changes, so
+            you can still play with the other testers.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="downloads panel" id="downloads">
+    <div class="dl-head">
+      <h2>Downloads</h2>
+      <p class="dl-version" id="dl-version">Latest testing build</p>
+    </div>
+    <ul class="dl-list" id="dl-list">
+      <li class="dl-loading">Loading the latest testing build… or <a href="https://github.com/KennyStier/warmux/releases/tag/testing">see it on GitHub</a>.</li>
+    </ul>
+  </section>
+
+  <section class="panel testing-changes" id="changes" hidden>
+    <h2>New since the last release</h2>
+    <ul id="change-list"></ul>
+  </section>
+
+  <section class="panel testing-report">
+    <h2>Found a bug?</h2>
+    <p>Tell us what you were doing and what happened on
+       <a href="https://github.com/KennyStier/warmux/issues/new">GitHub</a>, with the
+       build number from the top of this page. On Android, a bug report
+       (<i>Developer options &rarr; Take bug report</i>) right after a crash helps a lot.</p>
+  </section>
+</main>
+
+<footer class="sea">
+  <div class="sea-body">
+    <p class="sea-logo"><img src="/assets/img/bomb.png" alt="" width="40" height="40"> Warmux</p>
+    <nav>
+      <a href="/">Released version</a>
+      <a href="https://github.com/KennyStier/warmux">Source code</a>
+      <a href="https://github.com/KennyStier/warmux/issues">Report a bug</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

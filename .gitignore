@@ -6,3 +6,4 @@ _flatpak/
 .flatpak-builder/
 packaging/flatpak/*.Testing.yml
 packaging/flatpak/*.Testing.metainfo.xml
+_nettest/

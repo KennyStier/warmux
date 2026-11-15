@@ -6,8 +6,10 @@ warmux.net {
 	encode zstd gzip
 	file_server
 
-	# The latest release, refreshed from GitHub by warmux-latest.timer
-	handle /latest.json {
+	# The latest release and the testing pre-release, refreshed from
+	# GitHub by warmux-latest.timer
+	@releases path /latest.json /testing.json
+	handle @releases {
 		root * /var/lib/warmux-web
 		header Cache-Control "public, max-age=300"
 		file_server

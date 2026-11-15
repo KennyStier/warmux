@@ -495,6 +495,62 @@ h2 em { font-style: normal; color: var(--gold); }
 .sea nav a:hover { border-color: var(--gold); }
 .fine { margin: 10px auto 0; max-width: 620px; font-size: 13px; color: #b9d3ea; }
 
+/* ================= Testing page ================= */
+
+.testing-top {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 18px 16px 56px;
+  text-align: center;
+  color: #22303b;
+}
+/* The sun up in the corner, away from the heading */
+.testing-top .sun, .testing-top .rays { left: 88%; top: 18%; }
+.testing-top .sun { width: clamp(60px, 8vw, 110px); }
+.testing-nav { text-align: left; width: min(100%, 1080px); margin: 0 auto; }
+.testing-nav a { color: #22303b; font-weight: 700; text-decoration: none; }
+.testing-nav a:hover { color: #000; }
+.testing-hero { max-width: 720px; margin: 28px auto 0; }
+.testing-hero h1 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(36px, 7vw, 64px);
+  line-height: 1.05;
+  margin: 10px 0 12px;
+  color: #fff;
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.18);
+}
+.testing-hero h1 em { font-style: normal; color: var(--gold); text-shadow: 0 4px 0 var(--gold-edge); }
+.testing-hero p { font-size: clamp(16px, 2.2vw, 19px); margin: 0; font-weight: 500; }
+.testing-badge {
+  display: inline-block;
+  margin: 0;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: #e8a317;
+  color: #2a1a00;
+  font-family: var(--display);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 3px 0 #9a6a00;
+}
+.testing-page .meadow { gap: 28px; }
+.testing-warn {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 18px;
+  padding: clamp(18px, 3vw, 28px);
+  box-shadow: inset 0 0 0 2px #e8a317, 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+.testing-warn h2, .testing-changes h2, .testing-report h2 { font-size: clamp(24px, 3.4vw, 32px); }
+.testing-warn ul, .testing-changes ul { margin: 0; padding-left: 20px; color: var(--text-dim); }
+.testing-warn li, .testing-changes li { margin: 6px 0; }
+.testing-warn b { color: var(--text); }
+.testing-changes, .testing-report { padding: clamp(18px, 3vw, 28px); }
+.testing-report p { margin: 0; color: var(--text-dim); }
+
 /* ================= Small screens ================= */
 
 @media (max-width: 640px) {

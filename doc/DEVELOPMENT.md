@@ -32,7 +32,9 @@ Every push to `dev` runs `.github/workflows/testing.yml`, which replaces the
 
 `<ver>` is the coming release and the build number, e.g. `12.0.3-test42`.
 GitHub's "latest release", which the website's download button uses, never
-points at the pre-release.
+points at the pre-release. Testers get them from
+[warmux.net/testing](https://warmux.net/testing/), which lists the files and
+the changes since the last release (refreshed every 15 minutes).
 
 Testing builds are configured with `--enable-testing` (Android:
 `gradlew -Pwarmux.testing`; Windows: `WARMUX_TESTING=1`). That:
@@ -75,6 +77,9 @@ A release needs the maintainer's go-ahead. Then:
    `.github/workflows/release.yml` builds every package and publishes the
    release; the website picks it up within 30 minutes.
 3. Servers:
+   - if the index server changed since the last release (it did for
+     12.0.3: the list of battles in progress), deploy the new one first:
+     new clients ask it things the old one doesn't know;
    - add the version to `versions=` in `/etc/warmux/index_server.conf`
      (and `tools/servers/deploy/index_server.conf`), restart `warmux-index`;
    - run a game server for the new version (each version needs its own,
@@ -83,6 +88,15 @@ A release needs the maintainer's go-ahead. Then:
    the next version, and set `versions=` in
    `tools/servers/deploy/testing/index_server.conf` to match; redeploy the
    testing servers.
+
+## Automatic checks
+
+`.github/workflows/build.yml` runs on every push to `main` and `dev` and on
+pull requests: native builds on Arch, Ubuntu and Fedora, Windows, Android,
+Flatpak, and **Network game test** (`.github/ci-network-test.sh`), which
+plays a whole two-player game over a local index server and game server
+and fails if the battle doesn't start, isn't listed as in progress, or
+doesn't end. Run it locally with `sh .github/ci-network-test.sh`.
 
 ## Testing a network game unattended
 

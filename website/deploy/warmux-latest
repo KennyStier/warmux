@@ -1,17 +1,30 @@
 #!/bin/sh
-# Writes latest.json (the newest Warmux release and its files) for the
-# website's download button, from the GitHub API.
+# Writes, from the GitHub API, for the website:
+#   latest.json   the newest Warmux release and its files (download button)
+#   testing.json  the "testing" pre-release built from the dev branch
+#                 (warmux.net/testing), with its release notes
 set -eu
-OUT=/var/lib/warmux-web/latest.json
-TMP=$(mktemp /var/lib/warmux-web/.latest.XXXXXX)
-trap 'rm -f "$TMP"' EXIT
-curl -fsS --max-time 30 -H "Accept: application/vnd.github+json" \
-     -A "warmux.net-website" \
-     https://api.github.com/repos/KennyStier/warmux/releases/latest |
-  jq '{tag: .tag_name, version: (.tag_name | ltrimstr("v")), published: .published_at,
-       url: .html_url,
-       assets: [.assets[] | {name, size, url: .browser_download_url}]}' > "$TMP"
-# Never replace a good list with an empty one
-jq -e '.assets | length > 0' "$TMP" > /dev/null
-chmod 644 "$TMP"
-mv "$TMP" "$OUT"
+DIR=/var/lib/warmux-web
+API=https://api.github.com/repos/KennyStier/warmux/releases
+
+fetch() {  # api-path out-file jq-filter
+  tmp=$(mktemp "$DIR/.fetch.XXXXXX")
+  if curl -fsS --max-time 30 -H "Accept: application/vnd.github+json" \
+          -A "warmux.net-website" "$API/$1" | jq "$3" > "$tmp" \
+     && jq -e '.assets | length > 0' "$tmp" > /dev/null; then
+    # Only a good list replaces the last one
+    chmod 644 "$tmp"
+    mv "$tmp" "$DIR/$2"
+  else
+    rm -f "$tmp"
+    return 1
+  fi
+}
+
+FIELDS='tag: .tag_name, version: (.tag_name | ltrimstr("v")), published: .published_at,
+        url: .html_url, assets: [.assets[] | {name, size, url: .browser_download_url}]'
+
+status=0
+fetch latest latest.json "{$FIELDS}" || status=1
+fetch tags/testing testing.json "{$FIELDS, title: .name, notes: .body}" || status=1
+exit $status

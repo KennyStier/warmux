@@ -6,8 +6,12 @@ flags, weapon icons, the bomb icon); the screenshots are real games
 captured offscreen.
 
 The download button picks the file for the visitor's system from
-`/latest.json`, which the server refreshes from the GitHub API every 30
+`/latest.json`, which the server refreshes from the GitHub API every 15
 minutes. Nothing needs to change on the site for a new release.
+
+`/testing/` lists the testing builds (the `testing` pre-release, built from
+the `dev` branch) from `/testing.json`, refreshed the same way, with the
+changes since the last release.
 
 ## Server (the index server's VPS, Debian 13)
 
@@ -27,7 +31,8 @@ the HTTPS certificates itself.
 
 ## Publishing changes
 
-    rsync -a --delete index.html assets warmux-vps:/var/www/warmux.net/
+    rsync -a --delete index.html assets testing warmux-vps:/var/www/warmux.net/
+    # after changing deploy/: install it as in "Server" above
 
 ## Preview locally
 
