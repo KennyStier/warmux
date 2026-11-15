@@ -59,10 +59,10 @@ while [ $i -lt "$ROUNDS" ]; do
     if grep -aq "ERROR: AddressSanitizer\|runtime error:" "$log"; then
       grep -a -A40 "ERROR: AddressSanitizer\|runtime error:" "$log" | grep -av "^monkey: " | head -70 >&2
     else
-      grep -av "^monkey: " "$log" | tail -30 >&2
+      grep -av "^monkey: " "$log" | tail -n 30 >&2
     fi
     echo "  last actions:" >&2
-    grep -a "^monkey: " "$log" | tail -25 | sed 's/^/    /' >&2
+    grep -a "^monkey: " "$log" | tail -n 25 | sed 's/^/    /' >&2
     echo "  replay: WARMUX_TEST_MONKEY=$seed warmux --size $size (AddressSanitizer build)" >&2
   else
     how=$([ "$status" = timeout ] && echo "ran ${SECONDS_PER_ROUND}s" || echo "quit by itself")

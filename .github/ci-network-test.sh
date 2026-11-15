@@ -142,7 +142,7 @@ player l2 wilber 3828 lobby run/l2.log; L2=$LAST
 for i in $(seq 1 120); do grep -aq "total: 2" run/lobby.log && break; sleep 1; done
 if ! check "two players in the lobby" run/lobby.log "total: 2"; then
   echo "Network test FAILED: the players didn't both join the lobby" >&2
-  tail -20 run/lobby.log run/l1.log run/l2.log >&2
+  tail -n 20 run/lobby.log run/l1.log run/l2.log >&2
   exit 1
 fi
 sleep 5  # let them settle in (teams, AI)
@@ -155,7 +155,7 @@ for p in "l1 $L1" "l2 $L2"; do
     echo "ok: $1 left the lobby and is still running"
   else
     echo "FAILED: $1 crashed leaving the lobby" >&2
-    tail -30 "run/$1.log" >&2
+    tail -n 30 "run/$1.log" >&2
     lobby_ok=no
   fi
 done
@@ -201,7 +201,7 @@ done
 echo "Network test FAILED (started=$started reported=$reported finished=$finished)" >&2
 for f in run/gs.log run/p1.log run/p2.log; do
   echo "=== $f" >&2
-  tail -25 "$f" >&2
+  tail -n 25 "$f" >&2
 done
-grep -a "battles in progress" run/idx.log | tail -5 >&2 || true
+grep -a "battles in progress" run/idx.log | tail -n 5 >&2 || true
 exit 1

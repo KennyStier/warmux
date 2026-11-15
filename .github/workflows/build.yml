@@ -65,9 +65,14 @@ jobs:
       - uses: actions/checkout@v4
       # A real two-player game over the network, played by the computer
       - run: autoreconf -fi && sh .github/ci-network-test.sh
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: network-test-logs-${{ matrix.arch }}
+          path: _nettest/run/*.log
 
   memory-check:
-    name: Memory check (AddressSanitizer)
+    name: Memory check (sanitizers)
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -82,6 +87,15 @@ jobs:
       # The network tests again, built with AddressSanitizer: a use of freed
       # memory fails here even when it wouldn't crash a normal build
       - run: autoreconf -fi && NETTEST_SANITIZE=1 sh .github/ci-network-test.sh
+      # Random taps, swipes, touches and keys all through the game
+      - run: MONKEY_ROUNDS=6 MONKEY_SECONDS=50 MONKEY_SEED=${{ github.run_number }}00 sh .github/ci-monkey-test.sh
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: memory-check-logs
+          path: |
+            _asantest/run/*.log
+            _asantest/monkey/*.log
 
   fedora:
     name: Fedora
