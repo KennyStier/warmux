@@ -50,8 +50,9 @@ class Font
   Font(int size);
 
 public:
-  // Size
-  typedef enum {
+  // Size (in pixels; other sizes than these are made by scaling, hence the
+  // explicit int: any size is a valid value)
+  typedef enum : int {
     FONT_HUGE = 40,
     FONT_LARGE = 32,
     FONT_BIG = 24,

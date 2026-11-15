@@ -1,6 +1,7 @@
 #ifndef WARMUX_VECTOR2_H
 #define WARMUX_VECTOR2_H
 
+#include <limits>
 #include <WARMUX_types.h>
 #undef min
 #undef max
@@ -58,8 +59,19 @@ template<class T> class Vector2
     /**
      *
      */
+    // Equal, within VECTOR2_EPS_ZERO for fractional types. Integers are
+    // compared directly: subtracting far-apart ones (INT_MAX, used as "not
+    // set yet") overflowed
+    inline bool Same(T a, T b) const{
+      if (a == b)
+        return true;
+      if (std::numeric_limits<T>::is_integer)
+        return false;
+      return IsZero(a - b);
+    }
+
     inline bool operator==(const Vector2<T> &p2) const{
-      return IsZero(x - p2.x) && IsZero(y - p2.y);
+      return Same(x, p2.x) && Same(y, p2.y);
     }
 
     /**
@@ -67,8 +79,7 @@ template<class T> class Vector2
      * @param p2
      */
     inline bool operator!=(const Vector2<T> &p2) const{
-               //         return (x != p2.x) || (y != p2.y);
-      return !IsZero(x - p2.x) || !IsZero(y - p2.y);
+      return !(*this == p2);
     }
 
     /**
