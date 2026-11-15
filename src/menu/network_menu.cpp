@@ -536,16 +536,18 @@ void NetworkMenu::Draw(const Point2i& /*mousePosition*/)
 
   // Developer aid: WARMUX_TEST_AUTOPLAY=1 hands our teams to the computer
   // and keeps pressing Ready / Start, so network games can be tested
-  // without anyone at the keyboard
+  // without anyone at the keyboard. WARMUX_TEST_AUTOPLAY=lobby only waits
+  // in the lobby (to test joining and leaving it).
   static Uint32 autoplay_next = 0;
   static bool autoplay_ai = false;
-  if (SDL_getenv("WARMUX_TEST_AUTOPLAY") && SDL_GetTicks() > autoplay_next
+  const char *autoplay = SDL_getenv("WARMUX_TEST_AUTOPLAY");
+  if (autoplay && SDL_GetTicks() > autoplay_next
       && Network::GetInstance()->IsConnected()) {
     autoplay_next = SDL_GetTicks() + 3000;
     if (!autoplay_ai) {
       team_box->SetLocalTeamsAI();
       autoplay_ai = true;
-    } else {
+    } else if (std::string(autoplay) != "lobby") {
       mouse_ok();
     }
   }

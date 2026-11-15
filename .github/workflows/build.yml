@@ -66,6 +66,23 @@ jobs:
       # A real two-player game over the network, played by the computer
       - run: autoreconf -fi && sh .github/ci-network-test.sh
 
+  memory-check:
+    name: Memory check (AddressSanitizer)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential autoconf automake gettext autopoint pkg-config \
+            libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
+            libsdl2-net-dev libsdl2-gfx-dev libcurl4-openssl-dev libxml2-dev libpng-dev
+      - uses: actions/checkout@v4
+      # The network tests again, built with AddressSanitizer: a use of freed
+      # memory fails here even when it wouldn't crash a normal build
+      - run: autoreconf -fi && NETTEST_SANITIZE=1 sh .github/ci-network-test.sh
+
   fedora:
     name: Fedora
     runs-on: ubuntu-latest

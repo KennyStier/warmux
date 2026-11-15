@@ -7,3 +7,4 @@ _flatpak/
 packaging/flatpak/*.Testing.yml
 packaging/flatpak/*.Testing.metainfo.xml
 _nettest/
+_asantest/

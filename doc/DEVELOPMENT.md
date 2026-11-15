@@ -93,16 +93,25 @@ A release needs the maintainer's go-ahead. Then:
 
 `.github/workflows/build.yml` runs on every push to `main` and `dev` and on
 pull requests: native builds on Arch, Ubuntu and Fedora, Windows, Android,
-Flatpak, and **Network game test** (`.github/ci-network-test.sh`), which
-plays a whole two-player game over a local index server and game server
-and fails if the battle doesn't start, isn't listed as in progress, or
-doesn't end. Run it locally with `sh .github/ci-network-test.sh`.
+Flatpak (x86_64 and ARM64 for Ubuntu and Flatpak), and **Network game
+test** (`.github/ci-network-test.sh`, on x86_64 and ARM64). It runs
+computer-played clients against a local index server and game servers:
+two players join a lobby and are dropped from it (neither may crash),
+then a whole two-player game must start, be listed as in progress, and
+end. Run it locally with `sh .github/ci-network-test.sh`.
+
+**Memory check (AddressSanitizer)** runs the same test with the game and
+servers built with AddressSanitizer (`NETTEST_SANITIZE=1`), so using freed
+memory fails even when a normal build happens not to crash (on phones it
+does). Locally: `NETTEST_SANITIZE=1 sh .github/ci-network-test.sh` (builds
+in `_asantest/`).
 
 ## Testing a network game unattended
 
 `WARMUX_TEST_AUTOPLAY=1` hands a player's teams to the computer and keeps
 pressing Ready / Start, and leaves the results screen, so a full network
-game plays itself. With a local index server and game server:
+game plays itself. `WARMUX_TEST_AUTOPLAY=lobby` only joins and waits in
+the lobby. With a local index server and game server:
 
     WARMUX_INDEX_SERVER=127.0.0.1 WARMUX_TEST_AUTOPLAY=1 warmux -c127.0.0.1
 
