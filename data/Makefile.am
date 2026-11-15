@@ -1,5 +1,5 @@
 xdg_appsdir = $(datadir)/applications
-xdg_apps_DATA = warmux.desktop warmux_files.desktop
+xdg_apps_DATA = warmux.desktop
 
 # Install the icon into the freedesktop hicolor theme so launchers can
 # pick whichever size they need (Icon=warmux in the .desktop file).

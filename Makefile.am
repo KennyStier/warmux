@@ -11,7 +11,6 @@ EXTRA_DIST = build/visual/gettext.rules            \
              build/visual/warmux.sln               \
              build/visual/warmux.vcproj            \
              data/warmux.desktop                   \
-             data/warmux_files.desktop             \
              doc/license/COPYING.de.txt            \
              doc/license/COPYING.el.txt            \
              doc/license/COPYING.en.txt            \

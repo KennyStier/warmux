@@ -30,7 +30,7 @@ the original project.
 - **Network play no longer depends on the defunct upstream server**. Point it
   at your own index server instead (see [Running your own servers](#running-your-own-servers)).
 - **Desktop integration**: freedesktop icons at every size, a cleaned-up
-  `.desktop` entry, and a working "Warmux folder" shortcut.
+  `.desktop` entry.
 - The index and game servers build cleanly again (`--enable-servers`; the
   Arch package includes them).
 - Assorted fixes: a buffer overflow in the server-list reader, leaked file
@@ -130,9 +130,10 @@ Key bindings refer to physical key positions (a US layout's positions), so
 on AZERTY and similar layouts letter bindings stay where a QWERTY user would
 expect them.
 
-Your settings live in `~/.config/wormux/`; replays, chat logs and custom
-teams/maps go in `~/.local/share/wormux/`. (The `wormux` name predates the
-rename to Warmux and is kept so existing setups keep working.)
+Your settings live in `~/.config/wormux/` (a name from before the rename
+to Warmux, kept so existing setups keep working); replays, chat logs and
+custom teams/maps go in `~/.local/share/warmux/`. An older
+`~/.local/share/wormux/` is moved there on first start.
 
 ## Running your own servers
 

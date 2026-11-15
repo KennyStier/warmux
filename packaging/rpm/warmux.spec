@@ -44,6 +44,5 @@ autoreconf -fi
 %{_bindir}/warmux-list-games
 %{_datadir}/warmux/
 %{_datadir}/applications/warmux.desktop
-%{_datadir}/applications/warmux_files.desktop
 %{_datadir}/icons/hicolor/*/apps/warmux.*
 %{_mandir}/man6/warmux.6*
