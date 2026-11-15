@@ -142,6 +142,16 @@ jobs:
       options: --privileged
     steps:
       - uses: actions/checkout@v4
+      # On some GitHub machines, Docker's storage can't move files between
+      # the image's layers, and flatpak fails to update the SDK with
+      # "Invalid cross-device link". Copy its folder into the container's
+      # own layer first.
+      - name: Make flatpak's folder writable in place
+        run: |
+          for d in $(flatpak --installations); do
+            du -sh "$d"
+            cp -a "$d" "$d.rw" && rm -rf "$d" && mv "$d.rw" "$d"
+          done
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: warmux-${{ matrix.arch }}.flatpak
