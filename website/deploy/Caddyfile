@@ -7,7 +7,15 @@ warmux.net {
 	file_server
 
 	# The latest release and the testing pre-release, refreshed from
-	# GitHub by warmux-latest.timer
+	# GitHub by warmux-latest (on GitHub's webhook, and hourly)
+	# GitHub tells us when a release is published or changed
+	handle /hooks/release {
+		request_body {
+			max_size 1MB
+		}
+		reverse_proxy 127.0.0.1:9011
+	}
+
 	@releases path /latest.json /testing.json
 	handle @releases {
 		root * /var/lib/warmux-web

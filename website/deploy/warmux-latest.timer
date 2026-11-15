@@ -1,9 +1,11 @@
+# A fallback: GitHub's webhook (warmux-webhook, warmux-latest.path) normally
+# refreshes the lists as soon as a release changes
 [Unit]
-Description=Refresh the Warmux website's latest release list every 30 minutes
+Description=Refresh the Warmux website's release lists every hour
 
 [Timer]
 OnBootSec=1min
-OnUnitActiveSec=15min
+OnUnitActiveSec=1h
 RandomizedDelaySec=2min
 
 [Install]

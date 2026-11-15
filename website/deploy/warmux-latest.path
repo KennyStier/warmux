@@ -1,0 +1,10 @@
+[Unit]
+Description=Refresh the Warmux website's release lists when GitHub says a release changed
+
+[Path]
+# Touched by warmux-webhook
+PathModified=/run/warmux-webhook/refresh
+Unit=warmux-latest.service
+
+[Install]
+WantedBy=paths.target

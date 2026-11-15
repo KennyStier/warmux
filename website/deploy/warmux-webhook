@@ -1,0 +1,73 @@
+#!/usr/bin/python3
+# Receives GitHub's "release" webhook for KennyStier/warmux (behind Caddy at
+# https://warmux.net/hooks/release) and asks for the website's release lists
+# to be refreshed: it touches /run/warmux-webhook/refresh, which
+# warmux-latest.path watches to start warmux-latest.service. It runs
+# unprivileged and can do nothing else.
+#
+# Deliveries must be signed with the shared secret (X-Hub-Signature-256),
+# read from the systemd credential "secret".
+import hashlib
+import hmac
+import json
+import os
+import sys
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
+LISTEN = ("127.0.0.1", 9011)
+TRIGGER = "/run/warmux-webhook/refresh"
+MAX_BODY = 1 << 20  # release payloads are a few tens of KB
+
+with open(os.path.join(os.environ["CREDENTIALS_DIRECTORY"], "secret"), "rb") as f:
+    SECRET = f.read().strip()
+
+
+class Hook(BaseHTTPRequestHandler):
+    timeout = 10  # don't let a slow client hold the (single) server
+
+    def reply(self, code):
+        self.send_response(code)
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
+    def do_POST(self):
+        try:
+            length = int(self.headers.get("Content-Length", ""))
+        except ValueError:
+            return self.reply(411)
+        if length < 0 or length > MAX_BODY:
+            return self.reply(413)
+        body = self.rfile.read(length)
+
+        expected = "sha256=" + hmac.new(SECRET, body, hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(self.headers.get("X-Hub-Signature-256", ""), expected):
+            print("rejected: bad signature", file=sys.stderr)
+            return self.reply(403)
+
+        event = self.headers.get("X-GitHub-Event", "")
+        action = ""
+        if event == "release":
+            try:
+                payload = json.loads(body)
+                action = payload.get("action", "")
+                tag = payload.get("release", {}).get("tag_name", "?")
+            except (ValueError, AttributeError):
+                return self.reply(400)
+            # "deleted" comes before every new testing build (the old one is
+            # removed first); the list keeps the last good release anyway
+            if action != "deleted":
+                with open(TRIGGER, "w") as f:
+                    f.write(action + " " + tag + "\n")
+                print("refresh: release %s %s" % (action, tag), file=sys.stderr)
+        elif event != "ping":
+            print("ignored: %s event" % event, file=sys.stderr)
+        self.reply(204)
+
+    def do_GET(self):
+        self.reply(405)
+
+    def log_message(self, fmt, *args):
+        pass  # one line per delivery is printed above
+
+
+HTTPServer(LISTEN, Hook).serve_forever()
