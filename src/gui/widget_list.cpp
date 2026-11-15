@@ -62,7 +62,24 @@ void WidgetList::Clear()
        w++)
     delete *w;
 
+  // Empty() must not see the deleted widgets
+  widget_list.clear();
   Empty();
+}
+
+void WidgetList::Empty()
+{
+  // The widgets live on outside this list (they may be added to another one
+  // or deleted later), so they must not point to it any more: a widget tells
+  // its container when it is deleted, and this list may be gone by then
+  for (std::list<Widget*>::iterator w=widget_list.begin();
+       w != widget_list.end();
+       w++)
+    if ((*w)->GetContainer() == this)
+      (*w)->SetContainer(NULL);
+
+  widget_list.clear();
+  selected_widget = NULL;
 }
 
 // Parent lists keep the focused descendant too, so pass it up

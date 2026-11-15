@@ -71,7 +71,8 @@ public:
   virtual void AddWidget(Widget* widget);
   virtual void RemoveWidget(Widget* w);
   virtual size_t WidgetCount() const { return widget_list.size(); }
-  virtual void Empty() { widget_list.clear(); selected_widget = NULL; }
+  // Take the widgets out of the list without deleting them
+  virtual void Empty();
   virtual void ForgetWidget(Widget *w);
   virtual void Clear();
 

@@ -123,6 +123,7 @@ public:
   const Color& GetHighlightBgColor() const { return highlight_bg_color; };
 
   void SetContainer(Container * _ct) { ct = _ct; };
+  Container * GetContainer() const { return ct; };
 
   // to manage browsing between the widgets with keyboard
   virtual Widget * GetFirstWidget() const { return NULL; };
