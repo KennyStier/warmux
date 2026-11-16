@@ -126,7 +126,10 @@ public:
   // 100 renders one game pixel per screen pixel (sharpest on HiDPI screens),
   // larger values make the interface bigger; 0 follows the desktop scale.
   // Takes effect at the next safe point, like a window resize.
-  void SetScale(uint percent) { scale_percent = percent; }
+  // In percent; 0 is automatic. Values outside 50..400 (a hand-edited
+  // config: 2 meant the game 50 times the window, which hung at start)
+  // mean automatic too.
+  void SetScale(uint percent) { scale_percent = (percent >= 50 && percent <= 400) ? percent : 0; }
   uint GetScale() const { return scale_percent; }
   Point2i GetWindowSize() const { return window_size; }
 

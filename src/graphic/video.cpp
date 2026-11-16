@@ -55,7 +55,7 @@ Video::Video()
 
   Config * config = Config::GetInstance();
   SetMaxFps(config->GetMaxFps());
-  scale_percent = config->GetVideoScale();
+  SetScale(config->GetVideoScale());
 
   InitSDL();
 
