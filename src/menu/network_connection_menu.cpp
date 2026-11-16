@@ -245,17 +245,22 @@ NetworkConnectionMenu::NetworkConnectionMenu(network_menu_action_t _action)
   join->AddWidget(Caption(_("Password, if the game has one"), inner_r));
   join_pwd = new PasswordBox("", 0, Flat::F(Font::FONT_MEDIUM));
   join->AddWidget(new FlatField(join_pwd, inner_r));
-  join_go = new FlatButton(_("Join"), Point2i(inner_r, button_h));
-  join->AddWidget(join_go);
+  // The message (e.g. what's wrong with the address) under the fields, so
+  // the button can line up with Start hosting
   join_hint = new Label(" ", inner_r, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::WARN);
   join->AddWidget(join_hint);
+  join_go = new FlatButton(_("Join"), Point2i(inner_r, button_h));
+  join->AddWidget(join_go);
   join->Pack();
 
   // ---- Games: as tall as the right column, within the window ----
   const int right_h = three_columns ? std::max(host->GetSizeY(), join->GetSizeY())
                                     : host->GetSizeY() + 2 * u + join->GetSizeY();
   const int avail_h = H - 2 * margin - header_h - 2 * u;
-  const int block_h = std::min(std::max(right_h, (three_columns ? 6 : 12) * button_h), avail_h);
+  // On short screens (phones) the block takes the whole height, the games
+  // list getting what's left; elsewhere it stays as big as it needs to be
+  const int block_h = three_columns ? std::max(avail_h, right_h)
+                    : std::min(std::max(right_h, 12 * button_h), avail_h);
   FlatPanel *left = new FlatPanel(left_w, pad, u);
   Label *games_title = Title(_("Games"), inner_l);
   left->AddWidget(games_title);
@@ -266,6 +271,11 @@ NetworkConnectionMenu::NetworkConnectionMenu(network_menu_action_t _action)
   left->AddWidget(games);
 
   // ---- Place the block ----
+  if (three_columns) {  // all three columns down to the bottom
+    left->SetMinHeight(block_h);
+    host->SetMinHeight(block_h, 1);  // Start hosting
+    join->SetMinHeight(block_h, 1);  // Join
+  }
   const int x0 = (W - block_w) / 2;
   const int y0 = std::max(margin, (H - header_h - 2 * u - block_h) / 2);
   title->SetPosition(x0, y0 + (header_h - title->GetSizeY()) / 2);

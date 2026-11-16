@@ -75,10 +75,17 @@ class FlatPanel : public VBox
 {
   Color fill;
   int radius;
+  int min_height;
+  int bottom_widgets;
 
 public:
   FlatPanel(uint width, uint padding, uint gap, const Color &fill = Flat::PANEL);
   void SetFill(const Color &c) { fill = c; NeedRedrawing(); }
+  // At least this tall, whatever it holds (to fill a column); the last
+  // `at_bottom` widgets then sit at the bottom (action buttons, in thumb
+  // reach on phones)
+  void SetMinHeight(int h, int at_bottom = 0) { min_height = h; bottom_widgets = at_bottom; }
+  virtual void Pack();
   virtual void RedrawBackground(const Rectanglei &rect) const;
 };
 

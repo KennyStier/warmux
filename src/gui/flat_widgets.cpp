@@ -123,10 +123,28 @@ FlatPanel::FlatPanel(uint width, uint padding, uint gap, const Color &_fill)
   : VBox(width, false, false, true)
   , fill(_fill)
   , radius(Flat::Unit() * 3 / 2)
+  , min_height(0)
+  , bottom_widgets(0)
 {
   Widget::SetBorder(transparent_color, padding);
   SetMargin(gap);
   Widget::SetBackgroundColor(transparent_color);
+}
+
+void FlatPanel::Pack()
+{
+  VBox::Pack();
+  if (size.y >= min_height)
+    return;
+  int extra = min_height - size.y;
+  size.y = min_height;
+  // Move the last widgets down by the extra height
+  int n = 0;
+  for (std::list<Widget*>::reverse_iterator it = widget_list.rbegin();
+       it != widget_list.rend() && n < bottom_widgets; ++it, ++n) {
+    (*it)->SetPosition((*it)->GetPositionX(), (*it)->GetPositionY() + extra);
+    (*it)->Pack();
+  }
 }
 
 void FlatPanel::RedrawBackground(const Rectanglei &rect) const
