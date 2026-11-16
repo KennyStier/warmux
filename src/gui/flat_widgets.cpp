@@ -88,12 +88,12 @@ namespace Flat
     s.BoxColor(Rectanglei(x, y + radius, w, h - 2 * radius), c);
     s.BoxColor(Rectanglei(x + radius, y, w - 2 * radius, radius), c);
     s.BoxColor(Rectanglei(x + radius, y + h - radius, w - 2 * radius, radius), c);
-    // Corners: quarter discs
-    const int r1 = radius - 1;
-    s.FilledPieColor(x + radius - 1,     y + radius - 1,     r1, 180, 270, c);
-    s.FilledPieColor(x + w - radius,     y + radius - 1,     r1, 270, 360, c);
-    s.FilledPieColor(x + w - radius,     y + h - radius,     r1,   0,  90, c);
-    s.FilledPieColor(x + radius - 1,     y + h - radius,     r1,  90, 180, c);
+    // Corners: quarter discs filling exactly the radius x radius squares
+    // left between the bands (at any scale: phones draw at 2x)
+    s.FilledCornerColor(Rectanglei(x,              y,              radius, radius), 180, c);
+    s.FilledCornerColor(Rectanglei(x + w - radius, y,              radius, radius), 270, c);
+    s.FilledCornerColor(Rectanglei(x + w - radius, y + h - radius, radius, radius),   0, c);
+    s.FilledCornerColor(Rectanglei(x,              y + h - radius, radius, radius),  90, c);
   }
 
   // Redraw `rect` of a rounded box on the main window (clipped to it)

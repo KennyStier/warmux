@@ -162,6 +162,11 @@ public:
   int FilledCircleColor(const uint &x, const uint &y, const uint &rad, const Color &color);
   int PieColor(const uint &x, const uint &y, const uint &rad, const int &start, const int &end, const Color &color);
   int FilledPieColor(const uint &x, const uint &y, const uint &rad, const int &start, const int &end, const Color &color);
+  /** The rounded corner of a box: a quarter disc filling exactly the
+   *  square cell (which must be square), whichever corner `start` (180: top
+   *  left, 270: top right, 0: bottom right, 90: bottom left) at any scale,
+   *  so it meets the box's straight parts without a gap */
+  int FilledCornerColor(const Rectanglei &cell, int start, const Color &color);
   int AAPolygonColor(const Sint16 * vx, const Sint16 * vy, const int n, const Color & color);
   int AAPolygonColor(std::list<Point2i> polygon, const Color & color);
   int FilledPolygon(const Sint16 * vx, const Sint16 * vy, const int n, const Color & color);

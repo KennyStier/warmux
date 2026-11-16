@@ -609,6 +609,28 @@ int Surface::FilledPieColor(const uint &x, const uint &y, const uint &rad, const
   return filledPieRGBA(RendererFor(surface, scale), x, y, rad, start, end, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
 }
 
+int Surface::FilledCornerColor(const Rectanglei &cell, int start, const Color &color)
+{
+  // In real pixels: the cell covers [x*s, (x+w)*s - 1]. The disc's centre is
+  // the cell's pixel at the box's inner corner, and its radius reaches the
+  // cell's outer edge. (Centre and radius computed at 1x and then scaled
+  // left s-1 pixels uncovered next to the straight parts.)
+  const int s = scale;
+  const int x0 = cell.GetPositionX() * s, y0 = cell.GetPositionY() * s;
+  const int x1 = (cell.GetPositionX() + cell.GetSizeX()) * s - 1;
+  const int y1 = (cell.GetPositionY() + cell.GetSizeY()) * s - 1;
+  const int rad = cell.GetSizeX() * s - 1;
+  int cx, cy;
+  switch (start) {
+  case 180: cx = x1; cy = y1; break;  // top left
+  case 270: cx = x0; cy = y1; break;  // top right
+  case 0:   cx = x0; cy = y0; break;  // bottom right
+  default:  cx = x1; cy = y0; break;  // bottom left (90)
+  }
+  return filledPieRGBA(RendererFor(surface), cx, cy, rad, start, start + 90,
+                       color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+}
+
 // Points scaled to pixels for a crisp outline/fill on a scaled surface
 static void ScalePoints(const Sint16 *vx, const Sint16 *vy, int n, int scale,
                         std::vector<Sint16> &sx, std::vector<Sint16> &sy)
