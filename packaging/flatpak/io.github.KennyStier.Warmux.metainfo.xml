@@ -39,6 +39,20 @@
     <control>gamepad</control>
   </supports>
   <releases>
+    <release version="12.0.3" date="2026-11-15">
+      <description>
+        <p>Online play and stability:</p>
+        <ul>
+          <li>Battles in progress are listed in the game list, with how far along they are, and players waiting are told when a battle ends</li>
+          <li>Players on phones show up with their player name instead of "Unnamed"</li>
+          <li>Fixed crashes on Android when tapping in the lobby, leaving it, and quitting</li>
+          <li>Fixed memory corruption in long games, and other crashes found by new automatic tests</li>
+          <li>Scrolling a list on a touch screen no longer presses the button your finger ends on</li>
+          <li>Energy bars no longer jump off screen when teams change places</li>
+          <li>Settings and saved data now live in a folder named warmux (moved from wormux)</li>
+        </ul>
+      </description>
+    </release>
     <release version="12.0.2" date="2026-11-14">
       <description>
         <p>Online play and a new Network Game menu:</p>
