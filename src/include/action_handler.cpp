@@ -319,6 +319,11 @@ static void Action_Network_Check_Phase2(Action *a)
   for (; it != GetTeamsList().playing_list.end() ; ++it) {
     team = a->PopString();
     if (team != (*it)->GetId()) {
+      // Say which, to tell how the lists came apart
+      std::cerr << "Teams here:";
+      for (it = GetTeamsList().playing_list.begin(); it != GetTeamsList().playing_list.end(); ++it)
+        std::cerr << " " << (*it)->GetId();
+      std::cerr << "; first difference: " << team << std::endl;
       Error_in_Network_Check_Phase2(a, WRONG_TEAM);
       return;
     }
@@ -568,12 +573,28 @@ static void _Action_AddTeam(Action *a, Player* player)
 
   bool local_team = (!Network::IsConnected() || player == &(Network::GetInstance()->GetPlayer()));
 
-  GetTeamsList().AddTeam(the_team, local_team);
+  // Players joining together can hear of a team twice: from its owner, and
+  // in the game master's GAME_INFO. Keep the first (it may have been
+  // updated since).
+  bool already_playing = false;
+  const std::vector<Team*>& playing = GetTeamsList().GetPlayingList();
+  for (std::vector<Team*>::const_iterator t = playing.begin(); t != playing.end(); ++t)
+    if ((*t)->GetId() == the_team.id)
+      already_playing = true;
+  if (!already_playing) {
+    GetTeamsList().AddTeam(the_team, local_team);
 
-  if (Network::GetInstance()->network_menu != NULL)
-    Network::GetInstance()->network_menu->AddTeamCallback(the_team.id);
+    if (Network::GetInstance()->network_menu != NULL)
+      Network::GetInstance()->network_menu->AddTeamCallback(the_team.id);
+  }
 
   ASSERT (player);
+  if (!player)
+    return;
+  const std::list<ConfigTeam>& owned = player->GetTeams();
+  for (std::list<ConfigTeam>::const_iterator t = owned.begin(); t != owned.end(); ++t)
+    if (t->id == the_team.id)
+      return;
   player->AddTeam(the_team);
 }
 
@@ -590,9 +611,12 @@ static void Action_Game_Info(Action *a)
   for (uint i = 0; i < nb_players; i++) {
     uint player_id = a->PopInt();
 
-    ASSERT (a->GetCreator() && a->GetCreator()->GetPlayer(player_id) == NULL);
+    ASSERT (a->GetCreator());
     ASSERT (player_id != Network::GetInstance()->GetPlayer().GetId());
-    a->GetCreator()->AddPlayer(player_id);
+    // Already known if one of its teams came before this (see
+    // Action_Game_AddTeam)
+    if (!a->GetCreator()->GetPlayer(player_id))
+      a->GetCreator()->AddPlayer(player_id);
 
     uint nb_teams = a->PopInt();
 
@@ -616,6 +640,13 @@ static void Action_Game_AddTeam(Action *a)
   ASSERT(Network::GetInstance()->network_menu->HasOpenTeamSlot());
 
   Player * player = Network::GetInstance()->LockRemoteHostsAndGetPlayer(player_id);
+  if (!player && a->GetCreator() && !Network::GetInstance()->IsGameMaster()) {
+    // Someone who joined at the same time as us: the game master's
+    // GAME_INFO, which tells us about them, may still be on its way. Their
+    // team would be lost (and the game refused at start: "Wrong team")
+    a->GetCreator()->AddPlayer(player_id);
+    player = a->GetCreator()->GetPlayer(player_id);
+  }
   if (player) {
     _Action_AddTeam(a, player);
   }
@@ -1042,8 +1073,9 @@ static void Action_Info_ClientConnect(Action *a)
   int player_id = a->PopInt();
   std::string host_info = a->PopString();
 
-  ASSERT(a->GetCreator() && a->GetCreator()->GetPlayer(player_id) == NULL);
-  a->GetCreator()->AddPlayer(player_id);
+  ASSERT(a->GetCreator());
+  if (!a->GetCreator()->GetPlayer(player_id))  // see Action_Game_AddTeam
+    a->GetCreator()->AddPlayer(player_id);
 
   _Info_ConnectHost(host_info);
 

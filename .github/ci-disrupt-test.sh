@@ -10,9 +10,11 @@
 #  3. The game server goes away mid-battle: nobody crashes.
 #  4. Lag and packet loss (NETTEST_NETEM=1; needs sudo and tc): a whole
 #     game still plays through, in sync.
+#  5. Four players join at the same moment: everyone hears of every team,
+#     so the battle starts (it used to be refused: "Wrong team").
 #
 # Anything crashing, a memory error, undefined behaviour or a desync fails.
-# NETTEST_SCENARIOS picks some (default "1 2 3 4"). Without sudo, set the
+# NETTEST_SCENARIOS picks some (default "1 2 3 4 5"). Without sudo, set the
 # lag up in a network namespace of your own (the servers won't run as root,
 # hence the second, nested namespace):
 #   unshare -rn sh -c 'ip link set lo up &&
@@ -25,7 +27,7 @@ set -eu
 WORMS=${NETTEST_WORMS:-2}
 DEATH=${NETTEST_DEATH:-90}
 TIMEOUT=${NETTEST_TIMEOUT:-900}
-SCENARIOS=${NETTEST_SCENARIOS:-1 2 3 4}
+SCENARIOS=${NETTEST_SCENARIOS:-1 2 3 4 5}
 want() { case " $SCENARIOS " in *" $1 "*) return 0;; esac; return 1; }
 failed=0
 fail() { echo "FAILED: $1" >&2; failed=$((failed + 1)); }
@@ -150,6 +152,36 @@ if want 4 && [ "${NETTEST_NETEM:-0}" != 0 ]; then
   asan_check "$RUN"/l*.log || failed=$((failed + 1))
   stop $L1 $L2
   netem_off
+fi
+
+# --- 5. Players join at the same moment
+if want 5; then
+echo "== 5. Four players join at the same moment"
+start_game_server join 3834 "Join Test"
+player j1 beastie 3834 1; J1=$LAST
+player j2 gnu 3834 1; J2=$LAST
+player j3 tux 3834 1; J3=$LAST
+player j4 suse 3834 1; J4=$LAST
+if battle_started "$RUN/join.log" 4; then
+  echo "ok: the battle started with 4 players"
+  # Until the second turn
+  wait_for "$RUN/j2.log" "Playing team" 120 || true
+  if grep -aq "does not agree" "$RUN"/j?.log; then
+    fail "the players didn't agree on the teams"
+    grep -ah "does not agree\|Teams here" "$RUN"/j?.log | sort -u >&2
+  elif grep -aq "Playing team" "$RUN/j2.log"; then
+    echo "ok: everyone agreed on the teams and the battle went on"
+  else
+    fail "the battle didn't go on"
+  fi
+  for j in 1 2 3 4; do
+    eval "alive \"j$j still running\" \$J$j \"\$RUN/j$j.log\"" || failed=$((failed + 1))
+  done
+else
+  fail "the battle with 4 players never started"
+fi
+asan_check "$RUN"/j?.log "$RUN/join.log" || failed=$((failed + 1))
+stop $J1 $J2 $J3 $J4
 fi
 
 if [ $failed -gt 0 ]; then

@@ -1059,6 +1059,9 @@ void Game::MainLoop()
         GetTeamsList().DelTeam(team_id);
         if (Network::GetInstance()->network_menu)
           Network::GetInstance()->network_menu->DelTeamCallback(team_id);
+        // The first team now has the turn; if it's our AI it must know
+        if (!GetTeamsList().GetPlayingList().empty())
+          ActiveTeam().RestartAITurn();
       }
     }
 

@@ -141,6 +141,9 @@ AIStupidPlayer::AIStupidPlayer(Team * team)
     }
   }
   items.sort(CompareIdeaMaxRating);
+  // The team can become active without PrepareTurn() (a player leaving
+  // hands the turn over), so start from a known state
+  Reset();
 }
 
 AIStupidPlayer::~AIStupidPlayer()

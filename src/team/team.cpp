@@ -397,6 +397,14 @@ void Team::LoadAI()
   ai = new AIStupidPlayer(this);
 }
 
+void Team::RestartAITurn()
+{
+  // Only the local AI's own state: it uses RandomLocal, so this can't
+  // put the players out of sync
+  if (ai != NULL)
+    ai->PrepareTurn();
+}
+
 void Team::RefreshAI()
 {
   if (ai != NULL)

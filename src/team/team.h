@@ -122,6 +122,8 @@ public:
   void DrawEnergy(const Point2i& pos) { energy.Draw(pos); }
   void Refresh() { energy.Refresh(); }
   void RefreshAI();
+  // The turn was handed to this team without PrepareTurn()
+  void RestartAITurn();
 
   // Change the weapon.
   void SetWeapon(Weapon::Weapon_type nv_arme);
