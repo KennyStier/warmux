@@ -309,6 +309,22 @@ void MapSelectionBox::ChangeMapListCallback(const std::vector<uint>& index_list)
   }
 }
 
+std::string MapSelectionBox::ChoiceName(uint index) const
+{
+  if (index >= common.size())
+    return _("Random map");
+  InfoMapBasicAccessor *basic = common[index]->LoadBasicInfo();
+  return basic ? basic->ReadFullMapName() : common[index]->GetRawName();
+}
+
+Surface MapSelectionBox::ChoicePreview(uint index) const
+{
+  if (index >= common.size())
+    return random_map_preview;
+  InfoMapBasicAccessor *basic = common[index]->LoadBasicInfo();
+  return basic ? basic->ReadPreview() : Surface();
+}
+
 std::string MapSelectionBox::GetMapName() const
 {
   return map_name_label->GetText();

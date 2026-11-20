@@ -71,6 +71,15 @@ class MapSelectionBox : public VBox
   std::string GetMapName() const;
   const Surface &GetPreview() const { return selected_preview; }
 
+  // For a picker of its own (the desktop lobby's grid): the maps all
+  // players have, then "Random map" last
+  uint NbChoices() const { return common.size() + 1; }
+  uint GetSelectedIndex() const { return selected_map_index; }
+  bool CanSelect() const { return !display_only; }
+  void SelectIndex(uint index) { if (!display_only && index < NbChoices()) ChangeMap(index); }
+  std::string ChoiceName(uint index) const;
+  Surface ChoicePreview(uint index) const;
+
   virtual Widget* Click(const Point2i &mousePosition, uint button);
   virtual Widget* ClickUp(const Point2i &mousePosition, uint button);
   virtual void Pack();

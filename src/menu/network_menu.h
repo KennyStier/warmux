@@ -105,6 +105,10 @@ class NetworkMenu : public Menu
   FlatStepper *team_chars;
   FlatToggle *team_ai;
   PictureWidget *map_preview; // big screens
+  ScrollBox *map_grid;        // big screens: every map, as a grid
+  std::vector<std::pair<FlatPanel*, uint> > map_tiles;
+  std::string shown_map_list;
+  int shown_map_choice;
   int edited_slot;         // in team_box
 
   void BuildDesktopLayout();
@@ -113,6 +117,7 @@ class NetworkMenu : public Menu
   void UpdateChips();
   void UpdateTeamPanel();
   void UpdateMapCard();
+  void UpdateMapGrid();
   bool PhoneClick(Widget *w, const Point2i &mousePosition);
 
   void PrepareForNewGame();

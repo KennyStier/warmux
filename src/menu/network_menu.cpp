@@ -173,17 +173,22 @@ void NetworkMenu::BuildDesktopLayout()
   map_actions->AddWidget(mode_button);
   map_actions->AddWidget(map_done);
   map_actions->Pack();
-  const int map_h = std::min(content_h - 2 * pad - title_h - 3 * u - play_in_loop->GetSizeY()
-                             - button_h, Flat::S(320));
-  map_box = new MapSelectionBox(Point2i(inner_c, std::max(map_h, 100)), false, !master);
+  // Every map as a grid, filled when first shown (it loads their previews).
+  // The usual map box stays, hidden, to do the work
+  const int grid_h = content_h - 2 * pad - title_h - 3 * u - play_in_loop->GetSizeY() - button_h;
+  map_grid = new PlayersListBox(Point2i(inner_c, std::max(grid_h, 3 * button_h)));
+  map_panel->AddWidget(map_grid);
+  map_box = new MapSelectionBox(Point2i(inner_c, Flat::S(200)), false, !master);
   map_box->SetDarkTheme();
-  map_panel->AddWidget(map_box);
+  map_box->SetVisible(false);
+  map_box->SetPosition(center_x, top);
   map_panel->AddWidget(play_in_loop);
   map_panel->AddWidget(map_actions);
   map_panel->SetMinHeight(content_h, 1);
   map_panel->SetPosition(center_x, top);
   map_panel->SetVisible(false);
   widgets.AddWidget(map_panel);
+  widgets.AddWidget(map_box);
 
   // ---- Right: the map (click it to change), then the chat ----
   const int inner_r = right_w - 2 * pad;
@@ -494,6 +499,61 @@ void NetworkMenu::UpdateMapCard()
   }
 }
 
+// The desktop map picker: a tile per map (and Random), the selected one
+// tinted; rebuilt when the list of maps changes, retinted otherwise
+void NetworkMenu::UpdateMapGrid()
+{
+  if (!map_grid || !map_panel->IsVisible())
+    return;
+  const uint n = map_box->NbChoices();
+  std::string key = Format("%u", n);
+  for (uint i = 0; i + 1 < n; i++)
+    key += "|" + map_box->ChoiceName(i);
+  const Color selected(110, 182, 255, 90);
+
+  if (key != shown_map_list) {
+    shown_map_list = key;
+    shown_map_choice = -1;
+    map_grid->Clear();
+    map_tiles.clear();
+    const int u = Flat::Unit();
+    const int avail = ((PlayersListBox*)map_grid)->RowWidth();
+    const int cols = std::max(3, (avail + u) / (Flat::S(190) + u));
+    const int tile_w = (avail - (cols - 1) * u) / cols;
+    const int pad = u;
+    const int pic_w = tile_w - 2 * pad;
+    const int pic_h = pic_w * 3 / 5;
+    FlatRow *row = NULL;
+    for (uint i = 0; i < n; i++) {
+      if (i % cols == 0) {
+        row = new FlatRow(0, 0, u, transparent_color);
+        map_grid->AddWidget(row);
+      }
+      FlatPanel *tile = new FlatPanel(tile_w, pad, u / 2, Flat::INSET);
+      PictureWidget *pic = new PictureWidget(Point2i(pic_w, pic_h));
+      pic->SetSurface(map_box->ChoicePreview(i), PictureWidget::FIT_SCALING);
+      tile->AddWidget(pic);
+      tile->AddWidget(new Label(map_box->ChoiceName(i), pic_w, Flat::F(Font::FONT_SMALL),
+                                Font::FONT_BOLD, Flat::TEXT, Text::ALIGN_CENTER_TOP));
+      tile->Pack();
+      row->AddWidget(tile);
+      map_tiles.push_back(std::make_pair(tile, i));
+      if (i % cols == uint(cols - 1) || i + 1 == n)
+        row->Pack();  // once all its tiles are in
+    }
+    map_grid->Pack();
+    map_grid->NeedRedrawing();
+  }
+
+  int choice = map_box->GetSelectedIndex();
+  if (choice != shown_map_choice) {
+    shown_map_choice = choice;
+    for (size_t t = 0; t < map_tiles.size(); t++)
+      map_tiles[t].first->SetFill(int(map_tiles[t].second) == choice ? selected : Flat::INSET);
+    map_grid->NeedRedrawing();
+  }
+}
+
 // Phones: clicks on the chips, the team pop-up and the map card
 bool NetworkMenu::PhoneClick(Widget *w, const Point2i &mousePosition)
 {
@@ -508,6 +568,17 @@ bool NetworkMenu::PhoneClick(Widget *w, const Point2i &mousePosition)
       ShowLobbyView(LOBBY_TEAM);
     }
     return true;
+  }
+  if (map_grid && map_panel->IsVisible() && map_grid->Contains(mousePosition)) {
+    for (size_t t = 0; t < map_tiles.size(); t++) {
+      if (PressedOn(map_tiles[t].first, mousePosition)) {
+        if (map_box->CanSelect())
+          map_box->SelectIndex(map_tiles[t].second);
+        UpdateMapGrid();
+        UpdateMapCard();
+        return true;
+      }
+    }
   }
   if (!w)
     return false;
@@ -558,6 +629,8 @@ NetworkMenu::NetworkMenu()
   , team_chars(NULL)
   , team_ai(NULL)
   , map_preview(NULL)
+  , map_grid(NULL)
+  , shown_map_choice(-1)
   , edited_slot(-1)
 {
   const bool master = Network::GetInstance()->IsGameMaster();
@@ -940,6 +1013,7 @@ void NetworkMenu::Draw(const Point2i& /*mousePosition*/)
   else
     close_menu = true;
   if (!close_menu) {
+    UpdateMapGrid();
     UpdateChips();
     UpdateTeamPanel();
     UpdateMapCard();
