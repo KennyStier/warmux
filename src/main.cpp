@@ -602,6 +602,11 @@ extern "C" int main(int argc, char *argv[])
 
   DisplayWelcomeMessage();
 
+#ifdef ANDROID
+  // Android's Back button comes to the menus as SDLK_AC_BACK (it closes a
+  // form, leaves a menu), instead of closing the whole app
+  SDL_SetHint(SDL_HINT_ANDROID_TRAP_BACK_BUTTON, "1");
+#endif
   if (SDL_Init(SDL_INIT_TIMER) < 0) {
     fprintf(stderr, "Sorry, couldn't initialize SDL'!\n");
     exit(EXIT_FAILURE);

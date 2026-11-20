@@ -107,6 +107,8 @@ Keyboard::Keyboard()
 void Keyboard::SetDefaultConfig()
 {
   SetKeyAction(SDL_SCANCODE_ESCAPE, ManMachineInterface::KEY_QUIT);
+  // Android's Back button: the game menu, as Escape
+  SetKeyAction(SDL_SCANCODE_AC_BACK, ManMachineInterface::KEY_QUIT);
 }
 
 void Keyboard::SetConfig(const xmlNode *node)
