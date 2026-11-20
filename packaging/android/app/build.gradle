@@ -9,7 +9,11 @@ def parts = acVersion.tokenize('.').collect { it as int } + [0, 0, 0]
 // Testing builds (gradlew -Pwarmux.testing ...) are a separate app,
 // "Warmux Testing", installed next to the normal one. Their version code
 // is the CI build number, so each new testing build installs over the last.
-def testing = project.hasProperty('warmux.testing')
+// Preview builds (-Pwarmux.preview: the Build workflow, run on a feature
+// branch) are testing builds too, as a third app, "Warmux Preview", signed
+// with the debug key: they install next to both without replacing either.
+def preview = project.hasProperty('warmux.preview')
+def testing = project.hasProperty('warmux.testing') || preview
 def buildNumber = (System.getenv('WARMUX_BUILD_NUMBER') ?: '1') as int
 
 android {
@@ -20,12 +24,12 @@ android {
     defaultConfig {
         applicationId 'io.github.kennystier.warmux'
         if (testing)
-            applicationIdSuffix '.testing'
+            applicationIdSuffix preview ? '.preview' : '.testing'
         minSdk 24
         targetSdk 36
         versionName testing ? "${acVersion}-testing.${buildNumber}" : acVersion
         versionCode testing ? buildNumber : parts[0] * 10000 + parts[1] * 100 + parts[2]
-        manifestPlaceholders = [appLabel: testing ? 'Warmux Testing' : 'Warmux']
+        manifestPlaceholders = [appLabel: preview ? 'Warmux Preview' : testing ? 'Warmux Testing' : 'Warmux']
         externalNativeBuild {
             cmake {
                 arguments '-DANDROID_STL=c++_static', "-DWARMUX_TESTING=${testing ? 1 : 0}"

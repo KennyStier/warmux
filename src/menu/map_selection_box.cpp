@@ -307,6 +307,11 @@ void MapSelectionBox::ChangeMapListCallback(const std::vector<uint>& index_list)
   }
 }
 
+std::string MapSelectionBox::GetMapName() const
+{
+  return map_name_label->GetText();
+}
+
 void MapSelectionBox::AllowSelection()
 {
   display_only = false;

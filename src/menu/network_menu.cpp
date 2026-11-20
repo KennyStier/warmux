@@ -67,11 +67,9 @@ static Label *Title(const std::string &text, uint width)
   return new Label(text, width, Flat::F(Font::FONT_MEDIUM), Font::FONT_BOLD, Flat::TEXT);
 }
 
-NetworkMenu::NetworkMenu()
-  : Menu("menu/bg_network", vNo)
-  , waiting_for_server(false)
-  , last_ready(-1)
-  , game_mode(0)
+// Big screens: teams and map on the left; players, chat and the actions on
+// the right
+void NetworkMenu::BuildDesktopLayout()
 {
   const Surface& window = GetMainWindow();
   const int u = Flat::Unit();
@@ -136,11 +134,6 @@ NetworkMenu::NetworkMenu()
 
   // ---- Right, bottom: game mode, play again, start ----
   FlatPanel *actions = new FlatPanel(right_w, pad, u);
-  game_modes = GameMode::ListGameModes();
-  const std::string &current = Config::GetInstance()->GetGameMode();
-  for (size_t i = 0; i < game_modes.size(); i++)
-    if (game_modes[i].first == current)
-      game_mode = i;
   mode_button = new FlatButton("", Point2i(inner_r, button_h), FlatButton::SECONDARY,
                                Font::FONT_SMALL);
   actions->AddWidget(mode_button);
@@ -152,7 +145,6 @@ NetworkMenu::NetworkMenu()
   actions->Pack();
   actions->SetPosition(right_x, oy + H - margin - actions->GetSizeY());
   widgets.AddWidget(actions);
-  ShowGameMode();
 
   // ---- Right, top: players, chat ----
   // Short screens (phones): one row, the rest scrolls, so the chat has room
@@ -177,6 +169,361 @@ NetworkMenu::NetworkMenu()
   chat->AddWidget(msg_box);
   chat->SetPosition(right_x, chat_top);
   widgets.AddWidget(chat);
+
+}
+
+// Phones in landscape: the chat over a row of team chips on the left; the
+// players, the map and Ready on the right. Changing a team, or the map,
+// happens in the chat's place.
+void NetworkMenu::BuildPhoneLayout()
+{
+  const Surface& window = GetMainWindow();
+  const int W = window.GetWidth(), H = window.GetHeight();
+  const int u = Flat::Unit();
+  const int margin = 3 * u / 2;
+  const int gap = 3 * u / 2;
+  const int pad = 3 * u / 2;
+  const int button_h = Flat::ButtonHeight();
+  const bool master = Network::GetInstance()->IsGameMaster();
+  const int right_w = std::max(Flat::S(230), (W - 2 * margin) * 26 / 100);
+  const int left_w = W - 2 * margin - gap - right_w;
+  const int x0 = margin;
+  const int right_x = W - margin - right_w;
+  const int inner_l = left_w - 2 * pad;
+  const int inner_r = right_w - 2 * pad;
+  chip_h = button_h + u;
+
+  // ---- Header: Leave, the game's name and where it is ----
+  FlatRow *header = new FlatRow(0, u / 2, u, Flat::PANEL);
+  leave = new FlatButton(_("Leave"), Point2i(9 * u, button_h), FlatButton::SECONDARY);
+  header->AddWidget(leave);
+  const int names_w = left_w - u - leave->GetSizeX() - u;
+  VBox *names = new VBox(names_w, false, false, false);
+  names->SetNoBorder();
+  names->SetMargin(0);
+  names->AddWidget(new Label(Network::GetInstance()->GetGameName(), names_w,
+                             Flat::F(Font::FONT_MEDIUM), Font::FONT_BOLD, Flat::TEXT));
+  subtitle = new Label(" ", names_w, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::TEXT_DIM);
+  names->AddWidget(subtitle);
+  names->Pack();
+  header->AddWidget(names);
+  header->Pack();
+  header->SetPosition(x0, margin);
+  widgets.AddWidget(header);
+  const int top = margin + header->GetSizeY() + gap;
+  const int bottom = H - margin;
+
+  // ---- The teams, done by the usual box, hidden: the chips show them ----
+  team_box = new NetworkTeamsSelectionBox(Point2i(left_w, Flat::S(200)), false, true);
+  team_box->SetDarkTheme();
+  team_box->SetVisible(false);
+  team_box->SetPosition(x0, top);
+
+  // ---- Bottom left: the team chips ----
+  chips_panel = new FlatPanel(left_w, u, 0);
+  chips_row = new FlatRow(chip_h, 0, u, transparent_color);
+  chips_panel->AddWidget(chips_row);
+  chips_panel->Pack();
+  const int chips_y = bottom - (chip_h + 2 * u);
+  chips_panel->SetPosition(x0, chips_y);
+  const int mid_h = chips_y - gap - top;
+
+  // ---- Left: the chat ----
+  chat_panel = new FlatPanel(left_w, pad, u);
+  msg_box = new TalkBox(Point2i(inner_l, mid_h - 2 * pad), Flat::F(Font::FONT_SMALL),
+                        Font::FONT_BOLD, true);
+  chat_panel->AddWidget(msg_box);
+  chat_panel->SetMinHeight(mid_h);
+  chat_panel->SetPosition(x0, top);
+
+  // ---- In its place: one of our teams ----
+  team_panel = new FlatPanel(left_w, pad, u);
+  team_title = Title(" ", inner_l);
+  team_panel->AddWidget(team_title);
+  FlatRow *pick = new FlatRow(button_h, 0, u, transparent_color);
+  team_prev = new FlatButton("<", Point2i(button_h, button_h));
+  team_flag = new PictureWidget(Point2i(button_h, button_h));
+  team_next = new FlatButton(">", Point2i(button_h, button_h));
+  pick->AddWidget(team_prev);
+  pick->AddWidget(team_flag);
+  pick->AddWidget(team_next);
+  pick->AddWidget(new Label(_("Pick another team"), inner_l - 3 * button_h - 3 * u,
+                            Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::TEXT_DIM));
+  pick->Pack();
+  team_panel->AddWidget(pick);
+  team_chars = new FlatStepper(_("Characters"), inner_l, 4, 1, 1, 10);
+  team_panel->AddWidget(team_chars);
+  team_ai = new FlatToggle(_("The computer plays this team"), inner_l, false);
+  team_panel->AddWidget(team_ai);
+  FlatRow *team_actions = new FlatRow(button_h, 0, u, transparent_color);
+  const int half = (inner_l - u) / 2;
+  team_remove = new FlatButton(_("Remove team"), Point2i(half, button_h), FlatButton::DANGER);
+  team_done = new FlatButton(_("Done"), Point2i(inner_l - u - half, button_h), FlatButton::PRIMARY);
+  team_actions->AddWidget(team_remove);
+  team_actions->AddWidget(team_done);
+  team_actions->Pack();
+  team_panel->AddWidget(team_actions);
+  team_panel->SetMinHeight(mid_h, 1);
+  team_panel->SetPosition(x0, top);
+  team_panel->SetVisible(false);
+
+  // ---- Or the map and game mode ----
+  map_panel = new FlatPanel(left_w, pad, u);
+  play_in_loop = new FlatToggle(_("Play several times"), inner_l, true);
+  FlatRow *map_actions = new FlatRow(button_h, 0, u, transparent_color);
+  const int done_w = std::min(half, Flat::S(160));
+  mode_button = new FlatButton("", Point2i(inner_l - u - done_w, button_h), FlatButton::SECONDARY,
+                               Font::FONT_SMALL);
+  map_done = new FlatButton(_("Done"), Point2i(done_w, button_h), FlatButton::PRIMARY);
+  map_actions->AddWidget(mode_button);
+  map_actions->AddWidget(map_done);
+  map_actions->Pack();
+  const int map_h = mid_h - 2 * pad - 2 * u - play_in_loop->GetSizeY() - button_h;
+  map_box = new MapSelectionBox(Point2i(inner_l, std::max(map_h, 100)), false, !master);
+  map_box->SetDarkTheme();
+  map_panel->AddWidget(map_box);
+  map_panel->AddWidget(play_in_loop);
+  map_panel->AddWidget(map_actions);
+  map_panel->SetMinHeight(mid_h, 1);
+  map_panel->SetPosition(x0, top);
+  map_panel->SetVisible(false);
+
+  // ---- Right: Ready / Start at the bottom, the map above, players on top ----
+  action_button = new FlatButton(_("Ready"), Point2i(right_w, button_h + u), FlatButton::PRIMARY,
+                                 Font::FONT_MEDIUM);
+  action_button->SetPosition(right_x, bottom - action_button->GetSizeY());
+  map_card = new FlatButton(" ", Point2i(right_w, button_h), FlatButton::DARK, Font::FONT_SMALL);
+  map_card->SetPosition(right_x, action_button->GetPositionY() - u - button_h);
+
+  const int players_h = map_card->GetPositionY() - u - top;
+  FlatPanel *players = new FlatPanel(right_w, pad, u / 2);
+  Label *players_title = Title(_("Players"), inner_r);
+  players->AddWidget(players_title);
+  players_status = new Label(" ", inner_r, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::TEXT_DIM);
+  players->AddWidget(players_status);
+  const int list_h = players_h - 2 * pad - players_title->GetSizeY() - players_status->GetSizeY() - u;
+  players_list = new PlayersListBox(Point2i(inner_r, std::max(list_h, button_h)));
+  players->AddWidget(players_list);
+  players->SetMinHeight(players_h);
+  players->SetPosition(right_x, top);
+
+  widgets.AddWidget(chat_panel);
+  widgets.AddWidget(team_panel);
+  widgets.AddWidget(map_panel);
+  widgets.AddWidget(chips_panel);
+  widgets.AddWidget(players);
+  widgets.AddWidget(map_card);
+  widgets.AddWidget(action_button);
+  widgets.AddWidget(team_box);
+  widgets.Pack();
+  UpdateMapCard();
+}
+
+// Phones: the chat, or a team or the map in its place
+void NetworkMenu::ShowLobbyView(lobby_view_t view)
+{
+  if (!compact)
+    return;
+  chat_panel->SetVisible(view == LOBBY_CHAT);
+  team_panel->SetVisible(view == LOBBY_TEAM);
+  map_panel->SetVisible(view == LOBBY_MAP);
+  if (view != LOBBY_TEAM)
+    edited_slot = -1;
+  shown_team.clear();
+  if (view == LOBBY_TEAM)
+    UpdateTeamPanel();
+  RedrawMenu();
+}
+
+// The chips: every team, ours outlined in blue, rebuilt when one changed
+void NetworkMenu::UpdateChips()
+{
+  const bool can_add = team_box->CanAddTeam() && !waiting_for_server;
+  std::vector<uint> slots;
+  std::string key = can_add ? "+" : "-";
+  for (uint i = 0; i < team_box->NbSlots(); i++) {
+    TeamBox *box = team_box->Slot(i);
+    Team *t = box->GetTeam();
+    if (!t)
+      continue;
+    slots.push_back(i);
+    key += Format("|%u:%s:%d:%d:%d:%s", i, t->GetId().c_str(), (int)box->IsLocal(),
+                  (int)(box->IsLocal() ? box->IsAI() : t->IsAI()),
+                  box->IsLocal() ? box->GetNbCharacters() : (int)t->GetNbCharacters(),
+                  t->GetPlayerName().c_str());
+  }
+  if (key == shown_chips)
+    return;
+  shown_chips = key;
+
+  chips_row->Clear();
+  chips.clear();
+  const int u = Flat::Unit();
+  const int n = slots.size();
+  const int avail = chips_panel->GetSizeX() - 2 * u;
+  const int plus_w = can_add ? chip_h : 0;
+  const int gaps = std::max(0, n - (can_add ? 0 : 1)) * u;
+  const int chip_w = n ? std::min(Flat::S(210), (avail - plus_w - gaps) / n) : 0;
+  const int icon = chip_h - u;
+  const int text_w = std::max(chip_w - u - icon - u / 2, 10);
+
+  for (int k = 0; k < n; k++) {
+    TeamBox *box = team_box->Slot(slots[k]);
+    Team *t = box->GetTeam();
+    const bool mine = box->IsLocal();
+    FlatRow *chip = new FlatRow(chip_h, u / 2, u / 2,
+                                mine ? Color(110, 182, 255, 80) : Flat::INSET);
+    PictureWidget *flag = new PictureWidget(Point2i(icon, icon));
+    flag->SetSurface(t->GetFlag(), PictureWidget::FIT_SCALING);
+    chip->AddWidget(flag);
+    VBox *text = new VBox(text_w, false, false, false);
+    text->SetNoBorder();
+    text->SetMargin(0);
+    text->AddWidget(new Label(t->GetName(), text_w, Flat::F(Font::FONT_MEDIUM), Font::FONT_BOLD,
+                              Flat::TEXT));
+    bool ai = mine ? box->IsAI() : t->IsAI();
+    std::string who = ai ? _("Computer") : (mine ? _("you") : t->GetPlayerName());
+    int nb = mine ? box->GetNbCharacters() : (int)t->GetNbCharacters();
+    text->AddWidget(new Label(Format("%s  \xC2\xB7  %d", who.c_str(), nb), text_w,
+                              Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::TEXT_DIM));
+    text->Pack();
+    chip->AddWidget(text);
+    chip->Pack();
+    chips_row->AddWidget(chip);
+    chips.push_back(std::make_pair((Widget*)chip, (int)slots[k]));
+  }
+  if (can_add) {
+    FlatButton *plus = new FlatButton("+", Point2i(chip_h, chip_h), FlatButton::SECONDARY,
+                                      Font::FONT_BIG);
+    chips_row->AddWidget(plus);
+    chips.push_back(std::make_pair((Widget*)plus, -1));
+  }
+  if (chips.empty())
+    chips_row->AddWidget(new Label(_("No team yet"), avail, Flat::F(Font::FONT_SMALL),
+                                   Font::FONT_BOLD, Flat::TEXT_DIM));
+  chips_row->Pack();
+  chips_panel->Pack();
+  chips_panel->NeedRedrawing();
+}
+
+// The team pop-up, from the team it is about
+void NetworkMenu::UpdateTeamPanel()
+{
+  if (edited_slot < 0 || !team_panel->IsVisible())
+    return;
+  TeamBox *box = team_box->Slot(edited_slot);
+  Team *t = box->GetTeam();
+  if (!t || !box->IsLocal()) {  // gone meanwhile
+    ShowLobbyView(LOBBY_CHAT);
+    return;
+  }
+  // Our last team is the one that can be removed
+  const std::list<ConfigTeam> &mine = Network::GetInstance()->GetPlayer().GetTeams();
+  const bool last = !mine.empty() && mine.back().id == t->GetId();
+  std::string key = Format("%s:%d:%d:%d", t->GetId().c_str(), box->GetNbCharacters(),
+                           (int)box->IsAI(), (int)last);
+  if (key == shown_team)
+    return;
+  shown_team = key;
+
+  team_title->SetText(Format(_("%s Team"), t->GetName().c_str()));
+  team_flag->SetSurface(t->GetFlag(), PictureWidget::FIT_SCALING);
+  team_chars->SetMinValue(box->GetMinCharacters());
+  team_chars->SetMaxValue(box->GetMaxCharacters());
+  team_chars->SetValue(box->GetNbCharacters());
+  team_ai->SetValue(box->IsAI());
+  team_remove->SetEnabled(last);
+  team_panel->NeedRedrawing();
+}
+
+void NetworkMenu::UpdateMapCard()
+{
+  if (!map_card)
+    return;
+  std::string text = Format(_("Map: %s"), map_box->GetMapName().c_str());
+  if (text != shown_map) {
+    shown_map = text;
+    map_card->SetText(text);
+  }
+}
+
+// Phones: clicks on the chips, the team pop-up and the map card
+bool NetworkMenu::PhoneClick(Widget *w, const Point2i &mousePosition)
+{
+  for (size_t i = 0; i < chips.size(); i++) {
+    if (!PressedOn(chips[i].first, mousePosition))
+      continue;
+    int slot = chips[i].second;
+    if (slot < 0) {
+      team_box->RequestTeam();
+    } else if (team_box->Slot(slot)->IsLocal()) {
+      edited_slot = slot;
+      ShowLobbyView(LOBBY_TEAM);
+    }
+    return true;
+  }
+  if (!w)
+    return false;
+
+  TeamBox *box = edited_slot >= 0 ? team_box->Slot(edited_slot) : NULL;
+  if (w == map_card) {
+    ShowLobbyView(LOBBY_MAP);
+  } else if (w == map_done || w == team_done) {
+    ShowLobbyView(LOBBY_CHAT);
+  } else if (box && w == team_prev) {
+    team_box->PrevTeam(edited_slot);
+  } else if (box && w == team_next) {
+    team_box->NextTeam(edited_slot);
+  } else if (box && w == team_chars) {
+    box->SetNbCharacters(team_chars->GetValue());
+  } else if (box && w == team_ai) {
+    if (team_ai->GetValue() != box->IsAI())
+      box->SwitchPlayerType();
+  } else if (box && w == team_remove) {
+    team_box->RequestTeamRemoval();
+    ShowLobbyView(LOBBY_CHAT);
+  } else {
+    return false;
+  }
+  UpdateTeamPanel();
+  return true;
+}
+
+NetworkMenu::NetworkMenu()
+  : Menu("menu/bg_network", vNo)
+  , waiting_for_server(false)
+  , last_ready(-1)
+  , game_mode(0)
+  , compact(GetMainWindow().GetHeight() < 640)
+  , chat_panel(NULL)
+  , team_panel(NULL)
+  , map_panel(NULL)
+  , chips_panel(NULL)
+  , chips_row(NULL)
+  , map_card(NULL)
+  , map_done(NULL)
+  , team_done(NULL)
+  , team_remove(NULL)
+  , team_prev(NULL)
+  , team_next(NULL)
+  , team_title(NULL)
+  , team_flag(NULL)
+  , team_chars(NULL)
+  , team_ai(NULL)
+  , edited_slot(-1)
+{
+  const bool master = Network::GetInstance()->IsGameMaster();
+  game_modes = GameMode::ListGameModes();
+  const std::string &current = Config::GetInstance()->GetGameMode();
+  for (size_t i = 0; i < game_modes.size(); i++)
+    if (game_modes[i].first == current)
+      game_mode = i;
+
+  if (compact)
+    BuildPhoneLayout();
+  else
+    BuildDesktopLayout();
+  ShowGameMode();
 
   if (!Network::GetInstance()->IsServer()) {
     // First %s will be replaced with the name of the network game,
@@ -354,6 +701,8 @@ void NetworkMenu::UpdatePlayers()
 void NetworkMenu::OnClickUp(const Point2i &mousePosition, int button)
 {
   Widget *w = widgets.ClickUp(mousePosition, button);
+  if (compact && PhoneClick(w, mousePosition))
+    return;
   if (!w)
     return;
   if (w == leave) {
@@ -378,8 +727,12 @@ void NetworkMenu::RequestSavedTeams()
   std::list<ConfigTeam>::const_iterator it;
 
   if (team_list.size() > 0) {
+    const std::string &nick = Config::GetInstance()->GetNetworkNickname();
     for (it = team_list.begin(); it != team_list.end(); it++) {
-      ActionHandler::GetInstance()->NewRequestTeamAction(*it);
+      ConfigTeam team = *it;
+      if (!nick.empty())  // the name typed in the Network Game menu
+        team.player_name = nick;
+      ActionHandler::GetInstance()->NewRequestTeamAction(team);
     }
   } else {
     team_box->RequestTeam();
@@ -517,6 +870,11 @@ void NetworkMenu::key_ok()
 
 bool NetworkMenu::signal_cancel()
 {
+  // Phones: Back closes a team or the map first
+  if (compact && !chat_panel->IsVisible()) {
+    ShowLobbyView(LOBBY_CHAT);
+    return false;
+  }
   Network::Disconnect();
   return true;
 }
@@ -527,6 +885,11 @@ void NetworkMenu::Draw(const Point2i& /*mousePosition*/)
     UpdatePlayers();
   else
     close_menu = true;
+  if (compact && !close_menu) {
+    UpdateChips();
+    UpdateTeamPanel();
+    UpdateMapCard();
+  }
   ActionHandler * action_handler = ActionHandler::GetInstance();
   action_handler->ExecFrameLessActions();
 

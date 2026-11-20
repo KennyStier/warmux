@@ -149,9 +149,15 @@ jobs:
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
             "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.31.6" >/dev/null
       - name: Build APK
+        env:
+          WARMUX_BUILD_NUMBER: ${{ github.run_number }}
         run: |
           packaging/android/prepare.sh
-          cd packaging/android && ./gradlew --no-daemon assembleDebug
+          # Off main and dev (a feature branch, run by hand): "Warmux
+          # Preview", to try on a phone next to the other two
+          extra=""
+          case "$GITHUB_REF_NAME" in main|dev) ;; *) extra=-Pwarmux.preview ;; esac
+          cd packaging/android && ./gradlew --no-daemon $extra assembleDebug
       - uses: actions/upload-artifact@v4
         with:
           name: android

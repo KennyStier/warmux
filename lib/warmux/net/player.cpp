@@ -53,7 +53,13 @@ void Player::UpdateNickname()
   std::string nick;
 
   std::list<ConfigTeam>::iterator it;
+  std::list<std::string> seen;
   for (it = owned_teams.begin(); it != owned_teams.end(); it++) {
+    // The same name on several teams shows once
+    if (it->player_name.empty()
+        || std::find(seen.begin(), seen.end(), it->player_name) != seen.end())
+      continue;
+    seen.push_back(it->player_name);
     if (nick != "")
       nick += "+";
 

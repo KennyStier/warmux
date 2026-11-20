@@ -67,6 +67,7 @@ class MapSelectionBox : public VBox
   void ChangeMapCallback();
   void ChangeMapListCallback(const std::vector<uint>& list);
   void AllowSelection();
+  std::string GetMapName() const;
 
   virtual Widget* Click(const Point2i &mousePosition, uint button);
   virtual Widget* ClickUp(const Point2i &mousePosition, uint button);

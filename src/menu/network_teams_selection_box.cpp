@@ -103,6 +103,10 @@ Widget* NetworkTeamsSelectionBox::ClickUp(const Point2i &mousePosition, uint but
 
 const std::string NetworkTeamsSelectionBox::GetLocalPlayerName()
 {
+  // As typed in the Network Game menu
+  if (!Config::GetInstance()->GetNetworkNickname().empty())
+    return Config::GetInstance()->GetNetworkNickname();
+
   std::string result;
 #ifdef WIN32
   // The username might be in NLS !
@@ -225,6 +229,15 @@ bool NetworkTeamsSelectionBox::IsSelected(Team * team)
     }
   }
   return false;
+}
+
+bool NetworkTeamsSelectionBox::CanAddTeam()
+{
+  uint nb_local = 0;
+  for (uint i = 0; i < teams_selections.size(); i++)
+    if (teams_selections[i]->GetTeam() && teams_selections[i]->IsLocal())
+      nb_local++;
+  return HasOpenTeamSlot() && int(nb_local) < local_teams_nb->GetMaxValue();
 }
 
 bool NetworkTeamsSelectionBox::HasOpenTeamSlot()

@@ -424,6 +424,20 @@ void TeamBox::SwitchPlayerType()
   }
 }
 
+bool TeamBox::IsAI() const { return ai_name != NO_AI_NAME; }
+int TeamBox::GetNbCharacters() const { return nb_characters->GetValue(); }
+int TeamBox::GetMinCharacters() const { return nb_characters->GetMinValue(); }
+int TeamBox::GetMaxCharacters() const { return nb_characters->GetMaxValue(); }
+
+void TeamBox::SetNbCharacters(int n)
+{
+  if (!associated_team || n == nb_characters->GetValue())
+    return;
+  nb_characters->SetValue(n);
+  if (Network::GetInstance()->IsConnected())
+    ValidOptions();
+}
+
 void TeamBox::SetDarkTheme()
 {
   dark_theme = true;

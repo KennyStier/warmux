@@ -35,10 +35,10 @@ class AbstractSpinButton : public Widget
 
   protected:
     int GetStep() const { return m_step; }
-    int GetMinValue() const { return m_min_value; }
-    int GetMaxValue() const { return m_max_value; }
 
   public:
+    int GetMinValue() const { return m_min_value; }
+    int GetMaxValue() const { return m_max_value; }
     AbstractSpinButton(int value, 
                        int step, 
                        int min_value, 

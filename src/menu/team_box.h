@@ -95,6 +95,13 @@ class TeamBox : public HBox
   virtual Widget* ClickUp(const Point2i &mousePosition, uint button);
 
   void SwitchPlayerType();
+
+  // For the phone lobby's team pop-up (see network_menu.cpp)
+  bool IsAI() const;
+  int GetNbCharacters() const;
+  int GetMinCharacters() const;
+  int GetMaxCharacters() const;
+  void SetNbCharacters(int n);
 };
 
 #endif

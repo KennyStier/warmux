@@ -35,12 +35,8 @@ class NetworkTeamsSelectionBox : public TeamsSelectionBox
 
   const std::string GetLocalPlayerName();
 
-  void PrevTeam(uint i);
-  void NextTeam(uint i);
-
   bool IsSelected(Team * team);
 
-  void RequestTeamRemoval();
   void UpdateNbTeams();
 
 public:
@@ -57,5 +53,15 @@ public:
   void RequestTeam();
   // Developer aid (WARMUX_TEST_AUTOPLAY): let the computer play our teams
   void SetLocalTeamsAI();
+
+  // For the phone lobby, which shows the teams its own way (this box
+  // stays, hidden, to do the work)
+  uint NbSlots() const { return teams_selections.size(); }
+  TeamBox *Slot(uint i) const { return teams_selections.at(i); }
+  void PrevTeam(uint i);
+  void NextTeam(uint i);
+  // Can we add a team, and remove (our last) one
+  bool CanAddTeam();
+  void RequestTeamRemoval();
 };
 #endif

@@ -21,6 +21,13 @@
  *   left   your teams, the map
  *   right  players (with who is ready, on the host), chat,
  *          game mode and "Start game" (host) or "Ready" (others)
+ *
+ * On short screens (phones in landscape):
+ *   left   the chat, and below it every team as a small chip: tap one of
+ *          yours to change it (team, characters, human or computer), in
+ *          the chat's place; "+" adds a team
+ *   right  players, the map (tap: map and game mode, in the chat's place)
+ *          and "Ready" / "Start game"
  *****************************************************************************/
 
 #ifndef NETWORK_MENU_H
@@ -33,7 +40,11 @@
 
 class FlatButton;
 class FlatPanel;
+class FlatRow;
+class FlatStepper;
 class FlatToggle;
+class PictureWidget;
+class Widget;
 class Label;
 class MapSelectionBox;
 class NetworkTeamsSelectionBox;
@@ -69,6 +80,39 @@ class NetworkMenu : public Menu
 
   /* Map controllers */
   MapSelectionBox *map_box;
+
+  /* Phone layout */
+  typedef enum { LOBBY_CHAT, LOBBY_TEAM, LOBBY_MAP } lobby_view_t;
+  bool compact;
+  FlatPanel *chat_panel;
+  FlatPanel *team_panel;   // the team pop-up, in the chat's place
+  FlatPanel *map_panel;
+  FlatPanel *chips_panel;
+  FlatRow *chips_row;
+  std::vector<std::pair<Widget*, int> > chips; // and their slot (-1: "+")
+  std::string shown_chips;
+  std::string shown_team;
+  std::string shown_map;
+  int chip_h;
+  FlatButton *map_card;
+  FlatButton *map_done;
+  FlatButton *team_done;
+  FlatButton *team_remove;
+  FlatButton *team_prev;
+  FlatButton *team_next;
+  Label *team_title;
+  PictureWidget *team_flag;
+  FlatStepper *team_chars;
+  FlatToggle *team_ai;
+  int edited_slot;         // in team_box
+
+  void BuildDesktopLayout();
+  void BuildPhoneLayout();
+  void ShowLobbyView(lobby_view_t view);
+  void UpdateChips();
+  void UpdateTeamPanel();
+  void UpdateMapCard();
+  bool PhoneClick(Widget *w, const Point2i &mousePosition);
 
   void PrepareForNewGame();
   void SaveOptions();
