@@ -50,6 +50,7 @@ class MapSelectionBox : public VBox
   Label *map_author_label;
   Button *bt_map_plus, *bt_map_minus;
   Surface random_map_preview;
+  Surface selected_preview;
 
   void ChangeMap(uint index);
   void UpdateMapInfo(PictureWidget * widget, uint index, bool selected);
@@ -68,6 +69,7 @@ class MapSelectionBox : public VBox
   void ChangeMapListCallback(const std::vector<uint>& list);
   void AllowSelection();
   std::string GetMapName() const;
+  const Surface &GetPreview() const { return selected_preview; }
 
   virtual Widget* Click(const Point2i &mousePosition, uint button);
   virtual Widget* ClickUp(const Point2i &mousePosition, uint button);

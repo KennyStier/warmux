@@ -81,7 +81,7 @@ class NetworkMenu : public Menu
   /* Map controllers */
   MapSelectionBox *map_box;
 
-  /* Phone layout */
+  /* Panels shown in another's place (phones: team, map; big screens: map) */
   typedef enum { LOBBY_CHAT, LOBBY_TEAM, LOBBY_MAP } lobby_view_t;
   bool compact;
   FlatPanel *chat_panel;
@@ -104,6 +104,7 @@ class NetworkMenu : public Menu
   PictureWidget *team_flag;
   FlatStepper *team_chars;
   FlatToggle *team_ai;
+  PictureWidget *map_preview; // big screens
   int edited_slot;         // in team_box
 
   void BuildDesktopLayout();

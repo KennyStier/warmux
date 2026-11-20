@@ -34,6 +34,7 @@
 #include "graphic/video.h"
 #include "gui/flat_widgets.h"
 #include "gui/label.h"
+#include "gui/null_widget.h"
 #include "gui/msg_box.h"
 #include "gui/picture_widget.h"
 #include "gui/scroll_box.h"
@@ -67,109 +68,148 @@ static Label *Title(const std::string &text, uint width)
   return new Label(text, width, Flat::F(Font::FONT_MEDIUM), Font::FONT_BOLD, Flat::TEXT);
 }
 
-// Big screens: teams and map on the left; players, chat and the actions on
-// the right
+// Big screens: players on the left, teams in the middle, the map and the
+// chat on the right, and along the bottom what we wait for and Ready /
+// Start game. The map picker opens in the teams' place.
 void NetworkMenu::BuildDesktopLayout()
 {
   const Surface& window = GetMainWindow();
   const int u = Flat::Unit();
   const int margin = 2 * u;
+  const int gap = 2 * u;
   const int pad = 2 * u;
   const int button_h = Flat::ButtonHeight();
+  const bool master = Network::GetInstance()->IsGameMaster();
   // The lobby is laid out in a block no bigger than this, centred
   const int W = std::min(window.GetWidth(), Flat::S(1400) + 2 * margin);
-  const int H = std::min(window.GetHeight(), Flat::S(600) + 2 * margin);
+  const int H = std::min(window.GetHeight(), Flat::S(760) + 2 * margin);
   const int ox = (window.GetWidth() - W) / 2, oy = (window.GetHeight() - H) / 2;
-  const bool master = Network::GetInstance()->IsGameMaster();
+  const int x0 = ox + margin;
+  const int full_w = W - 2 * margin;
 
-  // ---- Header: game name, who we are, Leave ----
-  Label *title = new Label(Network::GetInstance()->GetGameName(), W * 2 / 3,
-                           Flat::F(Font::FONT_BIG), Font::FONT_BOLD, Flat::TEXT,
-                           Text::ALIGN_LEFT_TOP, true);
-  title->SetPosition(ox + margin, oy + margin);
-  widgets.AddWidget(title);
-  subtitle = new Label(" ", W * 2 / 3, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::TEXT,
-                       Text::ALIGN_LEFT_TOP, true);
-  subtitle->SetPosition(ox + margin, oy + margin + title->GetSizeY());
-  widgets.AddWidget(subtitle);
+  // ---- Header: Leave, the game's name and where it is ----
+  FlatRow *header = new FlatRow(0, u, gap, Flat::PANEL);
+  leave = new FlatButton(_("Leave"), Point2i(12 * u, button_h), FlatButton::SECONDARY);
+  header->AddWidget(leave);
+  const int names_w = full_w - 2 * u - leave->GetSizeX() - gap;
+  VBox *names = new VBox(names_w, false, false, false);
+  names->SetNoBorder();
+  names->SetMargin(0);
+  names->AddWidget(new Label(Network::GetInstance()->GetGameName(), names_w,
+                             Flat::F(Font::FONT_BIG), Font::FONT_BOLD, Flat::TEXT));
+  subtitle = new Label(" ", names_w, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::TEXT_DIM);
+  names->AddWidget(subtitle);
+  names->Pack();
+  header->AddWidget(names);
+  header->Pack();
+  header->SetPosition(x0, oy + margin);
+  widgets.AddWidget(header);
 
-  leave = new FlatButton(_("Leave"), Point2i(12 * u, button_h), FlatButton::DARK);
-  leave->SetPosition(ox + W - margin - leave->GetSizeX(), oy + margin);
-  widgets.AddWidget(leave);
+  // ---- Footer: what we wait for, and Ready / Start game ----
+  FlatRow *footer = new FlatRow(0, u, gap, Flat::PANEL);
+  const int action_w = Flat::S(260);
+  action_button = new FlatButton(_("Ready"), Point2i(action_w, button_h + u), FlatButton::PRIMARY,
+                                 Font::FONT_MEDIUM);
+  const int status_w = full_w - 2 * u - gap - action_w;
+  players_status = new Label(" ", status_w, Flat::F(Font::FONT_MEDIUM), Font::FONT_BOLD, Flat::TEXT);
+  // Centred in the height of the button
+  VBox *status_box = new VBox(status_w, false, false, false);
+  status_box->SetNoBorder();
+  status_box->SetMargin(0);
+  status_box->AddWidget(new NullWidget(Point2i(status_w, std::max(0,
+    (action_button->GetSizeY() - players_status->GetSizeY()) / 2))));
+  status_box->AddWidget(players_status);
+  status_box->Pack();
+  footer->AddWidget(status_box);
+  footer->AddWidget(action_button);
+  footer->Pack();
+  footer->SetPosition(x0, oy + H - margin - footer->GetSizeY());
+  widgets.AddWidget(footer);
 
-  const int top = margin + std::max(title->GetSizeY() + subtitle->GetSizeY(), button_h) + u;
-  const int content_h = H - top - margin;
-  const int right_w = std::min(Flat::S(380), std::max(W * 34 / 100, std::min(W / 2, Flat::S(300))));
-  const int left_w = W - 2 * margin - right_w - 2 * u;
-  const int right_x = ox + W - margin - right_w;
-  const int inner_l = left_w - 2 * pad;
-  const int inner_r = right_w - 2 * pad;
+  const int top = header->GetPositionY() + header->GetSizeY() + gap;
+  const int content_h = footer->GetPositionY() - gap - top;
+  const int players_w = std::max(Flat::S(220), full_w * 19 / 100);
+  const int right_w = std::max(Flat::S(300), full_w * 27 / 100);
+  const int center_w = full_w - players_w - right_w - 2 * gap;
+  const int center_x = x0 + players_w + gap;
+  const int right_x = x0 + full_w - right_w;
   const int title_h = Title("X", 10)->GetSizeY(); // measured once, leaked label is tiny
 
-  // ---- Left: teams, then map ----
-  // Room for the "- n +" line and a row of team cards
-  const int card_rows = 1; // 3-4 cards per row; more scroll
-  int teams_h = 3 * u + u + card_rows * (TeamBox::CompactHeight() + u);
-  FlatPanel *teams = new FlatPanel(left_w, pad, u);
-  teams->AddWidget(Title(_("Teams"), inner_l));
-  teams->AddWidget(new Label(_("Click a team's picture to pick another team, the icon under it to "
-                               "switch between human and computer."), inner_l,
-                             Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::TEXT_DIM));
-  team_box = new NetworkTeamsSelectionBox(Point2i(inner_l, teams_h), false, true);
+  // ---- Left: players ----
+  FlatPanel *players = new FlatPanel(players_w, pad, u);
+  players->AddWidget(Title(_("Players"), players_w - 2 * pad));
+  players_list = new PlayersListBox(Point2i(players_w - 2 * pad, content_h - 2 * pad - title_h - u));
+  players->AddWidget(players_list);
+  players->SetMinHeight(content_h);
+  players->SetPosition(x0, top);
+  widgets.AddWidget(players);
+
+  // ---- Middle: teams ----
+  const int inner_c = center_w - 2 * pad;
+  FlatPanel *teams = new FlatPanel(center_w, pad, u);
+  teams->AddWidget(Title(_("Teams"), inner_c));
+  Label *hint = new Label(_("Click a team's picture to pick another team, the icon under it to "
+                            "switch between human and computer."), inner_c,
+                          Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::TEXT_DIM);
+  teams->AddWidget(hint);
+  team_box = new NetworkTeamsSelectionBox(
+    Point2i(inner_c, content_h - 2 * pad - title_h - hint->GetSizeY() - 2 * u), false, true);
   team_box->SetDarkTheme();
   teams->AddWidget(team_box);
-  teams->SetPosition(ox + margin, oy + top);
+  teams->SetMinHeight(content_h);
+  teams->SetPosition(center_x, top);
   widgets.AddWidget(teams);
-  widgets.Pack();
+  chat_panel = teams; // what the map picker takes the place of
 
-  int map_top = teams->GetPositionY() + teams->GetSizeY() + 2 * u;
-  int map_h = oy + H - margin - map_top - 2 * pad - title_h - u;
-  FlatPanel *map = new FlatPanel(left_w, pad, u);
-  map->AddWidget(Title(_("Map"), inner_l));
-  map_box = new MapSelectionBox(Point2i(inner_l, std::max(map_h, 100)), false, !master);
+  // ---- In its place: the map picker, game mode, play again ----
+  map_panel = new FlatPanel(center_w, pad, u);
+  map_panel->AddWidget(Title(_("Map"), inner_c));
+  play_in_loop = new FlatToggle(_("Play several times"), inner_c, true);
+  FlatRow *map_actions = new FlatRow(button_h, 0, u, transparent_color);
+  const int done_w = Flat::S(180);
+  mode_button = new FlatButton("", Point2i(inner_c - u - done_w, button_h), FlatButton::SECONDARY,
+                               Font::FONT_SMALL);
+  map_done = new FlatButton(_("Done"), Point2i(done_w, button_h), FlatButton::PRIMARY);
+  map_actions->AddWidget(mode_button);
+  map_actions->AddWidget(map_done);
+  map_actions->Pack();
+  const int map_h = std::min(content_h - 2 * pad - title_h - 3 * u - play_in_loop->GetSizeY()
+                             - button_h, Flat::S(320));
+  map_box = new MapSelectionBox(Point2i(inner_c, std::max(map_h, 100)), false, !master);
   map_box->SetDarkTheme();
-  map->AddWidget(map_box);
-  map->SetPosition(ox + margin, map_top);
+  map_panel->AddWidget(map_box);
+  map_panel->AddWidget(play_in_loop);
+  map_panel->AddWidget(map_actions);
+  map_panel->SetMinHeight(content_h, 1);
+  map_panel->SetPosition(center_x, top);
+  map_panel->SetVisible(false);
+  widgets.AddWidget(map_panel);
+
+  // ---- Right: the map (click it to change), then the chat ----
+  const int inner_r = right_w - 2 * pad;
+  FlatPanel *map = new FlatPanel(right_w, pad, u);
+  map->AddWidget(Title(_("Map"), inner_r));
+  map_preview = new PictureWidget(Point2i(inner_r, std::min(inner_r * 9 / 20, content_h / 4)));
+  map->AddWidget(map_preview);
+  map_card = new FlatButton(" ", Point2i(inner_r, button_h), FlatButton::SECONDARY,
+                            Font::FONT_SMALL);
+  map->AddWidget(map_card);
+  map->Pack();
+  map->SetPosition(right_x, top);
   widgets.AddWidget(map);
 
-  // ---- Right, bottom: game mode, play again, start ----
-  FlatPanel *actions = new FlatPanel(right_w, pad, u);
-  mode_button = new FlatButton("", Point2i(inner_r, button_h), FlatButton::SECONDARY,
-                               Font::FONT_SMALL);
-  actions->AddWidget(mode_button);
-  play_in_loop = new FlatToggle(_("Play several times"), inner_r, true);
-  actions->AddWidget(play_in_loop);
-  action_button = new FlatButton(_("Ready"), Point2i(inner_r, button_h + u), FlatButton::PRIMARY,
-                                 Font::FONT_MEDIUM);
-  actions->AddWidget(action_button);
-  actions->Pack();
-  actions->SetPosition(right_x, oy + H - margin - actions->GetSizeY());
-  widgets.AddWidget(actions);
-
-  // ---- Right, top: players, chat ----
-  // Short screens (phones): one row, the rest scrolls, so the chat has room
-  const int players_h = window.GetHeight() < 640 ? button_h + 2 * u
-                      : std::max(2 * button_h, std::min(4 * button_h, content_h * 20 / 100));
-  FlatPanel *players = new FlatPanel(right_w, pad, u);
-  players->AddWidget(Title(_("Players"), inner_r));
-  players_status = new Label(" ", inner_r, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::TEXT_DIM);
-  players->AddWidget(players_status);
-  players_list = new PlayersListBox(Point2i(inner_r, players_h));
-  players->AddWidget(players_list);
-  players->SetPosition(right_x, oy + top);
-  widgets.AddWidget(players);
-  widgets.Pack();
-
-  int chat_top = players->GetPositionY() + players->GetSizeY() + 2 * u;
-  int chat_h = actions->GetPositionY() - 2 * u - chat_top - 2 * pad - title_h - u;
+  const int chat_top = top + map->GetSizeY() + gap;
+  const int chat_h = top + content_h - chat_top;
   FlatPanel *chat = new FlatPanel(right_w, pad, u);
   chat->AddWidget(Title(_("Chat"), inner_r));
-  msg_box = new TalkBox(Point2i(inner_r, std::max(chat_h, 2 * button_h)),
+  msg_box = new TalkBox(Point2i(inner_r, std::max(chat_h - 2 * pad - title_h - u, 2 * button_h)),
                         Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, true);
   chat->AddWidget(msg_box);
+  chat->SetMinHeight(chat_h);
   chat->SetPosition(right_x, chat_top);
   widgets.AddWidget(chat);
-
+  widgets.Pack();
+  UpdateMapCard();
 }
 
 // Phones in landscape: the chat over a row of team chips on the left; the
@@ -322,10 +362,11 @@ void NetworkMenu::BuildPhoneLayout()
 // Phones: the chat, or a team or the map in its place
 void NetworkMenu::ShowLobbyView(lobby_view_t view)
 {
-  if (!compact)
+  if (!map_panel)
     return;
   chat_panel->SetVisible(view == LOBBY_CHAT);
-  team_panel->SetVisible(view == LOBBY_TEAM);
+  if (team_panel)
+    team_panel->SetVisible(view == LOBBY_TEAM);
   map_panel->SetVisible(view == LOBBY_MAP);
   if (view != LOBBY_TEAM)
     edited_slot = -1;
@@ -338,6 +379,8 @@ void NetworkMenu::ShowLobbyView(lobby_view_t view)
 // The chips: every team, ours outlined in blue, rebuilt when one changed
 void NetworkMenu::UpdateChips()
 {
+  if (!chips_panel)
+    return;
   const bool can_add = team_box->CanAddTeam() && !waiting_for_server;
   std::vector<uint> slots;
   std::string key = can_add ? "+" : "-";
@@ -409,7 +452,7 @@ void NetworkMenu::UpdateChips()
 // The team pop-up, from the team it is about
 void NetworkMenu::UpdateTeamPanel()
 {
-  if (edited_slot < 0 || !team_panel->IsVisible())
+  if (!team_panel || edited_slot < 0 || !team_panel->IsVisible())
     return;
   TeamBox *box = team_box->Slot(edited_slot);
   Team *t = box->GetTeam();
@@ -444,6 +487,10 @@ void NetworkMenu::UpdateMapCard()
   if (text != shown_map) {
     shown_map = text;
     map_card->SetText(text);
+    if (map_preview) {
+      map_preview->SetSurface(map_box->GetPreview(), PictureWidget::FIT_SCALING);
+      map_preview->NeedRedrawing();
+    }
   }
 }
 
@@ -510,6 +557,7 @@ NetworkMenu::NetworkMenu()
   , team_flag(NULL)
   , team_chars(NULL)
   , team_ai(NULL)
+  , map_preview(NULL)
   , edited_slot(-1)
 {
   const bool master = Network::GetInstance()->IsGameMaster();
@@ -679,18 +727,24 @@ void NetworkMenu::UpdatePlayers()
   const int row_w = ((PlayersListBox*)players_list)->RowWidth();
   const int pad = u;
   const int status_w = std::max(10 * u, 70);
-  const int text_w = row_w - 2 * pad - status_w - u;
+  // Narrow lists: the status on a line of its own, under the name
+  const bool stacked = row_w - 2 * pad - status_w - u < Flat::S(170);
+  const int text_w = stacked ? row_w - 2 * pad : row_w - 2 * pad - status_w - u;
   for (size_t i = 0; i < rows.size(); i++) {
     FlatRow *row = new FlatRow(0, pad, u);
     VBox *text = new VBox(text_w, false, false, false);
     text->SetNoBorder();
     text->SetMargin(0);
     text->AddWidget(new Label(rows[i].name, text_w, Flat::F(Font::FONT_MEDIUM), Font::FONT_BOLD, Flat::TEXT));
+    if (stacked && rows[i].status != " ")
+      text->AddWidget(new Label(rows[i].status, text_w, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD,
+                                rows[i].color));
     text->AddWidget(new Label(rows[i].teams, text_w, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::TEXT_DIM));
     text->Pack(); // boxes measure their children before packing them
     row->AddWidget(text);
-    row->AddWidget(new Label(rows[i].status, status_w, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD,
-                             rows[i].color, Text::ALIGN_RIGHT_TOP));
+    if (!stacked)
+      row->AddWidget(new Label(rows[i].status, status_w, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD,
+                               rows[i].color, Text::ALIGN_RIGHT_TOP));
     row->Pack();
     players_list->AddWidget(row);
   }
@@ -701,7 +755,7 @@ void NetworkMenu::UpdatePlayers()
 void NetworkMenu::OnClickUp(const Point2i &mousePosition, int button)
 {
   Widget *w = widgets.ClickUp(mousePosition, button);
-  if (compact && PhoneClick(w, mousePosition))
+  if (map_panel && PhoneClick(w, mousePosition))
     return;
   if (!w)
     return;
@@ -871,7 +925,7 @@ void NetworkMenu::key_ok()
 bool NetworkMenu::signal_cancel()
 {
   // Phones: Back closes a team or the map first
-  if (compact && !chat_panel->IsVisible()) {
+  if (map_panel && !chat_panel->IsVisible()) {
     ShowLobbyView(LOBBY_CHAT);
     return false;
   }
@@ -885,7 +939,7 @@ void NetworkMenu::Draw(const Point2i& /*mousePosition*/)
     UpdatePlayers();
   else
     close_menu = true;
-  if (compact && !close_menu) {
+  if (!close_menu) {
     UpdateChips();
     UpdateTeamPanel();
     UpdateMapCard();

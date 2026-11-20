@@ -122,6 +122,7 @@ int AppWarmux::Main(void)
 
   Action_Handler_Init();
   StartTestMonkey();
+  StartTestClicks();
 
   // Is a replay filename set so that we play it?
   if (!replay.empty()) {

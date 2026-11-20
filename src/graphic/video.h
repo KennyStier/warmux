@@ -165,6 +165,7 @@ Surface& GetMainWindow();
 Uint32 GetGameMouseState(int *x, int *y);
 // WARMUX_TEST_MONKEY=<seed>: random input everywhere (see video.cpp)
 void StartTestMonkey();
+void StartTestClicks();  // WARMUX_TEST_CLICKS (see video.cpp)
 void SwapWindowClip(Rectanglei& clip);
 
 #endif

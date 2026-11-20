@@ -209,6 +209,7 @@ void MapSelectionBox::UpdateMapInfo(PictureWidget * widget, uint index, bool sel
 
   // If selected update general information
   if (selected) {
+    selected_preview = basic->ReadPreview();
     map_name_label->SetText(basic->ReadFullMapName());
     map_author_label->SetText(basic->ReadAuthorInfo());
   }
@@ -225,6 +226,7 @@ void MapSelectionBox::UpdateRandomMapInfo(PictureWidget * widget, bool selected)
 
   // If selected update general information
   if (selected) {
+    selected_preview = random_map_preview;
     map_name_label->SetText(_("Random map"));
     map_author_label->SetText(_("Choose randomly between the different maps"));
   }

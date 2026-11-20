@@ -22,6 +22,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include <vector>
 #include <SDL.h>
 #include <SDL_image.h>
 
@@ -962,6 +963,49 @@ void StartTestMonkey()
   SDL_AtomicSet(&monkey_y, monkey_h / 2);
   printf("monkey: seed %s, window %dx%d\n", seed, monkey_w, monkey_h);
   monkey_timer = SDL_AddTimer(500, MonkeyTick, NULL);
+}
+
+// Developer aid: WARMUX_TEST_CLICKS="x,y;x,y;..." clicks there, in game
+// coordinates, one every WARMUX_TEST_CLICKS_INTERVAL ms (default 1500),
+// the first after that or 3 s: to drive menus in offscreen tests (with
+// WARMUX_SCREENSHOT to see the result). Printed as "click: x,y".
+static std::vector<Point2i> test_clicks;
+static size_t test_click_next = 0;
+static Uint32 test_click_interval = 1500;
+
+static Uint32 TestClickTick(Uint32 /*interval*/, void * /*param*/)
+{
+  if (test_click_next >= test_clicks.size())
+    return 0;  // done: the timer stops
+  Point2i p = test_clicks[test_click_next++];
+  printf("click: %d,%d\n", p.x, p.y);
+  fflush(stdout);
+  MonkeyMouse(SDL_MOUSEMOTION, p.x, p.y, 0);
+  MonkeyMouse(SDL_MOUSEBUTTONDOWN, p.x, p.y, SDL_BUTTON_LEFT);
+  MonkeyMouse(SDL_MOUSEBUTTONUP, p.x, p.y, SDL_BUTTON_LEFT);
+  return test_click_interval;
+}
+
+void StartTestClicks()
+{
+  const char *list = SDL_getenv("WARMUX_TEST_CLICKS");
+  if (!list || monkey_timer)
+    return;
+  const char *interval = SDL_getenv("WARMUX_TEST_CLICKS_INTERVAL");
+  if (interval)
+    test_click_interval = (Uint32)strtoul(interval, NULL, 10);
+  int x, y, n;
+  for (const char *c = list; sscanf(c, "%d,%d%n", &x, &y, &n) == 2; ) {
+    test_clicks.push_back(Point2i(x, y));
+    c += n;
+    if (*c != ';')
+      break;
+    c++;
+  }
+  monkey_window = SDL_GetWindowID(AppWarmux::GetInstance()->video->GetSDLWindow());
+  SDL_AtomicSet(&monkey_x, 0);
+  SDL_AtomicSet(&monkey_y, 0);
+  monkey_timer = SDL_AddTimer(std::max<Uint32>(3000, test_click_interval), TestClickTick, NULL);
 }
 
 Uint32 GetGameMouseState(int *x, int *y)
