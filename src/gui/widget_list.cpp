@@ -189,7 +189,10 @@ Widget* WidgetList::GetNextWidget(const Widget *w, bool loop) const
 {
   Widget *r = NULL;
 
-  ASSERT(!w || !w->IsWidgetBrowser());
+  // Focus can be on a container (a click on a row of buttons focuses the
+  // row): go on from its last widget
+  if (w && w->IsWidgetBrowser() && w->GetLastWidget())
+    w = w->GetLastWidget();
 
   MSG_DBG_RTTI("widgetlist", "%p::GetNextWidget(%s:%p)",
                this, typeid(w).name(), w);
@@ -250,7 +253,9 @@ Widget* WidgetList::GetNextWidget(const Widget *w, bool loop) const
     }
   }
 
-  ASSERT(!r || !r->IsWidgetBrowser());
+  // The next one can be a container: its first widget
+  if (r && r->IsWidgetBrowser())
+    r = r->GetFirstWidget();
 
   MSG_DBG_RTTI("widgetlist", "%p::GetNextWidget(%s:%p) ==> %s%p",
                this, typeid(w).name(), w, typeid(r).name(), r);
@@ -301,6 +306,9 @@ Widget* WidgetList::GetPreviousWidget(const Widget *w, bool loop) const
     }
   }
 
+  // The previous one can be a container: its last widget
+  if (r && r->IsWidgetBrowser())
+    r = r->GetLastWidget();
   return r;
 }
 
