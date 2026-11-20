@@ -148,6 +148,12 @@ jobs:
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
             "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.31.6" >/dev/null
+      # The same debug key every time, so a new Warmux Preview installs over
+      # the last one (Android refuses an update signed with another key)
+      - uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: android-debug-keystore-v1
       - name: Build APK
         env:
           WARMUX_BUILD_NUMBER: ${{ github.run_number }}
