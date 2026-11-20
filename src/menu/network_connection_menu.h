@@ -17,11 +17,15 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  ******************************************************************************
  * The Network Game menu: finding a game (on the local network or through
- * the index server), hosting one, or joining one by address.
+ * the index server, in one list), hosting one, or joining one by address.
  *
  *   left   games found, refreshed on their own, each with a Join button
  *   right  "Host a game" (name, optional password, list online)
  *          "Join by address" (host[:port], password if the game has one)
+ *
+ * On short screens (phones in landscape) the right column only holds the
+ * player's name and two buttons, which open Host or Join in the list's
+ * place.
  *****************************************************************************/
 
 #ifndef NETWORK_CONNECTION_MENU_H
@@ -54,6 +58,17 @@ public:
 
 private:
   network_menu_action_t action;
+  typedef enum { VIEW_GAMES, VIEW_HOST, VIEW_JOIN } view_t;
+  bool compact;  // phone layout: one of the views at a time
+
+  TextBox *nickname;
+  FlatPanel *games_panel;
+  FlatPanel *host_panel;
+  FlatPanel *join_panel;
+  FlatButton *open_host;    // compact layout only
+  FlatButton *open_join;
+  FlatButton *host_cancel;
+  FlatButton *join_cancel;
 
   // Games
   GameListBox *games;
@@ -87,6 +102,8 @@ private:
   virtual bool signal_ok();
   virtual bool signal_cancel();
 
+  void ShowView(view_t view);
+  void SaveNickname();
   void ShowGames();
   void ThreadRefreshList();
   void DisplayNetError(connection_state_t conn);

@@ -226,8 +226,11 @@ NetworkServer * Network::GetInstanceServer()
 // first network team, as typed in the team panel, else the system user
 // name. Android has no user name, so phone players all showed as
 // "Unnamed".
-static std::string LocalNickname()
+std::string Network::LocalNickname()
 {
+  // Typed in the Network Game menu
+  if (!Config::GetInstance()->GetNetworkNickname().empty())
+    return Config::GetInstance()->GetNetworkNickname();
   const std::list<ConfigTeam>& teams = Config::GetInstance()->AccessNetworkTeamsList();
   for (std::list<ConfigTeam>::const_iterator it = teams.begin(); it != teams.end(); ++it)
     if (!it->player_name.empty())

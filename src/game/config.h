@@ -160,6 +160,9 @@ public:
   const std::string &GetNetworkServerGameName() const { return m_network_server_game_name; }
   void SetNetworkServerGameName(std::string s) { m_network_server_game_name = s; }
   bool GetNetworkServerPublic() const { return m_network_server_public; }
+  // The name other players see (empty: from the teams, else the system's)
+  const std::string &GetNetworkNickname() const { return m_network_nickname; }
+  void SetNetworkNickname(std::string s) { m_network_nickname = s; }
   void SetNetworkServerPublic(bool b) { m_network_server_public = b; }
 
   void SetNetworkLocalTeams();
@@ -229,6 +232,7 @@ protected:
   std::string m_network_server_game_name;
   std::string m_network_server_port;
   bool m_network_server_public;
+  std::string m_network_nickname;
 
   // personal teams used durint last network game
   std::list<ConfigTeam> network_local_teams;

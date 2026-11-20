@@ -99,6 +99,9 @@ protected:
 
   void SetGameName(const std::string& _game_name) { game_name = _game_name; }
 public:
+  // The name other players see for us: as typed in the Network Game menu,
+  // else from our teams, else the system user name
+  static std::string LocalNickname();
   NetworkMenu* network_menu;
 
   virtual ~Network();

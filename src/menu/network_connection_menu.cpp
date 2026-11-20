@@ -186,6 +186,10 @@ static Label *Title(const std::string &text, uint width)
 NetworkConnectionMenu::NetworkConnectionMenu(network_menu_action_t _action)
   : Menu("menu/bg_network", vNo)
   , action(_action)
+  , open_host(NULL)
+  , open_join(NULL)
+  , host_cancel(NULL)
+  , join_cancel(NULL)
   , refresh_timer(0)
   , last_search_end(0)
 {
@@ -193,108 +197,167 @@ NetworkConnectionMenu::NetworkConnectionMenu(network_menu_action_t _action)
   const int W = window.GetWidth(), H = window.GetHeight();
   const int u = Flat::Unit();
   const int margin = 2 * u;
-  // Less padding in short windows, so Host and Join fit stacked
-  const int pad = H < 700 ? 3 * u / 2 : 2 * u;
+  // Phones in landscape: not enough height for Host and Join beside the
+  // list, so they open in its place
+  compact = H < 640;
+  const int pad = compact ? 3 * u / 2 : 2 * u;
   const int button_h = Flat::ButtonHeight();
 
-  // Everything sits in one block, centred, no bigger than it needs to be.
-  // Host and Join are stacked on the right, or side by side when the window
-  // is too short for that (phones in landscape)
-  const bool three_columns = H < 640 && W >= 900;
-  const int block_w = std::min(W - 2 * margin, Flat::S(three_columns ? 1240 : 1040));
-  const int right_w = three_columns ? (block_w - 4 * u) / 3
-                                    : std::min(Flat::S(380), block_w * 45 / 100);
-  const int left_w = three_columns ? right_w : block_w - right_w - 2 * u;
-  const int inner_r = right_w - 2 * pad;
+  // Everything sits in one block, centred, no bigger than it needs to be
+  const int block_w = std::min(W - 2 * margin, Flat::S(compact ? 1240 : 1040));
+  const int right_w = compact ? std::max(Flat::S(230), block_w * 27 / 100)
+                              : std::min(Flat::S(380), block_w * 45 / 100);
+  const int left_w = block_w - right_w - 2 * u;
   const int inner_l = left_w - 2 * pad;
+  // Host and Join: in the right column, or in the list's place
+  const int form_w = compact ? left_w : right_w;
+  const int inner_f = form_w - 2 * pad;
 
+  // ---- Header: Back, the title, and (big screens) the player's name ----
+  back = new FlatButton(_("Back"), Point2i(10 * u, button_h), FlatButton::DARK);
   Label *title = new Label(_("Network game"), block_w / 2, Flat::F(Font::FONT_BIG), Font::FONT_BOLD,
                            Flat::TEXT, Text::ALIGN_LEFT_TOP, true);
-  back = new FlatButton(_("Back"), Point2i(12 * u, button_h), FlatButton::DARK);
   const int header_h = std::max(title->GetSizeY(), button_h);
 
+  std::string nick = Config::GetInstance()->GetNetworkNickname();
+  if (nick.empty())
+    nick = Network::LocalNickname();
+  nickname = new TextBox(nick, 0, Flat::F(Font::FONT_MEDIUM));
+  nickname->SetMaxNbChars(20);
+
   // ---- Host a game ----
-  FlatPanel *host = new FlatPanel(right_w, pad, u);
-  host->AddWidget(Title(_("Host a game"), inner_r));
-  host->AddWidget(Caption(_("Game name"), inner_r));
+  host_panel = new FlatPanel(form_w, pad, u);
+  host_panel->AddWidget(Title(_("Host a game"), inner_f));
+  host_panel->AddWidget(Caption(_("Game name"), inner_f));
   host_name = new TextBox(Config::GetInstance()->GetNetworkServerGameName(), 0,
                           Flat::F(Font::FONT_MEDIUM));
   host_name->SetMaxNbChars(20);
-  host->AddWidget(new FlatField(host_name, inner_r));
-  host->AddWidget(Caption(_("Password (optional)"), inner_r));
+  host_panel->AddWidget(new FlatField(host_name, inner_f));
+  host_panel->AddWidget(Caption(_("Password (optional)"), inner_f));
   host_pwd = new PasswordBox("", 0, Flat::F(Font::FONT_MEDIUM));
   host_pwd->SetMaxNbChars(15);
-  host->AddWidget(new FlatField(host_pwd, inner_r));
-  host_public = new FlatToggle(_("List it on the internet"), inner_r,
+  host_panel->AddWidget(new FlatField(host_pwd, inner_f));
+  host_public = new FlatToggle(_("List it on the internet"), inner_f,
                                Config::GetInstance()->GetNetworkServerPublic(), true);
-  host->AddWidget(host_public);
-  host_start = new FlatButton(_("Start hosting"), Point2i(inner_r, button_h),
-                              FlatButton::PRIMARY);
-  host->AddWidget(host_start);
-  host->Pack();
+  host_panel->AddWidget(host_public);
+  if (compact) {  // back to the games, beside the action
+    FlatRow *row = new FlatRow(button_h, 0, u, transparent_color);
+    const int bw = (inner_f - u) / 2;
+    host_cancel = new FlatButton(_("Back"), Point2i(bw, button_h));
+    host_start = new FlatButton(_("Start hosting"), Point2i(inner_f - u - bw, button_h),
+                                FlatButton::PRIMARY);
+    row->AddWidget(host_cancel);
+    row->AddWidget(host_start);
+    row->Pack();
+    host_panel->AddWidget(row);
+  } else {
+    host_start = new FlatButton(_("Start hosting"), Point2i(inner_f, button_h),
+                                FlatButton::PRIMARY);
+    host_panel->AddWidget(host_start);
+  }
+  host_panel->Pack();
 
   // ---- Join by address ----
-  FlatPanel *join = new FlatPanel(right_w, pad, u);
-  join->AddWidget(Title(_("Join by address"), inner_r));
+  join_panel = new FlatPanel(form_w, pad, u);
+  join_panel->AddWidget(Title(_("Join by address"), inner_f));
   std::string address = Config::GetInstance()->GetNetworkClientHost();
   if (!address.empty() && Config::GetInstance()->GetNetworkClientPort() != DefaultPort())
     address += ":" + Config::GetInstance()->GetNetworkClientPort();
-  join->AddWidget(Caption(_("Address, or address:port"), inner_r));
+  join_panel->AddWidget(Caption(_("Address, or address:port"), inner_f));
   join_address = new TextBox(address, 0, Flat::F(Font::FONT_MEDIUM));
-  join->AddWidget(new FlatField(join_address, inner_r));
-  join->AddWidget(Caption(_("Password, if the game has one"), inner_r));
+  join_panel->AddWidget(new FlatField(join_address, inner_f));
+  join_panel->AddWidget(Caption(_("Password, if the game has one"), inner_f));
   join_pwd = new PasswordBox("", 0, Flat::F(Font::FONT_MEDIUM));
-  join->AddWidget(new FlatField(join_pwd, inner_r));
+  join_panel->AddWidget(new FlatField(join_pwd, inner_f));
   // The message (e.g. what's wrong with the address) under the fields, so
   // the button can line up with Start hosting
-  join_hint = new Label(" ", inner_r, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::WARN);
-  join->AddWidget(join_hint);
-  join_go = new FlatButton(_("Join"), Point2i(inner_r, button_h));
-  join->AddWidget(join_go);
-  join->Pack();
+  join_hint = new Label(" ", inner_f, Flat::F(Font::FONT_SMALL), Font::FONT_BOLD, Flat::WARN);
+  join_panel->AddWidget(join_hint);
+  if (compact) {
+    FlatRow *row = new FlatRow(button_h, 0, u, transparent_color);
+    const int bw = (inner_f - u) / 2;
+    join_cancel = new FlatButton(_("Back"), Point2i(bw, button_h));
+    join_go = new FlatButton(_("Join"), Point2i(inner_f - u - bw, button_h), FlatButton::PRIMARY);
+    row->AddWidget(join_cancel);
+    row->AddWidget(join_go);
+    row->Pack();
+    join_panel->AddWidget(row);
+  } else {
+    join_go = new FlatButton(_("Join"), Point2i(inner_f, button_h));
+    join_panel->AddWidget(join_go);
+  }
+  join_panel->Pack();
 
   // ---- Games: as tall as the right column, within the window ----
-  const int right_h = three_columns ? std::max(host->GetSizeY(), join->GetSizeY())
-                                    : host->GetSizeY() + 2 * u + join->GetSizeY();
   const int avail_h = H - 2 * margin - header_h - 2 * u;
-  // On short screens (phones) the block takes the whole height, the games
-  // list getting what's left; elsewhere it stays as big as it needs to be
-  const int block_h = three_columns ? std::max(avail_h, right_h)
+  const int right_h = host_panel->GetSizeY() + 2 * u + join_panel->GetSizeY();
+  // On phones the block takes the whole height; elsewhere it stays as big
+  // as it needs to be
+  const int block_h = compact ? std::max(avail_h, std::max(host_panel->GetSizeY(),
+                                                           join_panel->GetSizeY()))
                     : std::min(std::max(right_h, 12 * button_h), avail_h);
-  FlatPanel *left = new FlatPanel(left_w, pad, u);
+  games_panel = new FlatPanel(left_w, pad, u);
   Label *games_title = Title(_("Games"), inner_l);
-  left->AddWidget(games_title);
+  games_panel->AddWidget(games_title);
   games_status = Caption(_("Looking for games on your network..."), inner_l);
-  left->AddWidget(games_status);
+  games_panel->AddWidget(games_status);
   int list_h = block_h - 2 * pad - games_title->GetSizeY() - games_status->GetSizeY() - 2 * u;
   games = new GameListBox(Point2i(inner_l, std::max(list_h, 3 * button_h)));
-  left->AddWidget(games);
+  games_panel->AddWidget(games);
 
-  // ---- Place the block ----
-  if (three_columns) {  // all three columns down to the bottom
-    left->SetMinHeight(block_h);
-    host->SetMinHeight(block_h, 1);  // Start hosting
-    join->SetMinHeight(block_h, 1);  // Join
-  }
+  // ---- Place everything ----
   const int x0 = (W - block_w) / 2;
   const int y0 = std::max(margin, (H - header_h - 2 * u - block_h) / 2);
-  title->SetPosition(x0, y0 + (header_h - title->GetSizeY()) / 2);
-  back->SetPosition(x0 + block_w - back->GetSizeX(), y0 + (header_h - button_h) / 2);
   const int top = y0 + header_h + 2 * u;
-  left->SetPosition(x0, top);
-  if (three_columns) {
-    host->SetPosition(x0 + left_w + 2 * u, top);
-    join->SetPosition(x0 + block_w - right_w, top);
-  } else {
-    host->SetPosition(x0 + block_w - right_w, top);
-    join->SetPosition(x0 + block_w - right_w, top + host->GetSizeY() + 2 * u);
-  }
-  widgets.AddWidget(title);
+  const int right_x = x0 + left_w + 2 * u;
+  back->SetPosition(x0, y0 + (header_h - button_h) / 2);
+  title->SetPosition(x0 + back->GetSizeX() + 2 * u, y0 + (header_h - title->GetSizeY()) / 2);
+  games_panel->SetPosition(x0, top);
   widgets.AddWidget(back);
-  widgets.AddWidget(left);
-  widgets.AddWidget(host);
-  widgets.AddWidget(join);
+  widgets.AddWidget(title);
+  widgets.AddWidget(games_panel);
+
+  if (compact) {
+    // The forms take the list's place, buttons at the bottom
+    games_panel->SetMinHeight(block_h);
+    host_panel->SetMinHeight(block_h, 1);
+    join_panel->SetMinHeight(block_h, 1);
+    host_panel->SetPosition(x0, top);
+    join_panel->SetPosition(x0, top);
+
+    // Right column: who we are, then Host and Join, in thumb reach
+    FlatPanel *me = new FlatPanel(right_w, pad, u / 2);
+    me->AddWidget(Caption(_("Playing as"), right_w - 2 * pad));
+    me->AddWidget(new FlatField(nickname, right_w - 2 * pad));
+    me->Pack();
+    me->SetPosition(right_x, top);
+    open_join = new FlatButton(_("Join by address"), Point2i(right_w, button_h), FlatButton::DARK);
+    open_host = new FlatButton(_("Host a game"), Point2i(right_w, button_h + u),
+                               FlatButton::PRIMARY);
+    open_join->SetPosition(right_x, top + block_h - button_h);
+    open_host->SetPosition(right_x, open_join->GetPositionY() - u - open_host->GetSizeY());
+    widgets.AddWidget(me);
+    widgets.AddWidget(open_host);
+    widgets.AddWidget(open_join);
+  } else {
+    // The player's name, at the right of the header, on a panel (the
+    // wallpaper behind is light)
+    FlatRow *me = new FlatRow(0, u / 2, u, Flat::PANEL);
+    Label *caption = new Label(_("Your name"), Flat::S(100), Flat::F(Font::FONT_SMALL),
+                               Font::FONT_BOLD, Flat::TEXT_DIM, Text::ALIGN_RIGHT_TOP);
+    me->AddWidget(caption);
+    me->AddWidget(new FlatField(nickname, Flat::S(220)));
+    me->Pack();
+    me->SetPosition(x0 + block_w - me->GetSizeX(), y0 + (header_h - me->GetSizeY()) / 2);
+    widgets.AddWidget(me);
+    host_panel->SetPosition(right_x, top);
+    join_panel->SetPosition(right_x, top + host_panel->GetSizeY() + 2 * u);
+  }
+  widgets.AddWidget(host_panel);
+  widgets.AddWidget(join_panel);
   widgets.Pack();
+  if (compact)
+    ShowView(VIEW_GAMES);
 
   // ************************************************************************
   InitNetInfo();
@@ -307,6 +370,33 @@ NetworkConnectionMenu::~NetworkConnectionMenu()
   if (refresh_timer)
     SDL_RemoveTimer(refresh_timer);
   CleanNetInfo();
+}
+
+// Phones: the list, or one of the forms in its place
+void NetworkConnectionMenu::ShowView(view_t view)
+{
+  if (!compact)
+    return;
+  games_panel->SetVisible(view == VIEW_GAMES);
+  host_panel->SetVisible(view == VIEW_HOST);
+  join_panel->SetVisible(view == VIEW_JOIN);
+  open_host->SetStyle(view == VIEW_HOST ? FlatButton::DARK : FlatButton::PRIMARY);
+  open_host->SetEnabled(view != VIEW_HOST);
+  open_join->SetEnabled(view != VIEW_JOIN);
+  if (view == VIEW_HOST)
+    widgets.SetFocusOn(host_name);
+  else if (view == VIEW_JOIN)
+    widgets.SetFocusOn(join_address);
+  Menu::RedrawMenu();
+}
+
+// Kept for the next games (and sent to the others when we connect)
+void NetworkConnectionMenu::SaveNickname()
+{
+  std::string nick = nickname->GetText();
+  nick.erase(0, nick.find_first_not_of(" \t"));
+  nick.erase(nick.find_last_not_of(" \t") + 1);
+  Config::GetInstance()->SetNetworkNickname(nick);
 }
 
 void NetworkConnectionMenu::ThreadRefreshList()
@@ -393,7 +483,7 @@ void NetworkConnectionMenu::ShowGames()
     text->SetMargin(0);
     text->AddWidget(new Label(g.game_name, text_w, Flat::F(Font::FONT_MEDIUM), Font::FONT_BOLD,
                               Flat::TEXT));
-    std::string where = (i < nb_lan) ? _("LAN") : _("Online");
+    std::string where = (i < nb_lan) ? _("On your network") : _("Online");
     std::string host = (i >= nb_lan && !g.dns_address.empty()) ? g.dns_address : g.ip_address;
     if (g.port != DefaultPort())
       host += ":" + g.port;
@@ -484,6 +574,12 @@ void NetworkConnectionMenu::OnClickUp(const Point2i &mousePosition, int button)
 
   if (w == back) {
     mouse_cancel();
+  } else if (w == open_host) {
+    ShowView(VIEW_HOST);
+  } else if (w == open_join) {
+    ShowView(VIEW_JOIN);
+  } else if (w == host_cancel || w == join_cancel) {
+    ShowView(VIEW_GAMES);
   } else if (w == host_public) {
     if (host_public->InfoClicked()) {
       std::string port = Config::GetInstance()->GetNetworkServerPort();
@@ -519,6 +615,7 @@ void NetworkConnectionMenu::OnClickUp(const Point2i &mousePosition, int button)
                                                        : game.ip_address + ":" + game.port);
       join_hint->SetText(Format(_("\"%s\" needs a password: type it, then press Join."),
                                 game.game_name.c_str()));
+      ShowView(VIEW_JOIN);
       widgets.SetFocusOn(join_pwd);
 #ifdef ANDROID
       SDL_StartTextInput();
@@ -553,6 +650,7 @@ bool NetworkConnectionMenu::Host()
   GetTeamsList();
   WaitForSearch(); // the search uses the index server too
 
+  SaveNickname();
   std::string name = host_name->GetText();
   if (name.empty())
     name = _("Warmux party");
@@ -604,6 +702,7 @@ bool NetworkConnectionMenu::Connect(const std::string& address, const std::strin
   GetTeamsList();
   WaitForSearch();
 
+  SaveNickname();
   join_hint->SetText(" ");
   connection_state_t conn = Network::ClientStart(address, port, password);
   if (Network::IsConnected() && conn == CONNECTED)
@@ -613,6 +712,7 @@ bool NetworkConnectionMenu::Connect(const std::string& address, const std::strin
     join_hint->SetText(password.empty() ? _("This game needs a password.")
                                         : _("Wrong password."));
     join_address->SetText(port == DefaultPort() ? address : address + ":" + port);
+    ShowView(VIEW_JOIN);
     widgets.SetFocusOn(join_pwd);
   } else {
     DisplayNetError(conn);
@@ -659,6 +759,7 @@ void NetworkConnectionMenu::PlayNetworkGame()
   // Back here: the window may have been resized, the list is out of date
   join_pwd->SetText("");
   join_hint->SetText(" ");
+  ShowView(VIEW_GAMES);
   shown_games.clear();
   Menu::RedrawMenu();
   last_search_end = 0;
@@ -683,6 +784,12 @@ bool NetworkConnectionMenu::signal_ok()
 
 bool NetworkConnectionMenu::signal_cancel()
 {
+  // Phones: Back (or the Android back key) closes Host or Join first
+  if (compact && !games_panel->IsVisible()) {
+    ShowView(VIEW_GAMES);
+    return false;
+  }
+  SaveNickname();
   IndexServer::GetInstance()->Disconnect();
   Network::Disconnect();
   return true;

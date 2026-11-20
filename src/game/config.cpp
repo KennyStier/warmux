@@ -569,6 +569,7 @@ void Config::LoadXml(const xmlNode *xml)
       // "public" is not read back: listing a game on the internet is chosen
       // each time the game is started, as it needs port forwarding
     }
+    XmlReader::ReadString(elem, "nickname", m_network_nickname);
 
     //=== personal teams used in last network game ===
     if ((sub_elem = XmlReader::GetMarker(elem, "local_teams"))) {
@@ -725,6 +726,7 @@ bool Config::SaveXml(bool save_current_teams)
   doc.WriteElement(net_as_server_node, "game_name", m_network_server_game_name);
   doc.WriteElement(net_as_server_node, "port", m_network_server_port);
   doc.WriteElement(net_as_server_node, "public", bool2str(m_network_server_public));
+  doc.WriteElement(net_node, "nickname", m_network_nickname);
 
   // personal teams used durint last network game
   xmlNode *net_teams = xmlAddChild(net_node, xmlNewNode(NULL /* empty prefix */, (const xmlChar*)"local_teams"));

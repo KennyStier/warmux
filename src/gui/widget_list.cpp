@@ -334,6 +334,13 @@ bool WidgetList::SendKey(const SDL_Keysym & key)
 bool WidgetList::Update(const Point2i& mousePosition,
                         const Point2i& lastMousePosition)
 {
+  // A hidden container hides what it holds (and leaves its place to what
+  // is shown there instead)
+  if (!IsVisible()) {
+    need_redrawing = false;
+    return false;
+  }
+
   Rectanglei clip;
   Rectanglei wlr = GetClip(clip);
   if (!wlr.GetSizeX() || !wlr.GetSizeY())
@@ -378,6 +385,8 @@ void WidgetList::Draw(const Point2i &mousePosition)
       w != widget_list.end();
       w++)
   {
+    if (!(*w)->IsVisible())
+      continue;
     Rectanglei r((*w)->GetPosition(), (*w)->GetSize());
     r.Clip(wlr);
 
