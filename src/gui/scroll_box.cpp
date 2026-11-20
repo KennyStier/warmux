@@ -17,7 +17,8 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  ******************************************************************************
  * Vertical Scroll Box
- *****************************************************************************/
+*****************************************************************************/
+#include <algorithm>
 
 #include "graphic/video.h"
 #include "graphic/colors.h"
@@ -28,6 +29,10 @@
 #include "include/app.h"
 
 #define SCROLL_SPEED  6
+
+// A wheel notch or an arrow click: a fifth of what is shown (6 px a step
+// took ages to get through a long list, such as the maps)
+static inline int ScrollStepFor(int height) { return std::max(SCROLL_SPEED, height / 5); }
 #define NO_DRAG      -1
 
 static const Color c_even(0x80, 0x80, 0x80, 0x40);
@@ -105,12 +110,12 @@ Widget * ScrollBox::ClickUp(const Point2i & mousePosition, uint button)
         (is_click && m_down->Contains(mousePosition))) {
 
       // bottom button
-      new_offset = offset+SCROLL_SPEED;
+      new_offset = offset+ScrollStep();
     } else if ((button == WX_BUTTON_WHEELUP && Contains(mousePosition)) ||
                (is_click && m_up->Contains(mousePosition))) {
 
       // top button
-      new_offset = offset-SCROLL_SPEED;
+      new_offset = offset-ScrollStep();
     } else if (is_click) {
       // Was it released after a drag operation?
       if (old_mode!=SCROLL_MODE_NONE /*&& start_drag_y != mousePosition.y*/)
@@ -281,6 +286,11 @@ void ScrollBox::Pack()
   m_up->SetPosition(position.x + size.x - m_up->GetSizeX() - border_size,
                     position.y + border_size);
   m_down->SetPosition(position + size - m_down->GetSize() - border_size);
+}
+
+int ScrollBox::ScrollStep() const
+{
+  return ScrollStepFor(size.y);
 }
 
 bool ScrollBox::SendKey(const SDL_Keysym & key)

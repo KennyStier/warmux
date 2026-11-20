@@ -32,6 +32,8 @@ class Button;
 
 class ScrollBox : public WidgetList
 {
+  int ScrollStep() const;
+
 public:
   typedef enum {
     SCROLL_MODE_NONE,
