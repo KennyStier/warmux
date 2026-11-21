@@ -190,12 +190,10 @@ jobs:
           packaging/web/prepare.sh
           emcmake cmake -S packaging/web -B packaging/web/build -DCMAKE_BUILD_TYPE=Release -DWARMUX_TESTING=1
           cmake --build packaging/web/build -j"$(nproc)"
-          mkdir -p web && cp -r packaging/web/build/warmux.{html,js,wasm,data} packaging/web/build/background.jpg packaging/web/build/lazy web/
-          mv web/warmux.html web/index.html
       - uses: actions/upload-artifact@v4
         with:
           name: web
-          path: web/
+          path: packaging/web/build/site/
 
   flatpak:
     name: Flatpak (${{ matrix.arch }})

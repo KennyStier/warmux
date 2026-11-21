@@ -1,5 +1,5 @@
 # Web build with Emscripten: the game as warmux.wasm with its data in
-# warmux.data, loaded by warmux.html. SDL2 and its image, mixer, ttf and net
+# warmux.data, loaded by warmux.html; build/site/ holds the finished site. SDL2 and its image, mixer, ttf and net
 # libraries, libpng and zlib come from Emscripten's ports; SDL2_gfx and
 # libxml2 are downloaded into deps/ by packaging/web/prepare.sh.
 #   emcmake cmake -S packaging/web -B packaging/web/build -DCMAKE_BUILD_TYPE=Release
@@ -126,7 +126,18 @@ set_property(TARGET warmux APPEND PROPERTY LINK_DEPENDS
   ${TOP}/data ${CMAKE_CURRENT_BINARY_DIR}/core/lazy.txt
   ${CMAKE_CURRENT_SOURCE_DIR}/shell.html)
 
-# The page's wallpaper while the game loads: the menu's own background
-add_custom_command(TARGET warmux POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${TOP}/data/menu/background.jpg
-          ${CMAKE_CURRENT_BINARY_DIR}/background.jpg)
+# site/: everything to put on the web server, as served at warmux.net/play/
+# (see website/README.md). The page's wallpaper while the game loads is the
+# menu's own background.
+set(B ${CMAKE_CURRENT_BINARY_DIR})
+add_custom_target(site ALL
+  COMMAND ${CMAKE_COMMAND} -E rm -rf ${B}/site
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${B}/site
+  COMMAND ${CMAKE_COMMAND} -E copy ${B}/warmux.html ${B}/site/index.html
+  COMMAND ${CMAKE_COMMAND} -E copy ${B}/warmux.js ${B}/warmux.wasm ${B}/warmux.data
+          ${CMAKE_CURRENT_SOURCE_DIR}/play.css ${CMAKE_CURRENT_SOURCE_DIR}/play.js
+          ${TOP}/data/menu/background.jpg ${B}/site/
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${B}/lazy ${B}/site/lazy
+  COMMENT "Putting the site together in site/"
+  VERBATIM)
+add_dependencies(site warmux)

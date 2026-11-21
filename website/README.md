@@ -75,6 +75,18 @@ key, everyone would have to add the repositories again.
     rsync -a --delete index.html assets testing warmux-vps:/var/www/warmux.net/
     # after changing deploy/: install it as in "Server" above
 
+## The game in the browser (warmux.net/play)
+
+`/play/` is the web build (`packaging/web`), in its own folder,
+`/var/www/warmux-play`, so publishing the site above leaves it alone.
+Build it (or download the `web` artifact of a CI run of `build.yml`) and
+copy its `site/` folder:
+
+    rsync -a --delete packaging/web/build/site/ warmux-vps:/var/www/warmux-play/
+
+The Caddyfile gives `/play/` its own Content-Security-Policy, the site's
+plus `'wasm-unsafe-eval'` (WebAssembly needs it).
+
 ## Preview locally
 
     python3 -m http.server 8765
