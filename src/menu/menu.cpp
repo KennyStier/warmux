@@ -497,7 +497,7 @@ void Menu::Run(bool skip_menu)
   Mouse::pointer_t old_pointer = Mouse::GetInstance()->SetPointer(Mouse::POINTER_STANDARD);
   // A menu opened during a game draws over its last frame
   AppWarmux::GetInstance()->video->EndLayers();
-#ifdef HAVE_TOUCHSCREEN
+#ifdef HAVE_TOUCH_CONTROLS
   // Menus are driven by taps as mouse clicks, even when opened during a game,
   // where the touch controls turn that off
   const char *hint = SDL_GetHint(SDL_HINT_TOUCH_MOUSE_EVENTS);
@@ -544,7 +544,7 @@ void Menu::Run(bool skip_menu)
   } while (!close_menu);
 
   Mouse::GetInstance()->SetPointer(old_pointer);
-#ifdef HAVE_TOUCHSCREEN
+#ifdef HAVE_TOUCH_CONTROLS
   SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, old_touch_mouse.c_str());
 #endif
 }

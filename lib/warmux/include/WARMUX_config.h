@@ -36,6 +36,12 @@
 #  error "Please add a config_${your_system}.h and include it properly"
 #endif
 
+// On-screen touch controls in battle: always on touchscreen builds, and on
+// the web whenever the screen is being touched (see TouchControls::InUse())
+#if defined(HAVE_TOUCHSCREEN) || defined(__EMSCRIPTEN__)
+#  define HAVE_TOUCH_CONTROLS
+#endif
+
 #ifdef MAEMO
 #  define HAVE_TOUCHSCREEN
 #  define HAVE_HANDHELD

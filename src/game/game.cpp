@@ -530,7 +530,7 @@ void Game::RefreshInput()
         ask_for_end = true;
       }
     } else {
-#ifdef HAVE_TOUCHSCREEN
+#ifdef HAVE_TOUCH_CONTROLS
       // Touch controls first: they turn taps into mouse clicks
       if (TouchControls::GetInstance()->HandleKeyEvent(evnt))
         continue;
@@ -652,7 +652,7 @@ void Game::Draw()
   Interface::GetInstance()->Draw();
   StatStop("GameDraw:interface");
 
-#ifdef HAVE_TOUCHSCREEN
+#ifdef HAVE_TOUCH_CONTROLS
   TouchControls::GetInstance()->Draw();
 #endif
 
@@ -766,7 +766,7 @@ bool Game::Run()
   // No text input during play: input methods (IMEs) could grab game keys.
   // The in-game chat turns it back on while it is open.
   SDL_StopTextInput();
-#ifdef HAVE_TOUCHSCREEN
+#ifdef HAVE_TOUCH_CONTROLS
   TouchControls::GetInstance()->Enable();
 #endif
 
@@ -798,14 +798,14 @@ bool Game::Run()
     if (ask_for_help_menu) {
       MenuHelpPause();
     }
-#ifdef HAVE_TOUCHSCREEN
+#ifdef HAVE_TOUCH_CONTROLS
     // Fingers lifted while a menu was open never reached the controls
     if (ask_for_menu || ask_for_help_menu)
       TouchControls::GetInstance()->Reset();
 #endif
   } while(!IsGameFinished());
 
-#ifdef HAVE_TOUCHSCREEN
+#ifdef HAVE_TOUCH_CONTROLS
   TouchControls::GetInstance()->Disable();
 #endif
 

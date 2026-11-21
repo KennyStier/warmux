@@ -21,10 +21,13 @@
 
 #include <WARMUX_config.h>
 
-#ifdef HAVE_TOUCHSCREEN
+#ifdef HAVE_TOUCH_CONTROLS
 
 #include <SDL.h>
 #include "interface/touch_controls.h"
+#ifdef __EMSCRIPTEN__
+#  include <emscripten.h>
+#endif
 #include "character/character.h"
 #include "game/game.h"
 #include "graphic/color.h"
@@ -42,6 +45,25 @@
 static const int DRAG_DISTANCE = 12;
 // Holding jump at least this long makes it a high jump
 static const Uint32 HIGH_JUMP_MS = 300;
+
+#ifdef __EMSCRIPTEN__
+// A phone or tablet browser: its main pointer is a finger
+EM_JS(int, web_touch_first, (), {
+  return (typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches) ? 1 : 0;
+});
+static int touch_in_use = -1; // not known yet
+#endif
+
+bool TouchControls::InUse()
+{
+#ifdef __EMSCRIPTEN__
+  if (touch_in_use < 0)
+    touch_in_use = web_touch_first();
+  return touch_in_use != 0;
+#else
+  return true;
+#endif
+}
 
 TouchControls::TouchControls()
   : enabled(false)
@@ -255,6 +277,14 @@ void TouchControls::Click(const Point2i &p)
 
 bool TouchControls::HandleKeyEvent(const SDL_Event &event)
 {
+#ifdef __EMSCRIPTEN__
+  // Show the controls to whoever touches the screen; hide them again once
+  // a mouse is used (in a battle SDL makes no mouse clicks from fingers)
+  if (event.type == SDL_FINGERDOWN)
+    touch_in_use = 1;
+  else if (event.type == SDL_MOUSEBUTTONDOWN && event.button.which != SDL_TOUCH_MOUSEID)
+    touch_in_use = 0;
+#endif
   if (!enabled)
     return false;
 
@@ -445,7 +475,7 @@ void TouchControls::DrawButton(int b, bool pressed) const
 
 void TouchControls::Draw()
 {
-  if (!enabled)
+  if (!enabled || !InUse())
     return;
   if (layout_for != GetMainWindow().GetSize())
     Layout();
@@ -461,4 +491,4 @@ void TouchControls::Draw()
       DrawButton(i, pressed[i]);
 }
 
-#endif // HAVE_TOUCHSCREEN
+#endif // HAVE_TOUCH_CONTROLS

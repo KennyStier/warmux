@@ -16,7 +16,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  ******************************************************************************
- * On-screen touch controls for touchscreen builds (HAVE_TOUCHSCREEN):
+ * On-screen touch controls for touchscreen builds (HAVE_TOUCHSCREEN), and
+ * on the web while the screen is being touched (HAVE_TOUCH_CONTROLS):
  *
  *   bottom left    walk left / right (slide between them)
  *   bottom right   fire (hold to charge; also shown outside the turn, where
@@ -95,6 +96,10 @@ public:
   bool HandleKeyEvent(const SDL_Event &event);
   void Draw();
   void Reset();
+  // Whether the player uses a touchscreen: always on touchscreen builds; on
+  // the web, from the device at start, then from the last finger or mouse
+  // button pressed
+  static bool InUse();
 };
 
 #endif
