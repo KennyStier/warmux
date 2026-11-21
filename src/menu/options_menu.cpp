@@ -108,7 +108,7 @@ OptionMenu::OptionMenu() :
     new PictureTextCBox(_("Player's name?"), "menu/display_name", option_size);
   graphic_options->AddWidget(opt_display_name);
 
-#ifndef HAVE_TOUCHSCREEN
+#if !defined(HAVE_TOUCHSCREEN) && !defined(__EMSCRIPTEN__) // web: the main menu's tile
   full_screen =
     new PictureTextCBox(_("Fullscreen?"), "menu/fullscreen", option_size);
   graphic_options->AddWidget(full_screen);
@@ -327,7 +327,7 @@ OptionMenu::OptionMenu() :
 #endif
   opt_display_energy->SetValue(config->GetDisplayEnergyCharacter());
   opt_display_name->SetValue(config->GetDisplayNameCharacter());
-#ifndef HAVE_TOUCHSCREEN
+#if !defined(HAVE_TOUCHSCREEN) && !defined(__EMSCRIPTEN__)
   full_screen->SetValue(app->video->IsFullScreen());
 #endif
   music_cbox->SetValue(config->GetSoundMusic());
@@ -467,7 +467,11 @@ void OptionMenu::SaveOptions()
   // Only fullscreen and the display scale can change; the window size
   // determines the resolution
   Point2i win = app->video->GetWindowSize();
+#  ifdef __EMSCRIPTEN__
+  app->video->SetConfig(win.x, win.y, false); // the page handles full screen
+#  else
   app->video->SetConfig(win.x, win.y, full_screen->GetValue());
+#  endif
 
   uint x = (window.GetWidth() - actions_buttons->GetSizeX())/2;
   uint y = window.GetHeight() - actions_buttons->GetSizeY();
