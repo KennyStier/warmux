@@ -61,6 +61,33 @@
 #ifdef WMX_LOG
 # include "include/debugmasks.h"
 #endif
+#ifdef __EMSCRIPTEN__
+# include <emscripten.h>
+// Settings, teams and replays live in the browser's IndexedDB: mount it
+// over the home folder, wait for its files to load, then write changes back
+// every few seconds and when the page is closed
+EM_ASYNC_JS(void, WebMountSaves, (), {
+  const home = ENV.HOME || '/home/web_user';
+  try { FS.mkdirTree(home); } catch (e) {}
+  FS.mount(IDBFS, {}, home);
+  await new Promise(done => FS.syncfs(true, err => {
+    if (err) console.warn('Could not load saved settings:', err);
+    done();
+  }));
+  let busy = false;
+  const save = () => {
+    if (busy) return;
+    busy = true;
+    FS.syncfs(false, err => {
+      busy = false;
+      if (err) console.warn('Could not save settings:', err);
+    });
+  };
+  setInterval(save, 5000);
+  addEventListener('pagehide', save);
+});
+#endif
+
 #ifdef ANDROID
 # include <android/log.h>
 # include "android_data.h"
@@ -584,6 +611,10 @@ extern "C" int main(int argc, char *argv[])
 #endif
 
   std::ios_base::sync_with_stdio(true);
+
+#ifdef __EMSCRIPTEN__
+  WebMountSaves();
+#endif
 
 #ifdef ANDROID
   if (!AndroidPrepareData()) {

@@ -1,0 +1,5 @@
+# Created by prepare.sh and the build
+/deps/
+/.downloads/
+/build/
+/*.log

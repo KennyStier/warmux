@@ -84,7 +84,6 @@ bool CreateFolder(const std::string &name)
   pos = dir.find("/");
   while (pos != dir.npos) {
     subdir = dir.substr(0, pos);
-    printf("%s\n", subdir.c_str());
 
     if (subdir.size() != 0) {
       // Create the directory if it doesn't exist

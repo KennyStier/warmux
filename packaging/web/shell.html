@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Warmux</title>
+<style>
+  :root {
+    --panel: rgba(16, 22, 34, 0.82);
+    --text: #f2f5fa;
+    --dim: #b4c0d2;
+    --good: #5cc25c;
+    --bad: #ff7a6e;
+  }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden;
+    background: #2b4a1e url("background.jpg") center / cover no-repeat;
+    font-family: Ubuntu, "Segoe UI", sans-serif; color: var(--text);
+  }
+  /* The game sizes itself to the canvas, which fills the window */
+  #canvas {
+    position: fixed; inset: 0; width: 100vw; height: 100vh;
+    display: block; border: 0; outline: none; background: transparent;
+  }
+  #loading {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: min(360px, calc(100vw - 32px)); box-sizing: border-box;
+    padding: 20px 22px; border-radius: 12px; background: var(--panel);
+    text-align: center;
+  }
+  #loading h1 { margin: 0 0 4px; font-size: 26px; letter-spacing: 0.5px; }
+  #status { margin: 0 0 14px; color: var(--dim); font-size: 14px; min-height: 1.2em; }
+  #bar { height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.14); overflow: hidden; }
+  #fill { height: 100%; width: 0; background: var(--good); transition: width 0.2s; }
+  #loading.failed #status { color: var(--bad); }
+  #loading.failed #bar { display: none; }
+</style>
+</head>
+<body>
+<canvas id="canvas" tabindex="-1" oncontextmenu="event.preventDefault()"></canvas>
+<div id="loading">
+  <h1>Warmux</h1>
+  <p id="status">Loading…</p>
+  <div id="bar"><div id="fill"></div></div>
+</div>
+<script>
+  const loading = document.getElementById('loading');
+  const statusLine = document.getElementById('status');
+  const fill = document.getElementById('fill');
+  const canvas = document.getElementById('canvas');
+  canvas.addEventListener('mousedown', () => canvas.focus());
+
+  function fail(text) {
+    loading.style.display = '';
+    loading.classList.add('failed');
+    statusLine.textContent = text;
+  }
+
+  var Module = {
+    canvas: canvas,
+    print: (text) => console.log(text),
+    printErr: (text) => console.warn(text),
+    setStatus: (text) => {
+      if (!text) return;
+      // Emscripten reports downloads as "Downloading data... (done/total)"
+      const m = text.match(/\((\d+(?:\.\d+)?)\/(\d+)\)/);
+      if (m) {
+        const done = +m[1], total = +m[2];
+        fill.style.width = (100 * done / total).toFixed(1) + '%';
+        statusLine.textContent = `Downloading game data… ${Math.round(done / 1048576)} of ${Math.round(total / 1048576)} MB`;
+      } else {
+        statusLine.textContent = text.replace('...', '…');
+      }
+    },
+    monitorRunDependencies: (left) => {
+      if (left === 0) statusLine.textContent = 'Starting…';
+    },
+    // Hide the box once the game draws its first frame
+    postRun: [],
+    onRuntimeInitialized: () => {
+      requestAnimationFrame(() => requestAnimationFrame(() => { loading.style.display = 'none'; canvas.focus(); }));
+    },
+    onAbort: () => fail('Warmux stopped because of an error. Reload the page to try again.'),
+  };
+  window.addEventListener('error', () => fail('Warmux stopped because of an error. Reload the page to try again.'));
+</script>
+{{{ SCRIPT }}}
+</body>
+</html>

@@ -30,6 +30,9 @@
 
 #include "game/config.h"
 #include "graphic/video.h"
+#ifdef __EMSCRIPTEN__
+#  include <emscripten/html5.h>
+#endif
 #include "include/app.h"
 #include "include/constant.h"
 #include "map/camera.h"
@@ -193,6 +196,19 @@ bool Video::CreateWindowAndRenderer(int w, int h, bool fs)
   // Without this SDL picks the orientation from the window size, overriding
   // the manifest
   SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
+#endif
+
+#ifdef __EMSCRIPTEN__
+  // The page sizes the canvas to the browser window: start at that size
+  {
+    double cw, ch;
+    if (emscripten_get_element_css_size("#canvas", &cw, &ch) == EMSCRIPTEN_RESULT_SUCCESS
+        && cw >= 1 && ch >= 1) {
+      w = (int)cw;
+      h = (int)ch;
+    }
+    flags &= ~SDL_WINDOW_FULLSCREEN_DESKTOP; // the browser's own button does that
+  }
 #endif
 
   sdl_window = SDL_CreateWindow("WarMUX", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -727,6 +743,14 @@ static int SDLCALL InputFilter(void *data, SDL_Event *event)
 
 int Video::WindowEventWatch(void *data, SDL_Event *event)
 {
+#ifdef __EMSCRIPTEN__
+  // This runs inside the browser's resize handler, while the game is paused
+  // in the middle of handing control to the browser: presenting here would
+  // try to pause again and lock up. Just remember the size.
+  if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+    static_cast<Video*>(data)->window_size = Point2i(event->window.data1, event->window.data2);
+  return 0;
+#endif
   // Menus only redraw on input, so show the last frame again whenever the
   // window is uncovered or resized instead of leaving it black.
   if (event->type == SDL_WINDOWEVENT) {

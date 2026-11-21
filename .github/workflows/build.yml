@@ -169,6 +169,34 @@ jobs:
           name: android
           path: packaging/android/app/build/outputs/apk/debug/*.apk
 
+  web:
+    name: Web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Emscripten
+        run: |
+          git clone --depth 1 https://github.com/emscripten-core/emsdk.git "$HOME/emsdk"
+          "$HOME/emsdk/emsdk" install 7.0.0 >/dev/null
+          "$HOME/emsdk/emsdk" activate 7.0.0 >/dev/null
+      # Emscripten builds its SDL and other ports on first use: keep them
+      - uses: actions/cache@v4
+        with:
+          path: ~/emsdk/upstream/emscripten/cache
+          key: emscripten-cache-7.0.0
+      - name: Build
+        run: |
+          . "$HOME/emsdk/emsdk_env.sh"
+          packaging/web/prepare.sh
+          emcmake cmake -S packaging/web -B packaging/web/build -DCMAKE_BUILD_TYPE=Release -DWARMUX_TESTING=1
+          cmake --build packaging/web/build -j"$(nproc)"
+          mkdir -p web && cp packaging/web/build/warmux.{html,js,wasm,data} packaging/web/build/background.jpg web/
+          mv web/warmux.html web/index.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web
+          path: web/
+
   flatpak:
     name: Flatpak (${{ matrix.arch }})
     strategy:

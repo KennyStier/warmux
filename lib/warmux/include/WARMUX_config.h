@@ -26,6 +26,8 @@
 #  include "config_visual.h"
 #elif defined(ANDROID)
 #  include "config_android.h"
+#elif defined(__EMSCRIPTEN__)
+#  include "config_emscripten.h"
 #elif defined(__SYMBIAN32__)
 #  include "config_symbian.h"
 #elif defined(HAVE_CONFIG_H)
