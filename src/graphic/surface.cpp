@@ -30,6 +30,7 @@
 #include <zlib.h>
 
 #include "graphic/surface.h"
+#include "web/web_data.h"
 #include "tool/math_tools.h"
 
 SDL_PixelFormat *Surface::GetDisplayFormat()
@@ -763,6 +764,7 @@ int Surface::FillRect(const Rectanglei &dstRect, const Color &color) const
 int Surface::ImgLoad(const std::string& filename)
 {
   AutoFree();
+  WebDataFetch(filename); // web: map images come when first used
   surface = IMG_Load(filename.c_str());
 
   return !IsNull();

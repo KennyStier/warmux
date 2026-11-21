@@ -84,7 +84,17 @@ set(WARMUX_META_URL "")
 configure_file(${TOP}/lib/warmux/include/WARMUX_net_defaults.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/include/WARMUX_net_defaults.h @ONLY)
 
-add_executable(warmux ${GAME_SOURCES} ${LIBWARMUX_SOURCES} ${FIXEDPOINT_SOURCES})
+add_executable(warmux ${GAME_SOURCES} ${LIBWARMUX_SOURCES} ${FIXEDPOINT_SOURCES}
+  ${TOP}/src/web/web_data.cpp)
+
+# The data: what the game needs to start goes in warmux.data (kept by the
+# browser between visits); map images, battle music and some fonts are
+# served from lazy/ and downloaded when first used (see split_data.sh)
+add_custom_target(webdata
+  COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/split_data.sh ${TOP}/data ${CMAKE_CURRENT_BINARY_DIR}
+  COMMENT "Splitting the game data"
+  VERBATIM)
+add_dependencies(warmux webdata)
 set_target_properties(warmux PROPERTIES SUFFIX ".html")
 target_include_directories(warmux PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}/include
@@ -110,12 +120,11 @@ target_link_options(warmux PRIVATE
   "SHELL:-lidbfs.js"
   "SHELL:-sFORCE_FILESYSTEM=1"
   "SHELL:--shell-file ${CMAKE_CURRENT_SOURCE_DIR}/shell.html"
-  "SHELL:--preload-file ${TOP}/data@/data"
-  "SHELL:--exclude-file *Makefile*"
-  "SHELL:--exclude-file *.svg"
-  "SHELL:--exclude-file *.desktop")
+  "SHELL:--preload-file ${CMAKE_CURRENT_BINARY_DIR}/core@/data"
+  "SHELL:--use-preload-cache")
 set_property(TARGET warmux APPEND PROPERTY LINK_DEPENDS
-  ${TOP}/data ${CMAKE_CURRENT_SOURCE_DIR}/shell.html)
+  ${TOP}/data ${CMAKE_CURRENT_BINARY_DIR}/core/lazy.txt
+  ${CMAKE_CURRENT_SOURCE_DIR}/shell.html)
 
 # The page's wallpaper while the game loads: the menu's own background
 add_custom_command(TARGET warmux POST_BUILD

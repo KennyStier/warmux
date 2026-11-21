@@ -29,6 +29,7 @@
 #include <WARMUX_random.h>
 
 #include "map/maps_list.h"
+#include "web/web_data.h"
 #include "map/water.h"
 #include "game/config.h"
 #include "graphic/surface.h"
@@ -217,6 +218,8 @@ InfoMapAccessor *InfoMap::LoadData()
     return normal;
 
   MSG_DEBUG("map.load", "Map data loaded: %s", name.c_str());
+  // Web: download all of the map's images at once, not one by one
+  WebDataFetchFolder(m_directory);
 
   uint layer = 0;
   if (Config::GetInstance()->GetDisplayMultiLayerSky()) {

@@ -50,6 +50,22 @@
   const canvas = document.getElementById('canvas');
   canvas.addEventListener('mousedown', () => canvas.focus());
 
+  // The main menu's Full screen tile: the game says when it is under the
+  // pointer or selected, and the click or key that presses it toggles full
+  // screen here, where the browser allows it
+  function toggleFullscreen() {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen().catch(() => {});
+  }
+  canvas.addEventListener('pointerup', () => {
+    const tile = Module.warmuxFullscreenTile;
+    if (tile && tile.hover) toggleFullscreen();
+  });
+  document.addEventListener('keyup', (e) => {
+    const tile = Module.warmuxFullscreenTile;
+    if (tile && tile.selected && (e.key === 'Enter' || e.key === ' ')) toggleFullscreen();
+  });
+
   function fail(text) {
     loading.style.display = '';
     loading.classList.add('failed');

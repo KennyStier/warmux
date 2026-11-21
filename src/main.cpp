@@ -63,6 +63,7 @@
 #endif
 #ifdef __EMSCRIPTEN__
 # include <emscripten.h>
+# include "web/web_data.h"
 // Settings, teams and replays live in the browser's IndexedDB: mount it
 // over the home folder, wait for its files to load, then write changes back
 // every few seconds and when the page is closed
@@ -614,6 +615,7 @@ extern "C" int main(int argc, char *argv[])
 
 #ifdef __EMSCRIPTEN__
   WebMountSaves();
+  WebDataInit();
 #endif
 
 #ifdef ANDROID

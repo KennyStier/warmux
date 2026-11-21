@@ -20,6 +20,7 @@
  *****************************************************************************/
 
 #include "sound/jukebox.h"
+#include "web/web_data.h"
 
 #include <iostream>
 #include <fstream>
@@ -323,6 +324,38 @@ bool JukeBox::PlayMusic(const std::string& type)
     return false;
 
   playing_pl = it;
+
+#ifdef __EMSCRIPTEN__
+  // Web: the battle music is downloaded when needed. Each time music starts,
+  // fetch one more song of this playlist in the background (for the menu's,
+  // one of the battles'), and only pick from songs already here.
+  {
+    PlayListMap::iterator battle = (type == "menu") ? playlist.find("ingame") : it;
+    if (battle != playlist.end()) {
+      std::vector<int> missing;
+      for (uint k = 0; k < battle->second.size(); k++)
+        if (!WebDataReady(battle->second[k]))
+          missing.push_back(k);
+      if (!missing.empty())
+        WebDataPrefetch(battle->second[missing[RandomLocal().GetInt(0, missing.size()-1)]]);
+    }
+    std::vector<int> ready;
+    for (uint k = 0; k < it->second.size(); k++)
+      if (WebDataReady(it->second[k]))
+        ready.push_back(k);
+    if (ready.empty()) {
+      playing_pl = playlist.end();
+      return false;
+    }
+    if (ready.size() < it->second.size()) {
+      int k = ready[RandomLocal().GetInt(0, ready.size()-1)];
+      if (PlayMusicSample(it->second.begin()+k))
+        return true;
+      playing_pl = playlist.end();
+      return false;
+    }
+  }
+#endif
 
   int i, j = 0;
   do {

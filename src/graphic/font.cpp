@@ -22,6 +22,7 @@
 #include "include/app.h"
 #include "game/config.h"
 #include "graphic/font.h"
+#include "web/web_data.h"
 #include "graphic/video.h"
 #include "map/map.h"
 #include <WARMUX_file_tools.h>
@@ -87,6 +88,7 @@ Font::Font(int size):
   const std::string filename = Config::GetConstInstance()->GetTtfFilename();
 
   if (DoesFileExist(filename)) {
+    WebDataFetch(filename); // web: the Japanese and Chinese fonts come when first used
     m_font = TTF_OpenFont(filename.c_str(), size);
     if (!m_font)
       Error(Format("Error in font file %s (size:%d): %s", filename.c_str(), size, TTF_GetError()));

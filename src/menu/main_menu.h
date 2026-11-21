@@ -81,6 +81,9 @@ private:
    virtual void RedrawBackground(const Rectanglei& rect) const;
    void OnClick(const Point2i &mousePosition, int button);
    void OnClickUp(const Point2i &mousePosition, int button);
+#ifdef __EMSCRIPTEN__
+   virtual void Draw(const Point2i& mousePosition);
+#endif
 };
 
 #endif

@@ -34,6 +34,9 @@
 
 #ifndef WIN32
 #include <dirent.h>
+#ifdef __EMSCRIPTEN__
+#  include <emscripten.h>
+#endif
 #endif
 
 // Position du texte de la version
@@ -44,6 +47,9 @@ MainMenu::~MainMenu()
   delete version_text;
   delete website_text;
   StatStop("Main:Menu");
+#ifdef __EMSCRIPTEN__
+  EM_ASM({ Module.warmuxFullscreenTile = null; });
+#endif
 }
 
 MainMenu::MainMenu() :
@@ -74,7 +80,12 @@ MainMenu::MainMenu() :
   replay = new ButtonPic(_("Replay"), "menu/ico_replay", size);
   box->AddWidget(replay);
 
+#ifdef __EMSCRIPTEN__
+  // A web page is closed with the browser: offer full screen in its place
+  quit =  new ButtonPic(_("Full screen"), "menu/fullscreen", size);
+#else
   quit =  new ButtonPic(_("Quit"), "menu/ico_quit", size);
+#endif
   box->AddWidget(quit);
 
   widgets.AddWidget(box);
@@ -143,8 +154,10 @@ void MainMenu::SelectAction(const Widget * widget)
     choice = REPLAY;
     close_menu = true;
   } else if (widget == quit) {
+#ifndef __EMSCRIPTEN__ // the page toggles full screen itself, see Draw()
     choice = QUIT;
     close_menu = true;
+#endif
   }
 
   // New implementation (XML custom menus)
@@ -195,14 +208,34 @@ MainMenu::menu_item MainMenu::Run ()
 
   Menu::Run();
 
+#ifdef __EMSCRIPTEN__
+  EM_ASM({ Module.warmuxFullscreenTile = null; });
+#endif
   return choice; // NONE if closed to be rebuilt at a new window size
 }
 
 bool MainMenu::signal_cancel()
 {
+#ifdef __EMSCRIPTEN__
+  return false; // Escape leaves the browser's full screen, not the game
+#else
   choice = QUIT;
   return true;
+#endif
 }
+
+#ifdef __EMSCRIPTEN__
+// Browsers only allow full screen from inside a click or key handler, which
+// the game never runs in. So tell the page whether the Full screen tile is
+// under the pointer or selected: its own handlers then toggle full screen
+// on the click or Enter that the game will see as pressing the tile.
+void MainMenu::Draw(const Point2i& mousePosition)
+{
+  bool hover = quit->Contains(mousePosition);
+  bool selected = grid->GetCurrentKeyboardSelectedWidget() == quit;
+  EM_ASM({ Module.warmuxFullscreenTile = ({ hover: !!$0, selected: !!$1 }); }, hover, selected);
+}
+#endif
 
 void MainMenu::MoveFocus(int dx, int dy)
 {
