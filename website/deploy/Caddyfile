@@ -12,7 +12,20 @@
 
 warmux.net {
 	root * /var/www/warmux.net
-	encode zstd gzip
+	# Caddy's usual list of types to compress, plus the game's WebAssembly
+	# (6.7 MB, 1.8 MB with zstd)
+	encode zstd gzip {
+		match {
+			header Content-Type text/*
+			header Content-Type application/json*
+			header Content-Type application/javascript*
+			header Content-Type application/xhtml+xml*
+			header Content-Type application/atom+xml*
+			header Content-Type application/rss+xml*
+			header Content-Type image/svg+xml*
+			header Content-Type application/wasm*
+		}
+	}
 	file_server
 
 	# GitHub tells us when a release is published or changed
